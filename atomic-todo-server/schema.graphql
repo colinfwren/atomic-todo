@@ -1,0 +1,42 @@
+enum TodoLevel {
+  Day,
+  Week,
+  Month
+}
+
+enum ContactPreferences {
+  NoMarketing
+  Marketing
+}
+
+type Todo {
+  id: ID!
+  name: String!
+  completed: Boolean!
+}
+
+type TodoList {
+  id: ID!
+  name: String!
+  level: TodoLevel!
+  todos: [Todo]!
+}
+
+type TodoBoard {
+  id: ID!
+  name: String!
+  days: [TodoList]!
+  weeks: [TodoList]!
+  months: [TodoList]!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  contactPreferences: ContactPreferences!
+}
+
+type Query {
+  todoBoards: [TodoBoard]!
+}
