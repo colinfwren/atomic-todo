@@ -19,15 +19,15 @@ type TodoList {
   id: ID!
   name: String!
   level: TodoLevel!
-  todos: [Todo]!
+  todos: [Todo!]!
 }
 
 type TodoBoard {
   id: ID!
   name: String!
-  days: [TodoList]!
-  weeks: [TodoList]!
-  months: [TodoList]!
+  days: [TodoList!]!
+  weeks: [TodoList!]!
+  months: [TodoList!]!
 }
 
 type User {
@@ -38,5 +38,5 @@ type User {
 }
 
 type Query {
-  todoBoards: [TodoBoard]!
+  todoBoards: [TodoBoard!]!
 }

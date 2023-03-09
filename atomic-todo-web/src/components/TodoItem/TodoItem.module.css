@@ -1,0 +1,15 @@
+.todoItem {
+    display: grid;
+    grid-template-columns: 1em 1fr;
+    gap: 0px 12px;
+}
+
+.todoItem > input {
+    width: 1em;
+    height: 1em;
+}
+
+.todoItem > p {
+    text-align: left;
+    margin: 0px;
+}
