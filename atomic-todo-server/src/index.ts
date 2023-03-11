@@ -4,7 +4,7 @@ import {readFileSync} from 'fs'
 import {
   Resolvers
 } from './generated/graphql'
-import { todoBoard } from "./testData";
+import {todoBoard, todoLists, todos} from "./testData";
 
 const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' })
 
@@ -14,6 +14,12 @@ const resolvers: Resolvers = {
   Query: {
     todoBoards: () => {
       return [todoBoard]
+    },
+    todoLists: () => {
+      return todoLists
+    },
+    todos: () => {
+      return todos
     }
   }
 }

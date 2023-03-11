@@ -1,14 +1,26 @@
-import { TodoBoard } from 'atomic-todo-server/src/generated/graphql'
+import {TodoBoard, Todo, TodoList} from 'atomic-todo-server/src/generated/graphql'
 import {TodoItemList} from "../TodoItemList/TodoItemList";
 import styles from './TodoItemBoard.module.css'
 
-export interface TodoItemBoardProps extends TodoBoard {}
+export interface TodoItemBoardProps extends TodoBoard {
+  todos: Map<string, Todo>,
+  lists: Map<string, TodoList>
+}
 
-export function TodoItemBoard({ name, days, weeks, months }: TodoItemBoardProps): JSX.Element {
+export function TodoItemBoard({ name, days, weeks, months, lists, todos }: TodoItemBoardProps): JSX.Element {
 
-  const dayLists = days.map((list) => <TodoItemList {...list} key={list.id} />)
-  const weekLists = weeks.map((list) => <TodoItemList {...list} key={list.id} />)
-  const monthLists = months.map((list) => <TodoItemList {...list} key={list.id} />)
+  const dayLists = days.map((listId) => {
+    const list = lists.get(listId)
+    return list ? <TodoItemList {...list} key={listId} todosMap={todos} /> : null
+  })
+  const weekLists = weeks.map((listId) => {
+    const list = lists.get(listId)
+    return list ? <TodoItemList {...list} key={listId} todosMap={todos} /> : null
+  })
+  const monthLists = months.map((listId) => {
+    const list = lists.get(listId)
+    return list ? <TodoItemList {...list} key={listId} todosMap={todos} /> : null
+  })
 
   return (
     <div className={styles.todoItemBoard}>

@@ -21,6 +21,8 @@ export enum ContactPreferences {
 export type Query = {
   __typename?: 'Query';
   todoBoards: Array<TodoBoard>;
+  todoLists: Array<TodoList>;
+  todos: Array<Todo>;
 };
 
 export type Todo = {
@@ -32,11 +34,11 @@ export type Todo = {
 
 export type TodoBoard = {
   __typename?: 'TodoBoard';
-  days: Array<TodoList>;
+  days: Array<Scalars['ID']>;
   id: Scalars['ID'];
-  months: Array<TodoList>;
+  months: Array<Scalars['ID']>;
   name: Scalars['String'];
-  weeks: Array<TodoList>;
+  weeks: Array<Scalars['ID']>;
 };
 
 export enum TodoLevel {
@@ -50,7 +52,7 @@ export type TodoList = {
   id: Scalars['ID'];
   level: TodoLevel;
   name: Scalars['String'];
-  todos: Array<Todo>;
+  todos: Array<Scalars['ID']>;
 };
 
 export type User = {
@@ -157,6 +159,8 @@ export type ResolversParentTypes = {
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   todoBoards?: Resolver<Array<ResolversTypes['TodoBoard']>, ParentType, ContextType>;
+  todoLists?: Resolver<Array<ResolversTypes['TodoList']>, ParentType, ContextType>;
+  todos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
 };
 
 export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {
@@ -167,11 +171,11 @@ export type TodoResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type TodoBoardResolvers<ContextType = any, ParentType extends ResolversParentTypes['TodoBoard'] = ResolversParentTypes['TodoBoard']> = {
-  days?: Resolver<Array<ResolversTypes['TodoList']>, ParentType, ContextType>;
+  days?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  months?: Resolver<Array<ResolversTypes['TodoList']>, ParentType, ContextType>;
+  months?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  weeks?: Resolver<Array<ResolversTypes['TodoList']>, ParentType, ContextType>;
+  weeks?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -179,7 +183,7 @@ export type TodoListResolvers<ContextType = any, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   level?: Resolver<ResolversTypes['TodoLevel'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  todos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
+  todos?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

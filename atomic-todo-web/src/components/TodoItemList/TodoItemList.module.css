@@ -4,3 +4,7 @@
     margin: 0;
     text-align: left;
 }
+
+.todoItemList .listContainer {
+    padding-bottom: 2em;
+}
