@@ -20,6 +20,8 @@ type TodoList {
   name: String!
   level: TodoLevel!
   todos: [ID!]!
+  parentList: ID
+  childLists: [ID!]!
 }
 
 type TodoBoard {

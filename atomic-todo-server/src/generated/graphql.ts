@@ -49,9 +49,11 @@ export enum TodoLevel {
 
 export type TodoList = {
   __typename?: 'TodoList';
+  childLists: Array<Scalars['ID']>;
   id: Scalars['ID'];
   level: TodoLevel;
   name: Scalars['String'];
+  parentList?: Maybe<Scalars['ID']>;
   todos: Array<Scalars['ID']>;
 };
 
@@ -180,9 +182,11 @@ export type TodoBoardResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type TodoListResolvers<ContextType = any, ParentType extends ResolversParentTypes['TodoList'] = ResolversParentTypes['TodoList']> = {
+  childLists?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   level?: Resolver<ResolversTypes['TodoLevel'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  parentList?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   todos?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
