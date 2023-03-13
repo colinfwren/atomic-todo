@@ -1,4 +1,8 @@
 {
   "private": true,
-  "workspaces": ["atomic-todo-server"]
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
 }

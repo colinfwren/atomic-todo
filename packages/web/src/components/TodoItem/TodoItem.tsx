@@ -1,12 +1,19 @@
+import React from 'react'
 import { useDraggable } from "@dnd-kit/core";
-import {Todo, TodoLevel} from 'atomic-todo-server/src/generated/graphql'
 import styles from "./TodoItem.module.css"
+import { TodoItemProps } from "../../types";
 
-export interface TodoItemProps extends Todo {
-  level: TodoLevel
-  listId: string
-}
-
+/**
+ * Render a Todo
+ *
+ * @param {TodoItemProps} props - Properties passed into the component
+ * @param {string} props.id - ID of the Todo
+ * @param {string} props.name - The name of the Todo
+ * @param {boolean} props.completed - If the Todo is completed
+ * @param {string} props.level - The level of the TodoList the Todo is rendered in
+ * @param {string} props.listId - The ID of the TodoList the Todo is rendered in
+ * @constructor
+ */
 export function TodoItem({ id, name, completed, level, listId }: TodoItemProps): JSX.Element {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `${level}_${id}`,

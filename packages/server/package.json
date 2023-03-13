@@ -1,5 +1,6 @@
 {
-  "name": "atomic-todo-server",
+  "name": "@atomic-todo/server",
+  "main": "dist/index.js",
   "version": "1.0.0",
   "description": "GraphQL server for Atomic ToDo",
   "type": "module",

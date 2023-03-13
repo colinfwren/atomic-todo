@@ -1,23 +1,31 @@
-import {TodoBoard, Todo, TodoList} from 'atomic-todo-server/src/generated/graphql'
+import React from 'react'
 import {TodoItemList} from "../TodoItemList/TodoItemList";
 import styles from './TodoItemBoard.module.css'
+import { TodoItemBoardProps } from "../../types";
 
-export interface TodoItemBoardProps extends TodoBoard {
-  todos: Map<string, Todo>,
-  lists: Map<string, TodoList>
-}
-
+/**
+ * Render a board of Todo Lists
+ *
+ * @param {TodoItemBoardProps} props - Props passed into the component
+ * @param {string} props.name - The name of the Todo board
+ * @param {TodoList[]} props.days - A list of TodoLists to render in the Days section
+ * @oaram {TodoList[]} props.weeks - A list of TodoLists to render in the Weeks section
+ * @param {TodoList[]} props.months - A list of TodoLists to render in the Months section
+ * @oaram {Map<string, TodoList>} props.lists - A Map of TodoLists
+ * @param {Map<string, Todo>} props.todos - A Map of Todos
+ * @constructor
+ */
 export function TodoItemBoard({ name, days, weeks, months, lists, todos }: TodoItemBoardProps): JSX.Element {
 
-  const dayLists = days.map((listId) => {
+  const dayLists = days.map((listId: string) => {
     const list = lists.get(listId)
     return list ? <TodoItemList {...list} key={listId} todosMap={todos} /> : null
   })
-  const weekLists = weeks.map((listId) => {
+  const weekLists = weeks.map((listId: string) => {
     const list = lists.get(listId)
     return list ? <TodoItemList {...list} key={listId} todosMap={todos} /> : null
   })
-  const monthLists = months.map((listId) => {
+  const monthLists = months.map((listId: string) => {
     const list = lists.get(listId)
     return list ? <TodoItemList {...list} key={listId} todosMap={todos} /> : null
   })
