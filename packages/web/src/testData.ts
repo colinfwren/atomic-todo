@@ -1,12 +1,13 @@
 import {Todo, TodoBoard, TodoLevel, TodoList} from '@atomic-todo/server/dist/src/generated/graphql'
 
-const WEEK_ONE_ID = '773c5148-df9f-4dc3-b69b-009e7e95006f'
-const MONTH_ONE_ID = 'f6aaa969-7bc8-47c8-98b1-05b663940265'
-const MONTH_TWO_ID = 'd2e04b10-5888-43d7-b9c8-3d77b115c8fa'
+export const WEEK_ONE_ID = '773c5148-df9f-4dc3-b69b-009e7e95006f'
+export const MONTH_ONE_ID = 'f6aaa969-7bc8-47c8-98b1-05b663940265'
+export const MONTH_TWO_ID = 'd2e04b10-5888-43d7-b9c8-3d77b115c8fa'
+export const TODO_ID = '8722f10a-a26a-4ae9-a855-9c15034c0cf8'
 
 const todos: Todo[] = [
   {
-    id: '8722f10a-a26a-4ae9-a855-9c15034c0cf8',
+    id: TODO_ID,
     name: 'Set up Apollo Server',
     completed: true
   },
