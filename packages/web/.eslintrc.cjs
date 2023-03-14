@@ -26,7 +26,8 @@ module.exports = {
   rules: {
       'jsdoc/require-jsdoc': [
           'error',
-      ]
+      ],
+      'no-unused-vars': [1]
   },
   settings: {
     react: {

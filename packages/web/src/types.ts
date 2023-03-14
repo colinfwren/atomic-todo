@@ -10,16 +10,29 @@ export enum TraversalDirection {
   CHILDREN
 }
 
-export type TodoItemProps = Todo & {
+export type TodoItemProps = {
+  id: string
   level: TodoLevel
   listId: string
 }
 
-export type TodoItemBoardProps = TodoBoard & {
-  todos: Map<string, Todo>,
-  lists: Map<string, TodoList>
+export type TodoItemListProps = {
+  id: string
+  level: TodoLevel
 }
 
-export type TodoItemListProps = TodoList & {
-  todosMap: Map<string, Todo>
+export type AppState = {
+  board: TodoBoard
+  lists: Map<string, TodoList>
+  todos: Map<string, Todo>
+}
+
+export type IAppContext = AppState & {
+  actions: {
+    setLists: (lists: Map<string, TodoList>) => void
+  }
+}
+
+export type AppProviderProps = {
+  children: JSX.Element | JSX.Element[]
 }
