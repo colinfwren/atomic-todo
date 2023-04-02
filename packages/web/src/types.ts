@@ -11,6 +11,12 @@ export enum TraversalDirection {
   NONE
 }
 
+export enum Action {
+  SET_LISTS,
+  SET_TODO_COMPLETED,
+  SET_TODO_TEXT
+}
+
 export type TodoListMapUpdateData = {
   listId: string,
   operation: UpdateOperation,
@@ -36,10 +42,16 @@ export type AppState = {
 
 export type IAppContext = AppState & {
   actions: {
-    setLists: (lists: Map<string, TodoList>) => void
+    setLists: (lists: Map<string, TodoList>) => void,
+    setTodoCompleted: (todoID: string, completed: boolean) => void
   }
 }
 
 export type AppProviderProps = {
   children: JSX.Element | JSX.Element[]
+}
+
+export type StateAction = {
+  type: Action,
+  payload: any
 }

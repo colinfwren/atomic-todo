@@ -54,7 +54,7 @@ const todos: Todo[] = [
 const days: TodoList[] = [
   {
     id: DAY_ONE_ID,
-    name: 'Monday',
+    name: 'Mon (3/4)',
     level: TodoLevel.Day,
     todos: [todos[0].id, todos[1].id],
     childLists: [],
@@ -62,7 +62,7 @@ const days: TodoList[] = [
   },
   {
     id: DAY_TWO_ID,
-    name: 'Tuesday',
+    name: 'Tue (4/4)',
     level: TodoLevel.Day,
     todos: [todos[2].id],
     childLists: [],
@@ -70,7 +70,7 @@ const days: TodoList[] = [
   },
   {
     id: 'adcb06ab-2f63-446d-b88c-ff521870e77a',
-    name: 'Wednesday',
+    name: 'Wed (5/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -78,7 +78,7 @@ const days: TodoList[] = [
   },
   {
     id: '6ad1f977-48ba-471b-8a73-a58225fc848f',
-    name: 'Thursday',
+    name: 'Thu (6/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -86,7 +86,7 @@ const days: TodoList[] = [
   },
   {
     id: 'f90ea05c-4b2b-4082-ab84-68ca423688b1',
-    name: 'Friday',
+    name: 'Fri (7/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -94,7 +94,7 @@ const days: TodoList[] = [
   },
   {
     id: '6c842ea8-3a35-45c7-91e9-4ff41410f151',
-    name: 'Saturday',
+    name: 'Sat (8/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -102,7 +102,7 @@ const days: TodoList[] = [
   },
   {
     id: '9db1ebc4-4a14-433c-8c40-20c9f42674f2',
-    name: 'Sunday',
+    name: 'Sun (9/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -113,7 +113,7 @@ const days: TodoList[] = [
 const weeks: TodoList[] = [
   {
     id: WEEK_ONE_ID,
-    name: '1 Week',
+    name: '1 Week (3/4)',
     level: TodoLevel.Week,
     todos: [todos[0].id, todos[1].id, todos[2].id],
     parentList: MONTH_ONE_ID,
@@ -121,7 +121,7 @@ const weeks: TodoList[] = [
   },
   {
     id: WEEK_TWO_ID,
-    name: '2 Weeks',
+    name: '2 Weeks (10/4)',
     level: TodoLevel.Week,
     todos: [todos[3].id, todos[4].id],
     parentList: MONTH_ONE_ID,
@@ -129,7 +129,7 @@ const weeks: TodoList[] = [
   },
   {
     id: '48276bee-0e50-4cb8-90a9-b12dcce9fd3f',
-    name: '3 Weeks',
+    name: '3 Weeks (17/4)',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_ONE_ID,
@@ -137,7 +137,7 @@ const weeks: TodoList[] = [
   },
   {
     id: '34a1432e-b45e-4f94-b57c-18c3b0efb7ec',
-    name: '4 Weeks',
+    name: '4 Weeks (24/4)',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_ONE_ID,
@@ -145,7 +145,7 @@ const weeks: TodoList[] = [
   },
   {
     id: WEEK_FIVE_ID,
-    name: '5 Weeks',
+    name: '5 Weeks (1/5)',
     level: TodoLevel.Week,
     todos: [todos[5].id],
     parentList: MONTH_TWO_ID,
@@ -153,7 +153,7 @@ const weeks: TodoList[] = [
   },
   {
     id: WEEK_SIX_ID,
-    name: '6 Weeks',
+    name: '6 Weeks (8/5)',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_TWO_ID,
@@ -164,7 +164,7 @@ const weeks: TodoList[] = [
 const months: TodoList[] = [
   {
     id: MONTH_ONE_ID,
-    name: '1 Month',
+    name: '1 Month (Apr)',
     level: TodoLevel.Month,
     todos: [
       todos[0].id,
@@ -183,7 +183,7 @@ const months: TodoList[] = [
   },
   {
     id: MONTH_TWO_ID,
-    name: '2 Months',
+    name: '2 Months (May)',
     level: TodoLevel.Month,
     todos: [
       todos[5].id,
@@ -197,7 +197,7 @@ const months: TodoList[] = [
   },
   {
     id: 'c52f1cc7-9c90-47dc-8ee5-2b11b620b9e0',
-    name: '3 Months',
+    name: '3 Months (Jun)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -205,7 +205,7 @@ const months: TodoList[] = [
   },
   {
     id: 'cf27c8e5-f1ec-48a9-870a-29e4f9cb2f49',
-    name: '4 Months',
+    name: '4 Months (Jul)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -213,7 +213,7 @@ const months: TodoList[] = [
   },
   {
     id: '3bf422e1-2ebe-41f1-9bfc-a08ea5fb937b',
-    name: '5 Months',
+    name: '5 Months (Aug)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -221,7 +221,7 @@ const months: TodoList[] = [
   },
   {
     id: '78527bc8-13b0-4ed3-b9ba-96b40715cd75',
-    name: '6 Months',
+    name: '6 Months (Sep)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -239,7 +239,7 @@ export const todoMap = new Map<string, Todo>(todos.map(todo => {
 
 export const todoBoard: TodoBoard = {
   id: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2',
-  name: 'Test Board',
+  name: 'Todo List',
   days: days.map(x => x.id),
   weeks: weeks.map(x => x.id),
   months: months.map(x => x.id)

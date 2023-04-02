@@ -20,19 +20,19 @@ export function TodoItemBoard(): JSX.Element {
     <div className={styles.todoItemBoard}>
       <h1>{ name }</h1>
       <div className={styles.days}>
-        <h2>Days</h2>
+        <h2>7 Days</h2>
         <div>
           {dayLists}
         </div>
       </div>
       <div className={styles.weeks}>
-        <h2>Weeks</h2>
+        <h2>6 Weeks</h2>
         <div>
           {weekLists}
         </div>
       </div>
       <div className={styles.months}>
-        <h2>Months</h2>
+        <h2>6 Months</h2>
         <div>
           {monthLists}
         </div>

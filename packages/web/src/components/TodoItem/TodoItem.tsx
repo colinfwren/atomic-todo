@@ -15,7 +15,7 @@ import AppContext from "../../contexts/AppContext";
  */
 export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | null {
 
-  const { todos } = useContext(AppContext)
+  const { todos, actions } = useContext(AppContext)
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `${level}_${id}`,
@@ -25,9 +25,19 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
     }
   })
 
+  const todo = todos.get(id)
+
+  /**
+   * Callback for when checkbox is clicked
+   */
+  function onClickCheckbox() {
+    if (todo) {
+      actions.setTodoCompleted(todo.id, !todo.completed)
+    }
+  }
+
   const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px,0)`} : undefined
 
-  const todo = todos.get(id)
   if (todo) {
     return (
       <div className={styles.todoItem} style={style}>
@@ -43,7 +53,7 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
           </div>
         </div>
         <div className={styles.inputContainer}>
-          <input type='checkbox' checked={todo.completed} readOnly/>
+          <input type='checkbox' checked={todo.completed} onClick={onClickCheckbox}/>
         </div>
         <div className={styles.textContainer}>
           <p>{todo.name}</p>
