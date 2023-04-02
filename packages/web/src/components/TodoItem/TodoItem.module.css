@@ -1,8 +1,9 @@
 .todoItem {
     display: flex;
     align-items: flex-start;
-    width: 100%;
+    width: calc(100% + 20px);
     padding-left: 2px;
+    margin-left: -20px;
 }
 
 .inputContainer {
@@ -24,6 +25,22 @@
     flex-direction: column;
 }
 
+.menuContainer {
+    visibility: hidden;
+    width: 20px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-height: calc(1.5em + 6px);
+}
+
+.todoItem:hover .menuContainer {
+    visibility: visible;
+}
+
 .todoItem input {
     width: 16px;
     height: 16px;
@@ -37,4 +54,19 @@
     text-align: left;
     flex-grow: 1;
     margin: 0;
+}
+
+.todoItem .menu svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    flex-shrink: 0;
+    fill: rgba(255, 255, 255, 0.5);
+    backface-visibility: hidden;
+}
+
+@media (prefers-color-scheme: light) {
+    .todoItem .menu svg {
+        fill: rgb(25, 25, 25, 0.8);
+    }
 }
