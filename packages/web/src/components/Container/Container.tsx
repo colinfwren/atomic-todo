@@ -1,16 +1,15 @@
 import {DndContext, DragEndEvent} from "@dnd-kit/core";
-import {TraversalDirection, UpdateOperation} from "../../types";
-import { TodoList } from "@atomic-todo/server/dist/src/generated/graphql";
-import {updateLists} from "../../functions/listUpdates";
+import { updateTodoListMap} from "../../functions/listUpdates";
 import {TodoItemBoard} from "../TodoItemBoard/TodoItemBoard";
 import React, {useContext} from "react";
 import AppContext from "../../contexts/AppContext";
 
 /**
  * Container for drag and drop in app
- * @constructor
+ *
+ * @returns {JSX.Element} Drag 'n' Drop wrapper over TodoItemBoard
  */
-export function Container() {
+export function Container(): JSX.Element {
   const { lists, actions: { setLists }} = useContext(AppContext)
 
   /**
@@ -22,16 +21,14 @@ export function Container() {
     console.log(event)
     const { active: todo, over: list } = event
     if (list) {
-      const {todoId, sourceListId} = todo.data.current!
-      const {listId: targetListId} = list.data.current!
-      const newListMap = [
-        [sourceListId, UpdateOperation.REMOVE, TraversalDirection.PARENTS],
-        [sourceListId, UpdateOperation.REMOVE, TraversalDirection.CHILDREN],
-        [targetListId, UpdateOperation.ADD, TraversalDirection.PARENTS]
-      ].reduce((listMap: Map<string, TodoList>, [listId, operation, direction]) => {
-        return updateLists(listId, todoId, listMap, operation, direction)
-      }, lists)
-      setLists(newListMap)
+      setLists(
+        updateTodoListMap(
+          todo.data.current!.sourceListId,
+          list.data.current!.listId,
+          todo.data.current!.todoId,
+          lists
+        )
+      )
     }
   }
 

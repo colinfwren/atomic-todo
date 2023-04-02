@@ -7,7 +7,14 @@ export enum UpdateOperation {
 
 export enum TraversalDirection {
   PARENTS,
-  CHILDREN
+  CHILDREN,
+  NONE
+}
+
+export type TodoListMapUpdateData = {
+  listId: string,
+  operation: UpdateOperation,
+  direction: TraversalDirection
 }
 
 export type TodoItemProps = {
