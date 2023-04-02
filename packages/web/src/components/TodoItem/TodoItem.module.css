@@ -1,15 +1,40 @@
 .todoItem {
-    display: grid;
-    grid-template-columns: 1em 1fr;
-    gap: 0px 12px;
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    padding-left: 2px;
 }
 
-.todoItem > input {
-    width: 1em;
-    height: 1em;
+.inputContainer {
+    user-select: none;
+    margin-right: 2px;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-height: calc(1.5em + 6px);
 }
 
-.todoItem > p {
+.textContainer {
+    flex: 1 1 0;
+    min-width: 1px;
+    display: flex;
+    flex-direction: column;
+}
+
+.todoItem input {
+    width: 16px;
+    height: 16px;
+}
+
+.todoItem  p {
+    max-width: 100%;
+    white-space: pre-wrap;
+    word-break: break-word;
+    padding: 3px 2px;
     text-align: left;
-    margin: 0px;
+    flex-grow: 1;
+    margin: 0 0 1rem 0;
 }

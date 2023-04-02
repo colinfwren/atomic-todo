@@ -31,8 +31,12 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
   if (todo) {
     return (
       <div className={styles.todoItem} ref={setNodeRef} style={style} {...listeners} {...attributes}>
-        <input type='checkbox' checked={todo.completed} readOnly/>
-        <p>{todo.name}</p>
+        <div className={styles.inputContainer}>
+          <input type='checkbox' checked={todo.completed} readOnly/>
+        </div>
+        <div className={styles.textContainer}>
+          <p>{todo.name}</p>
+        </div>
       </div>
     )
   }

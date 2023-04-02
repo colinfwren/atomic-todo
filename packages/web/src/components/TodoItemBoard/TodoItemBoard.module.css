@@ -1,5 +1,5 @@
 .todoItemBoard {
-    padding: 20px 1em;
+    padding: 1rem 40px;
 }
 
 .todoItemBoard h1 {
@@ -14,13 +14,13 @@
 .todoItemBoard .days > div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 0 24px;
+    gap: 0 46px;
 }
 
 .todoItemBoard .weeks > div, .todoItemBoard .months > div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 0 24px;
+    gap: 0 46px;
 }
 
 .todoItemBoard .weebs, .todoItemBoard .months {

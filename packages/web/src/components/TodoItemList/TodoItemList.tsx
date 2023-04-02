@@ -33,6 +33,9 @@ export function TodoItemList({ id, level }: TodoItemListProps): JSX.Element | nu
     return (
       <div className={styles.todoItemList}>
         <h3>{list.name}</h3>
+        <div className={styles.dividerContainer}>
+          <div className={styles.divider} />
+        </div>
         <div ref={setNodeRef} style={style} className={styles.listContainer}>
           {todoItems}
         </div>
