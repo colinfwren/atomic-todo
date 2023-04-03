@@ -46,7 +46,7 @@
     height: 16px;
 }
 
-.todoItem  p {
+.todoItem .textContainer > div {
     max-width: 100%;
     white-space: pre-wrap;
     word-break: break-word;

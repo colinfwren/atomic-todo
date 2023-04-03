@@ -43,7 +43,8 @@ export type AppState = {
 export type IAppContext = AppState & {
   actions: {
     setLists: (lists: Map<string, TodoList>) => void,
-    setTodoCompleted: (todoID: string, completed: boolean) => void
+    setTodoCompleted: (todoID: string, completed: boolean) => void,
+    setTodoName: (todoId: string, value: string) => void
   }
 }
 

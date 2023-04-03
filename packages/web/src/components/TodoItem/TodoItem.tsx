@@ -1,8 +1,9 @@
-import React, {useContext} from 'react'
+import React, { useContext } from 'react'
 import { useDraggable } from "@dnd-kit/core";
 import styles from "./TodoItem.module.css"
 import { TodoItemProps } from "../../types";
 import AppContext from "../../contexts/AppContext";
+import ContentEditable, {ContentEditableEvent} from "react-contenteditable";
 
 /**
  * Render a Todo
@@ -16,6 +17,7 @@ import AppContext from "../../contexts/AppContext";
 export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | null {
 
   const { todos, actions } = useContext(AppContext)
+  const todo = todos.get(id)
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `${level}_${id}`,
@@ -25,8 +27,6 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
     }
   })
 
-  const todo = todos.get(id)
-
   /**
    * Callback for when checkbox is clicked
    */
@@ -35,6 +35,15 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
       actions.setTodoCompleted(todo.id, !todo.completed)
     }
   }
+
+  /**
+   * Callback for when content is edited
+   */
+  function handleContentChange(event: ContentEditableEvent) {
+    if (todo) {
+      actions.setTodoName(todo.id, event.target.value)
+    }
+   }
 
   const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px,0)`} : undefined
 
@@ -56,7 +65,7 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
           <input type='checkbox' checked={todo.completed} onClick={onClickCheckbox}/>
         </div>
         <div className={styles.textContainer}>
-          <p>{todo.name}</p>
+          <ContentEditable html={todo.name} onChange={handleContentChange} />
         </div>
       </div>
     )

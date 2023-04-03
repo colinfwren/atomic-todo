@@ -9,7 +9,7 @@ const initialState: AppState = {
   todos: todoMap
 }
 
-const AppContext = createContext<IAppContext>({ ...initialState, actions: { setLists: () => {}, setTodoCompleted: () => {}}})
+const AppContext = createContext<IAppContext>({ ...initialState, actions: { setLists: () => {}, setTodoCompleted: () => {}, setTodoName: () => {}}})
 const { Provider } = AppContext
 
 /**
@@ -30,6 +30,11 @@ function reducer (state: AppState, { type, payload}: StateAction) {
       return {
         ...state,
         todos: new Map(state.todos).set(payload.todoId, { ...state.todos.get(payload.todoId)!, completed: payload.completed })
+      }
+    case Action.SET_TODO_TEXT:
+      return {
+        ...state,
+        todos: new Map(state.todos).set(payload.todoId, { ...state.todos.get(payload.todoId)!, name: payload.value })
       }
     default:
       return state
@@ -54,6 +59,9 @@ export function AppProvider({ children }: AppProviderProps) {
       },
       setTodoCompleted: (todoId: string, completed: boolean) => {
         dispatch({ type: Action.SET_TODO_COMPLETED, payload: { todoId, completed }})
+      },
+      setTodoName: (todoId: string, value: string) => {
+        dispatch({ type: Action.SET_TODO_TEXT, payload: { todoId, value }})
       }
     }
   }
