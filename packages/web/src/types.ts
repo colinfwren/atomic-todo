@@ -14,7 +14,9 @@ export enum TraversalDirection {
 export enum Action {
   SET_LISTS,
   SET_TODO_COMPLETED,
-  SET_TODO_TEXT
+  SET_TODO_TEXT,
+  SET_STATE,
+  SET_ERROR,
 }
 
 export type TodoListMapUpdateData = {
@@ -35,6 +37,8 @@ export type TodoItemListProps = {
 }
 
 export type AppState = {
+  loading: boolean
+  error: string | null
   board: TodoBoard
   lists: Map<string, TodoList>
   todos: Map<string, Todo>

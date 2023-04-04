@@ -1,3 +1,4 @@
+// @ts-ignore
 import {Todo, TodoBoard, TodoLevel, TodoList} from '@atomic-todo/server/dist/src/generated/graphql'
 
 export const DAY_ONE_ID = 'a7990dea-3b26-4b28-964c-e84b7fa88440'
@@ -244,3 +245,9 @@ export const todoBoard: TodoBoard = {
   weeks: weeks.map(x => x.id),
   months: months.map(x => x.id)
 }
+
+export const emptyTodoListMap = new Map<string, TodoList>([...days, ...weeks, ...months].map((list => {
+  return [list.id, { ...list, todos: []}]
+})))
+
+export const emptyTodoMap = new Map<string, Todo>([])

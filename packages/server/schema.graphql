@@ -1,7 +1,7 @@
 enum TodoLevel {
-  Day,
-  Week,
-  Month
+  day,
+  week,
+  month
 }
 
 enum ContactPreferences {

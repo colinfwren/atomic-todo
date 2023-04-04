@@ -1,3 +1,4 @@
+// @ts-ignore
 import {TodoList} from '@atomic-todo/server/src/generated/graphql'
 import {TodoListMapUpdateData, TraversalDirection, UpdateOperation} from "../types";
 
@@ -60,13 +61,13 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
   const sourceList = listMap.get(sourceListId)!
   const targetList = listMap.get(targetListId)!
   const sameLevel = sourceList.level === targetList.level
-  if (sourceList.level === 'Day') {
+  if (sourceList.level === 'day') {
     if (sameLevel) {
       return [
         {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
         {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
       ]
-    } else if (targetList.level === 'Week') {
+    } else if (targetList.level === 'week') {
       if (targetList.id === sourceList.parentList) {
         return [
           {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
@@ -89,8 +90,8 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
         ]
       }
     }
-  } else if (sourceList.level === 'Week') {
-    if (targetList.level === 'Day') {
+  } else if (sourceList.level === 'week') {
+    if (targetList.level === 'day') {
       if (sourceList.id === targetList.parentList) {
         return [
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
@@ -104,7 +105,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
         ]
       }
-    } else if (targetList.level === 'Week') {
+    } else if (targetList.level === 'week') {
       if (sourceList.parentList === targetList.parentList) {
         return [
           {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
@@ -119,7 +120,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
       }
     }
   } else {
-    if (targetList.level === 'Day') {
+    if (targetList.level === 'day') {
       const targetWeekList = listMap.get(targetList.parentList!)!
       if (targetWeekList.parentList === sourceList.id) {
         return [
@@ -127,7 +128,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
           {listId: targetWeekList.id, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE},
         ]
       }
-    } else if (targetList.level === 'Week') {
+    } else if (targetList.level === 'week') {
       if (targetList.parentList === sourceListId) {
         return [
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}

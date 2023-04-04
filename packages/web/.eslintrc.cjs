@@ -11,7 +11,11 @@ module.exports = {
   ignorePatterns: ["dist", "coverage", "jest.config.js"],
   rules: {
     'jsdoc/require-jsdoc': ['error'],
-    'no-unused-vars': [1]
+    'no-unused-vars': [1],
+    '@typescript-eslint/ban-ts-comment': [
+    'warn',
+    {'ts-ignore': 'off'},
+  ],
   },
   settings: {
     react: {

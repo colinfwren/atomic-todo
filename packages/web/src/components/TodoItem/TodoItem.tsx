@@ -62,7 +62,7 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
           </div>
         </div>
         <div className={styles.inputContainer}>
-          <input type='checkbox' checked={todo.completed} onClick={onClickCheckbox}/>
+          <input type='checkbox' defaultChecked={todo.completed} onClick={onClickCheckbox}/>
         </div>
         <div className={styles.textContainer}>
           <ContentEditable html={todo.name} onChange={handleContentChange} />

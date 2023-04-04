@@ -42,9 +42,9 @@ export type TodoBoard = {
 };
 
 export enum TodoLevel {
-  Day = 'Day',
-  Month = 'Month',
-  Week = 'Week'
+  Day = 'day',
+  Month = 'month',
+  Week = 'week'
 }
 
 export type TodoList = {

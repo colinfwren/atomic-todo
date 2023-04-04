@@ -1,12 +1,16 @@
-import React, {createContext, useReducer} from 'react'
+import React, {createContext, useEffect, useReducer} from 'react'
 import {Action, AppProviderProps, AppState, IAppContext, StateAction} from "../types";
-import {todoBoard, todoListMap, todoMap} from "../testData";
-import {TodoList} from "@atomic-todo/server/dist/src/generated/graphql";
+import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
+// @ts-ignore
+import {TodoList, Todo} from "@atomic-todo/server/dist/src/generated/graphql";
+import {useQuery, gql} from "@apollo/client";
 
 const initialState: AppState = {
+  loading: true,
+  error: null,
   board: todoBoard,
-  lists: todoListMap,
-  todos: todoMap
+  lists: emptyTodoListMap,
+  todos: emptyTodoMap
 }
 
 const AppContext = createContext<IAppContext>({ ...initialState, actions: { setLists: () => {}, setTodoCompleted: () => {}, setTodoName: () => {}}})
@@ -36,10 +40,51 @@ function reducer (state: AppState, { type, payload}: StateAction) {
         ...state,
         todos: new Map(state.todos).set(payload.todoId, { ...state.todos.get(payload.todoId)!, name: payload.value })
       }
+    case Action.SET_STATE:
+      return {
+        loading: false,
+        error: null,
+        board: payload.board,
+        lists: payload.lists,
+        todos: payload.todos
+      }
+    case Action.SET_ERROR:
+      return {
+        loading: false,
+        error: payload.error,
+        board: todoBoard,
+        lists: emptyTodoListMap,
+        todos: emptyTodoMap
+      }
     default:
       return state
   }
 }
+
+const GET_DATA = gql`
+query getData {
+  todos {
+    completed
+    id
+    name
+  }
+  todoBoards {
+    days
+    id
+    months
+    name
+    weeks
+  }
+  todoLists {
+    childLists
+    id
+    level
+    name
+    parentList
+    todos
+  }
+}
+`;
 
 /**
  * Provider for the AppContext
@@ -49,7 +94,25 @@ function reducer (state: AppState, { type, payload}: StateAction) {
  * @constructor
  */
 export function AppProvider({ children }: AppProviderProps) {
+  const { loading, error, data } = useQuery(GET_DATA);
+
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  useEffect(() => {
+    if (!loading && data) {
+      const board = data.todoBoards[0]
+      const listMap = new Map<string, TodoList>(data.todoLists.map((todoList: TodoList) => {
+        return [todoList.id, todoList]
+      }))
+      const todoMap = new Map<string, Todo>(data.todos.map((todo: Todo) => {
+        return [todo.id, todo]
+      }))
+      dispatch({ type: Action.SET_STATE, payload: { board, lists: listMap, todos: todoMap }})
+    }
+    if (!loading && error) {
+      dispatch({ type: Action.SET_ERROR, payload: { error }})
+    }
+  }, [loading, data, error])
 
   const value = {
     ...state,

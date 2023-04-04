@@ -1,25 +1,60 @@
 import {ApolloServer} from "@apollo/server";
 import {startStandaloneServer} from "@apollo/server/standalone";
+import {Client, Databases} from 'node-appwrite';
 import {readFileSync} from 'fs'
 import {
   Resolvers
 } from './generated/graphql'
-import {todoBoard, todoLists, todos} from "./testData";
 
 const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' })
 
+const apiKey = process.env.API_KEY;
 
+const client = new Client()
+  .setEndpoint('http://localhost/v1')
+  .setProject('atomic-todo')
+  .setKey(apiKey)
+
+const databases = new Databases(client);
+
+const DATABASE_ID = 'atomic-todo'
 
 const resolvers: Resolvers = {
   Query: {
-    todoBoards: () => {
-      return [todoBoard]
+    todoBoards: async () => {
+      const docs = await databases.listDocuments(DATABASE_ID, 'todoboards')
+      return docs.documents.map((doc : any) => {
+        return {
+          name: doc.name,
+          days: doc.days,
+          weeks: doc.weeks,
+          months: doc.months,
+          id: doc.$id
+        }
+      })
     },
-    todoLists: () => {
-      return todoLists
+    todoLists: async () => {
+      const docs = await databases.listDocuments(DATABASE_ID, 'todolists')
+      return docs.documents.map((doc: any) => {
+        return {
+          id: doc.$id,
+          name: doc.name,
+          level: doc.level,
+          todos: doc.todos,
+          parentList: doc.parentList,
+          childLists: doc.childLists
+        }
+      })
     },
-    todos: () => {
-      return todos
+    todos: async () => {
+      const docs = await databases.listDocuments(DATABASE_ID, 'todos')
+      return docs.documents.map((doc: any) => {
+        return {
+          id: doc.$id,
+          name: doc.name,
+          completed: doc.completed !== null
+        }
+      })
     }
   }
 }
