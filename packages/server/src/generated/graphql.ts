@@ -4,6 +4,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -17,6 +18,34 @@ export enum ContactPreferences {
   Marketing = 'Marketing',
   NoMarketing = 'NoMarketing'
 }
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  updateTodo?: Maybe<Todo>;
+  updateTodoList?: Maybe<TodoList>;
+  updateTodoLists?: Maybe<Array<Maybe<TodoList>>>;
+  updateTodos?: Maybe<Array<Maybe<Todo>>>;
+};
+
+
+export type MutationUpdateTodoArgs = {
+  todo: TodoUpdateInput;
+};
+
+
+export type MutationUpdateTodoListArgs = {
+  todoList: TodoListUpdateInput;
+};
+
+
+export type MutationUpdateTodoListsArgs = {
+  todoLists: Array<TodoListUpdateInput>;
+};
+
+
+export type MutationUpdateTodosArgs = {
+  todos: Array<TodoUpdateInput>;
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -55,6 +84,17 @@ export type TodoList = {
   name: Scalars['String'];
   parentList?: Maybe<Scalars['ID']>;
   todos: Array<Scalars['ID']>;
+};
+
+export type TodoListUpdateInput = {
+  id: Scalars['ID'];
+  todos: Array<Scalars['ID']>;
+};
+
+export type TodoUpdateInput = {
+  completed: Scalars['Boolean'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 export type User = {
@@ -138,12 +178,15 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ContactPreferences: ContactPreferences;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Todo: ResolverTypeWrapper<Todo>;
   TodoBoard: ResolverTypeWrapper<TodoBoard>;
   TodoLevel: TodoLevel;
   TodoList: ResolverTypeWrapper<TodoList>;
+  TodoListUpdateInput: TodoListUpdateInput;
+  TodoUpdateInput: TodoUpdateInput;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -151,12 +194,22 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   ID: Scalars['ID'];
+  Mutation: {};
   Query: {};
   String: Scalars['String'];
   Todo: Todo;
   TodoBoard: TodoBoard;
   TodoList: TodoList;
+  TodoListUpdateInput: TodoListUpdateInput;
+  TodoUpdateInput: TodoUpdateInput;
   User: User;
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  updateTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'todo'>>;
+  updateTodoList?: Resolver<Maybe<ResolversTypes['TodoList']>, ParentType, ContextType, RequireFields<MutationUpdateTodoListArgs, 'todoList'>>;
+  updateTodoLists?: Resolver<Maybe<Array<Maybe<ResolversTypes['TodoList']>>>, ParentType, ContextType, RequireFields<MutationUpdateTodoListsArgs, 'todoLists'>>;
+  updateTodos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType, RequireFields<MutationUpdateTodosArgs, 'todos'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -200,6 +253,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Todo?: TodoResolvers<ContextType>;
   TodoBoard?: TodoBoardResolvers<ContextType>;
