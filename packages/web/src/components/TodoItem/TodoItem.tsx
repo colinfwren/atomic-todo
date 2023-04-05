@@ -32,7 +32,7 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
    */
   function onClickCheckbox() {
     if (todo) {
-      actions.setTodoCompleted(todo.id, !todo.completed)
+      actions.setTodoCompleted(todo, !todo.completed)
     }
   }
 
@@ -41,7 +41,7 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
    */
   function handleContentChange(event: ContentEditableEvent) {
     if (todo) {
-      actions.setTodoName(todo.id, event.target.value)
+      actions.setTodoName(todo, event.target.value)
     }
    }
 
@@ -62,7 +62,7 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
           </div>
         </div>
         <div className={styles.inputContainer}>
-          <input type='checkbox' defaultChecked={todo.completed} onClick={onClickCheckbox}/>
+          <input type='checkbox' checked={todo.completed} onChange={onClickCheckbox}/>
         </div>
         <div className={styles.textContainer}>
           <ContentEditable html={todo.name} onChange={handleContentChange} />

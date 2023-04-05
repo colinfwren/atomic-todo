@@ -1,13 +1,11 @@
-import React, {createContext, useEffect, useReducer} from 'react'
-import {Action, AppProviderProps, AppState, IAppContext, StateAction} from "../types";
+import React, {createContext, useEffect, useState} from 'react'
+import {AppProviderProps, AppState, IAppContext} from "../types";
 import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
 // @ts-ignore
 import {TodoList, Todo} from "@atomic-todo/server/dist/src/generated/graphql";
-import {useQuery, gql} from "@apollo/client";
+import {useQuery, gql, useMutation} from "@apollo/client";
 
 const initialState: AppState = {
-  loading: true,
-  error: null,
   board: todoBoard,
   lists: emptyTodoListMap,
   todos: emptyTodoMap
@@ -15,51 +13,6 @@ const initialState: AppState = {
 
 const AppContext = createContext<IAppContext>({ ...initialState, actions: { setLists: () => {}, setTodoCompleted: () => {}, setTodoName: () => {}}})
 const { Provider } = AppContext
-
-/**
- * AppState reducer
- *
- * @param {AppState} state - The App's current state
- * @param {StateAction} action - The action to apply to the state
- * @returns {AppState} The updated app state
- */
-function reducer (state: AppState, { type, payload}: StateAction) {
-  switch(type) {
-    case Action.SET_LISTS:
-      return {
-        ...state,
-        lists: payload
-      }
-    case Action.SET_TODO_COMPLETED:
-      return {
-        ...state,
-        todos: new Map(state.todos).set(payload.todoId, { ...state.todos.get(payload.todoId)!, completed: payload.completed })
-      }
-    case Action.SET_TODO_TEXT:
-      return {
-        ...state,
-        todos: new Map(state.todos).set(payload.todoId, { ...state.todos.get(payload.todoId)!, name: payload.value })
-      }
-    case Action.SET_STATE:
-      return {
-        loading: false,
-        error: null,
-        board: payload.board,
-        lists: payload.lists,
-        todos: payload.todos
-      }
-    case Action.SET_ERROR:
-      return {
-        loading: false,
-        error: payload.error,
-        board: todoBoard,
-        lists: emptyTodoListMap,
-        todos: emptyTodoMap
-      }
-    default:
-      return state
-  }
-}
 
 const GET_DATA = gql`
 query getData {
@@ -86,6 +39,29 @@ query getData {
 }
 `;
 
+const UPDATE_TODO_LISTS = gql`
+mutation updateTodoLists($todoLists: [TodoListUpdateInput!]!) {
+  updateTodoLists(todoLists: $todoLists) {
+    childLists
+    id
+    level
+    name
+    parentList
+    todos
+  }
+}
+`;
+
+const UPDATE_TODO = gql`
+mutation updateTodo($todo: TodoUpdateInput!) {
+  updateTodo(todo: $todo) {
+    id
+    name
+    completed
+  }
+}
+`;
+
 /**
  * Provider for the AppContext
  *
@@ -94,37 +70,98 @@ query getData {
  * @constructor
  */
 export function AppProvider({ children }: AppProviderProps) {
-  const { loading, error, data } = useQuery(GET_DATA);
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string|null>(null)
+  const [data, setData] = useState<AppState>({
+    board: initialState.board,
+    lists: initialState.lists,
+    todos: initialState.todos
+  })
 
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const initialDataLoad = useQuery(GET_DATA)
+  const [updateTodoLists, updateTodoListsData] = useMutation(UPDATE_TODO_LISTS)
+  const [updateTodo, updateTodoData] = useMutation(UPDATE_TODO)
 
   useEffect(() => {
-    if (!loading && data) {
-      const board = data.todoBoards[0]
-      const listMap = new Map<string, TodoList>(data.todoLists.map((todoList: TodoList) => {
+    if (!initialDataLoad.loading && initialDataLoad.data) {
+      const board = initialDataLoad.data.todoBoards[0]
+      const listMap = new Map<string, TodoList>(initialDataLoad.data.todoLists.map((todoList: TodoList) => {
         return [todoList.id, todoList]
       }))
-      const todoMap = new Map<string, Todo>(data.todos.map((todo: Todo) => {
+      const todoMap = new Map<string, Todo>(initialDataLoad.data.todos.map((todo: Todo) => {
         return [todo.id, todo]
       }))
-      dispatch({ type: Action.SET_STATE, payload: { board, lists: listMap, todos: todoMap }})
+      setData({ board, lists: listMap, todos: todoMap })
+      setLoading(false)
     }
-    if (!loading && error) {
-      dispatch({ type: Action.SET_ERROR, payload: { error }})
+    if (!initialDataLoad.loading && initialDataLoad.error) {
+      setError(initialDataLoad.error.message)
+      setLoading(false)
     }
-  }, [loading, data, error])
+  }, [initialDataLoad])
+
+  useEffect(() => {
+    setLoading(updateTodoListsData.loading || updateTodoData.loading)
+
+    if (updateTodoListsData.error) {
+      setError(updateTodoListsData.error.message)
+    }
+
+    if (updateTodoData.error) {
+      setError(updateTodoData.error.message)
+    }
+  }, [updateTodoData, updateTodoListsData])
+
+  const state = {
+    ...data,
+    loading,
+    error
+  }
 
   const value = {
     ...state,
     actions: {
       setLists: (lists:Map<string, TodoList>) => {
-        dispatch({ type: Action.SET_LISTS, payload: lists})
+        setData((currentState: AppState) => ({ ...currentState, lists }))
+        const update = [ ...lists.entries()].map(([id, todoList]) => {
+          return {
+            id,
+            todos: todoList.todos
+          }
+        })
+        const response = [ ...lists.entries()].map(([_, todoList]) => todoList)
+        updateTodoLists({
+          variables: { todoLists: update },
+          optimisticResponse: {
+            updateTodoLists: response
+          }
+        })
       },
-      setTodoCompleted: (todoId: string, completed: boolean) => {
-        dispatch({ type: Action.SET_TODO_COMPLETED, payload: { todoId, completed }})
+      setTodoCompleted: (todo: Todo, completed: boolean) => {
+        const update = {
+          id: todo.id,
+          name: todo.name,
+          completed
+        }
+        updateTodo({
+          variables: { todo: update },
+          optimisticResponse: {
+            updateTodo: update
+          }
+        })
       },
-      setTodoName: (todoId: string, value: string) => {
-        dispatch({ type: Action.SET_TODO_TEXT, payload: { todoId, value }})
+      setTodoName: (todo: Todo, value: string) => {
+        const update = {
+          id: todo.id,
+          completed: todo.completed,
+          name: value
+        }
+        updateTodo({
+          variables: { todo: update },
+          optimisticResponse: {
+            updateTodo: update
+          }
+        })
       }
     }
   }

@@ -38,7 +38,7 @@ async function updateTodoDoc(todo: TodoUpdateInput): Promise<Todo> {
   return {
     id: doc.$id,
     name: doc.name,
-    completed: doc.completed !== null
+    completed: doc.completed
   }
 }
 
@@ -75,7 +75,7 @@ const resolvers: Resolvers = {
         return {
           id: doc.$id,
           name: doc.name,
-          completed: doc.completed !== null
+          completed: doc.completed === null ? false : doc.completed
         }
       })
     }
