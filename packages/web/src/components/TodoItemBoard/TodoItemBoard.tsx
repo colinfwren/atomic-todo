@@ -11,7 +11,6 @@ import {TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
  */
 export function TodoItemBoard(): JSX.Element {
   const { board: { name, days, weeks, months }} = useContext(AppContext)
-
   const dayLists = days.map((listId: string) =>  <TodoItemList id={listId} level={TodoLevel.Day} key={listId} />)
   const weekLists = weeks.map((listId: string) => <TodoItemList id={listId} level={TodoLevel.Week} key={listId} />)
   const monthLists = months.map((listId: string) => <TodoItemList id={listId} level={TodoLevel.Month} key={listId} />)

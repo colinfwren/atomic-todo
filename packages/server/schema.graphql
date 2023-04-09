@@ -17,11 +17,12 @@ type Todo {
 
 type TodoList {
   id: ID!
-  name: String!
+  name: String
   level: TodoLevel!
   todos: [ID!]!
   parentList: ID
   childLists: [ID!]!
+  startDate: String!
 }
 
 type TodoBoard {
@@ -30,6 +31,7 @@ type TodoBoard {
   days: [ID!]!
   weeks: [ID!]!
   months: [ID!]!
+  startDate: String!
 }
 
 type User {

@@ -55,11 +55,11 @@ const todos: Todo[] = [
 const days: TodoList[] = [
   {
     id: DAY_ONE_ID,
-    name: 'Mon (3/4)',
     level: TodoLevel.Day,
     todos: [todos[0].id, todos[1].id],
     childLists: [],
-    parentList: WEEK_ONE_ID
+    parentList: WEEK_ONE_ID,
+    startDate: '2023-04-03T00:00:00.000+00:00'
   },
   {
     id: DAY_TWO_ID,
@@ -67,105 +67,105 @@ const days: TodoList[] = [
     level: TodoLevel.Day,
     todos: [todos[2].id],
     childLists: [],
-    parentList: WEEK_ONE_ID
+    parentList: WEEK_ONE_ID,
+    startDate: '2023-04-04T00:00:00.000+00:00'
   },
   {
     id: 'adcb06ab-2f63-446d-b88c-ff521870e77a',
-    name: 'Wed (5/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
-    parentList: WEEK_ONE_ID
+    parentList: WEEK_ONE_ID,
+    startDate: '2023-04-05T00:00:00.000+00:00'
   },
   {
     id: '6ad1f977-48ba-471b-8a73-a58225fc848f',
-    name: 'Thu (6/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
-    parentList: WEEK_ONE_ID
+    parentList: WEEK_ONE_ID,
+    startDate: '2023-04-06T00:00:00.000+00:00'
   },
   {
     id: 'f90ea05c-4b2b-4082-ab84-68ca423688b1',
-    name: 'Fri (7/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
-    parentList: WEEK_ONE_ID
+    parentList: WEEK_ONE_ID,
+    startDate: '2023-04-07T00:00:00.000+00:00'
   },
   {
     id: '6c842ea8-3a35-45c7-91e9-4ff41410f151',
-    name: 'Sat (8/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
-    parentList: WEEK_ONE_ID
+    parentList: WEEK_ONE_ID,
+    startDate: '2023-04-08T00:00:00.000+00:00'
   },
   {
     id: '9db1ebc4-4a14-433c-8c40-20c9f42674f2',
-    name: 'Sun (9/4)',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
-    parentList: WEEK_ONE_ID
+    parentList: WEEK_ONE_ID,
+    startDate: '2023-04-09T00:00:00.000+00:00'
   }
 ]
 
 const weeks: TodoList[] = [
   {
     id: WEEK_ONE_ID,
-    name: '1 Week (3/4)',
     level: TodoLevel.Week,
     todos: [todos[0].id, todos[1].id, todos[2].id],
     parentList: MONTH_ONE_ID,
-    childLists: days.map(x => x.id)
+    childLists: days.map(x => x.id),
+    startDate: '2023-04-03T00:00:00.000+00:00'
   },
   {
     id: WEEK_TWO_ID,
-    name: '2 Weeks (10/4)',
     level: TodoLevel.Week,
     todos: [todos[3].id, todos[4].id],
     parentList: MONTH_ONE_ID,
-    childLists: []
+    childLists: [],
+    startDate: '2023-04-10T00:00:00.000+00:00'
   },
   {
     id: '48276bee-0e50-4cb8-90a9-b12dcce9fd3f',
-    name: '3 Weeks (17/4)',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_ONE_ID,
-    childLists: []
+    childLists: [],
+    startDate: '2023-04-17T00:00:00.000+00:00'
   },
   {
     id: '34a1432e-b45e-4f94-b57c-18c3b0efb7ec',
-    name: '4 Weeks (24/4)',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_ONE_ID,
-    childLists: []
+    childLists: [],
+    startDate: '2023-04-24T00:00:00.000+00:00'
   },
   {
     id: WEEK_FIVE_ID,
-    name: '5 Weeks (1/5)',
     level: TodoLevel.Week,
     todos: [todos[5].id],
     parentList: MONTH_TWO_ID,
-    childLists: []
+    childLists: [],
+    startDate: '2023-05-01T00:00:00.000+00:00'
   },
   {
     id: WEEK_SIX_ID,
-    name: '6 Weeks (8/5)',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_TWO_ID,
-    childLists: []
+    childLists: [],
+    startDate: '2023-05-08T00:00:00.000+00:00'
   }
 ]
 
 const months: TodoList[] = [
   {
     id: MONTH_ONE_ID,
-    name: '1 Month (Apr)',
     level: TodoLevel.Month,
     todos: [
       todos[0].id,
@@ -180,11 +180,11 @@ const months: TodoList[] = [
       weeks[1].id,
       weeks[2].id,
       weeks[3].id,
-    ]
+    ],
+    startDate: '2023-04-01T00:00:00.000+00:00'
   },
   {
     id: MONTH_TWO_ID,
-    name: '2 Months (May)',
     level: TodoLevel.Month,
     todos: [
       todos[5].id,
@@ -194,39 +194,40 @@ const months: TodoList[] = [
     childLists: [
       weeks[4].id,
       weeks[5].id
-    ]
+    ],
+    startDate: '2023-05-01T00:00:00.000+00:00'
   },
   {
     id: 'c52f1cc7-9c90-47dc-8ee5-2b11b620b9e0',
-    name: '3 Months (Jun)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
-    childLists: []
+    childLists: [],
+    startDate: '2023-06-01T00:00:00.000+00:00'
   },
   {
     id: 'cf27c8e5-f1ec-48a9-870a-29e4f9cb2f49',
-    name: '4 Months (Jul)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
-    childLists: []
+    childLists: [],
+    startDate: '2023-07-01T00:00:00.000+00:00'
   },
   {
     id: '3bf422e1-2ebe-41f1-9bfc-a08ea5fb937b',
-    name: '5 Months (Aug)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
-    childLists: []
+    childLists: [],
+    startDate: '2023-08-01T00:00:00.000+00:00'
   },
   {
     id: '78527bc8-13b0-4ed3-b9ba-96b40715cd75',
-    name: '6 Months (Sep)',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
-    childLists: []
+    childLists: [],
+    startDate: '2023-09-01T00:00:00.000+00:00'
   }
 ]
 
@@ -243,7 +244,8 @@ export const todoBoard: TodoBoard = {
   name: 'Todo List',
   days: days.map(x => x.id),
   weeks: weeks.map(x => x.id),
-  months: months.map(x => x.id)
+  months: months.map(x => x.id),
+  startDate: '2023-04-03T00:00:00.000+00:00'
 }
 
 export const emptyTodoListMap = new Map<string, TodoList>([...days, ...weeks, ...months].map((list => {

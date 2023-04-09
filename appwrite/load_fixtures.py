@@ -30,7 +30,8 @@ def load_boards():
                 'name': doc.get('name'),
                 'days': doc.get('days'),
                 'weeks': doc.get('weeks'),
-                'months': doc.get('months')
+                'months': doc.get('months'),
+                'startDate': doc.get('startDate')
             })
         )
 
@@ -43,7 +44,6 @@ def load_lists():
             doc.get('$collectionId'),
             doc.get('$id'),
             json.dumps({
-                'name': doc.get('name'),
                 'level': doc.get('level'),
                 'todos': doc.get('todos'),
                 'startDate': doc.get('startDate'),

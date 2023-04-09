@@ -2,8 +2,9 @@ import React, {createContext, useEffect, useState} from 'react'
 import {AppProviderProps, AppState, IAppContext} from "../types";
 import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
 // @ts-ignore
-import {TodoList, Todo} from "@atomic-todo/server/dist/src/generated/graphql";
+import {TodoList, Todo, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
 import {useQuery, gql, useMutation} from "@apollo/client";
+import { getTodoListName } from "../functions/getTodoListName";
 
 const initialState: AppState = {
   board: todoBoard,
@@ -27,12 +28,13 @@ query getData {
     months
     name
     weeks
+    startDate
   }
   todoLists {
     childLists
     id
     level
-    name
+    startDate
     parentList
     todos
   }
@@ -45,9 +47,9 @@ mutation updateTodoLists($todoLists: [TodoListUpdateInput!]!) {
     childLists
     id
     level
-    name
     parentList
     todos
+    startDate
   }
 }
 `;
@@ -86,7 +88,7 @@ export function AppProvider({ children }: AppProviderProps) {
     if (!initialDataLoad.loading && initialDataLoad.data) {
       const board = initialDataLoad.data.todoBoards[0]
       const listMap = new Map<string, TodoList>(initialDataLoad.data.todoLists.map((todoList: TodoList) => {
-        return [todoList.id, todoList]
+        return [todoList.id, { ...todoList, name: getTodoListName(board.startDate, todoList.startDate, todoList.level) }]
       }))
       const todoMap = new Map<string, Todo>(initialDataLoad.data.todos.map((todo: Todo) => {
         return [todo.id, todo]

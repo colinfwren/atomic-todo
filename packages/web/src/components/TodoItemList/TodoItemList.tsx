@@ -27,6 +27,7 @@ export function TodoItemList({ id, level }: TodoItemListProps): JSX.Element | nu
     backgroundColor: 'rgba(0,0,0,0.5)',
     border: '1px solid rgba(0,0,0,0.8)',
   } : undefined
+
   const list = lists.get(id)
   if (list) {
     const todoItems = list.todos.map((todoId: string) => <TodoItem id={todoId} key={todoId} level={level} listId={id}/>)

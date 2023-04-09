@@ -3,7 +3,12 @@ import {startStandaloneServer} from "@apollo/server/standalone";
 import {Client, Databases, Models} from 'node-appwrite';
 import {readFileSync} from 'fs'
 import {
-  Resolvers, TodoList, Todo, TodoBoard, TodoListUpdateInput, TodoUpdateInput
+  Resolvers,
+  Todo,
+  TodoBoard,
+  TodoList,
+  TodoListUpdateInput,
+  TodoUpdateInput
 } from './generated/graphql'
 
 const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' })
@@ -24,11 +29,11 @@ async function updateTodoListDoc(todoList: TodoListUpdateInput): Promise<TodoLis
   const doc: Models.Document & TodoList = await databases.updateDocument(DATABASE_ID, 'todolists', id, values)
   return {
     id: doc.$id,
-    name: doc.name,
     level: doc.level,
     todos: doc.todos,
     parentList: doc.parentList,
-    childLists: doc.childLists
+    childLists: doc.childLists,
+    startDate: doc.startDate
   }
 }
 
@@ -52,7 +57,8 @@ const resolvers: Resolvers = {
           days: doc.days,
           weeks: doc.weeks,
           months: doc.months,
-          id: doc.$id
+          id: doc.$id,
+          startDate: doc.startDate
         }
       })
     },
@@ -61,11 +67,11 @@ const resolvers: Resolvers = {
       return docs.documents.map((doc: Models.Document & TodoList) => {
         return {
           id: doc.$id,
-          name: doc.name,
           level: doc.level,
           todos: doc.todos,
           parentList: doc.parentList,
-          childLists: doc.childLists
+          childLists: doc.childLists,
+          startDate: doc.startDate
         }
       })
     },
