@@ -49,9 +49,12 @@ export type MutationUpdateTodosArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  todoBoards: Array<TodoBoard>;
-  todoLists: Array<TodoList>;
-  todos: Array<Todo>;
+  getTodoBoard?: Maybe<TodoBoardResult>;
+};
+
+
+export type QueryGetTodoBoardArgs = {
+  id: Scalars['ID'];
 };
 
 export type Todo = {
@@ -69,6 +72,13 @@ export type TodoBoard = {
   name: Scalars['String'];
   startDate: Scalars['String'];
   weeks: Array<Scalars['ID']>;
+};
+
+export type TodoBoardResult = {
+  __typename?: 'TodoBoardResult';
+  board: TodoBoard;
+  lists: Array<TodoList>;
+  todos: Array<Todo>;
 };
 
 export enum TodoLevel {
@@ -185,6 +195,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Todo: ResolverTypeWrapper<Todo>;
   TodoBoard: ResolverTypeWrapper<TodoBoard>;
+  TodoBoardResult: ResolverTypeWrapper<TodoBoardResult>;
   TodoLevel: TodoLevel;
   TodoList: ResolverTypeWrapper<TodoList>;
   TodoListUpdateInput: TodoListUpdateInput;
@@ -201,6 +212,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Todo: Todo;
   TodoBoard: TodoBoard;
+  TodoBoardResult: TodoBoardResult;
   TodoList: TodoList;
   TodoListUpdateInput: TodoListUpdateInput;
   TodoUpdateInput: TodoUpdateInput;
@@ -215,9 +227,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  todoBoards?: Resolver<Array<ResolversTypes['TodoBoard']>, ParentType, ContextType>;
-  todoLists?: Resolver<Array<ResolversTypes['TodoList']>, ParentType, ContextType>;
-  todos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
+  getTodoBoard?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<QueryGetTodoBoardArgs, 'id'>>;
 };
 
 export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {
@@ -234,6 +244,13 @@ export type TodoBoardResolvers<ContextType = any, ParentType extends ResolversPa
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   startDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   weeks?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TodoBoardResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TodoBoardResult'] = ResolversParentTypes['TodoBoardResult']> = {
+  board?: Resolver<ResolversTypes['TodoBoard'], ParentType, ContextType>;
+  lists?: Resolver<Array<ResolversTypes['TodoList']>, ParentType, ContextType>;
+  todos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -261,6 +278,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Todo?: TodoResolvers<ContextType>;
   TodoBoard?: TodoBoardResolvers<ContextType>;
+  TodoBoardResult?: TodoBoardResultResolvers<ContextType>;
   TodoList?: TodoListResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

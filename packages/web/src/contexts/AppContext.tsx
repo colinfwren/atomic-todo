@@ -16,27 +16,30 @@ const AppContext = createContext<IAppContext>({ ...initialState, actions: { setL
 const { Provider } = AppContext
 
 const GET_DATA = gql`
-query getData {
-  todos {
-    completed
-    id
-    name
-  }
-  todoBoards {
-    days
-    id
-    months
-    name
-    weeks
-    startDate
-  }
-  todoLists {
-    childLists
-    id
-    level
-    startDate
-    parentList
-    todos
+query getData($boardId: ID!) {
+  getTodoBoard(id: $boardId) {
+    board {
+      id
+      name
+      days
+      weeks
+      months
+      startDate
+    }
+    lists {
+      id
+      name
+      level
+      todos
+      parentList
+      childLists
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+    }
   }
 }
 `;
@@ -80,17 +83,17 @@ export function AppProvider({ children }: AppProviderProps) {
     todos: initialState.todos
   })
 
-  const initialDataLoad = useQuery(GET_DATA)
+  const initialDataLoad = useQuery(GET_DATA, { variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' }})
   const [updateTodoLists, updateTodoListsData] = useMutation(UPDATE_TODO_LISTS)
   const [updateTodo, updateTodoData] = useMutation(UPDATE_TODO)
 
   useEffect(() => {
     if (!initialDataLoad.loading && initialDataLoad.data) {
-      const board = initialDataLoad.data.todoBoards[0]
-      const listMap = new Map<string, TodoList>(initialDataLoad.data.todoLists.map((todoList: TodoList) => {
+      const { board, lists, todos } = initialDataLoad.data.getTodoBoard
+      const listMap = new Map<string, TodoList>(lists.map((todoList: TodoList) => {
         return [todoList.id, { ...todoList, name: getTodoListName(board.startDate, todoList.startDate, todoList.level) }]
       }))
-      const todoMap = new Map<string, Todo>(initialDataLoad.data.todos.map((todo: Todo) => {
+      const todoMap = new Map<string, Todo>(todos.map((todo: Todo) => {
         return [todo.id, todo]
       }))
       setData({ board, lists: listMap, todos: todoMap })

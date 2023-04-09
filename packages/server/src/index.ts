@@ -1,6 +1,6 @@
 import {ApolloServer} from "@apollo/server";
 import {startStandaloneServer} from "@apollo/server/standalone";
-import {Client, Databases, Models} from 'node-appwrite';
+import {Client, Databases, Models, Query} from 'node-appwrite';
 import {readFileSync} from 'fs'
 import {
   Resolvers,
@@ -49,22 +49,10 @@ async function updateTodoDoc(todo: TodoUpdateInput): Promise<Todo> {
 
 const resolvers: Resolvers = {
   Query: {
-    todoBoards: async () => {
-      const docs = await databases.listDocuments(DATABASE_ID, 'todoboards')
-      return docs.documents.map((doc : Models.Document & TodoBoard) => {
-        return {
-          name: doc.name,
-          days: doc.days,
-          weeks: doc.weeks,
-          months: doc.months,
-          id: doc.$id,
-          startDate: doc.startDate
-        }
-      })
-    },
-    todoLists: async () => {
-      const docs = await databases.listDocuments(DATABASE_ID, 'todolists')
-      return docs.documents.map((doc: Models.Document & TodoList) => {
+    getTodoBoard: async (_, { id }) => {
+      const boardDoc: Models.Document & TodoBoard = await databases.getDocument(DATABASE_ID, 'todoboards', id)
+      const listDocs = await databases.listDocuments(DATABASE_ID, 'todolists', [Query.equal('$id', [ ...boardDoc.days, ...boardDoc.weeks, ...boardDoc.months])])
+      const lists = listDocs.documents.map((doc: Models.Document & TodoList) => {
         return {
           id: doc.$id,
           level: doc.level,
@@ -74,17 +62,30 @@ const resolvers: Resolvers = {
           startDate: doc.startDate
         }
       })
-    },
-    todos: async () => {
-      const docs = await databases.listDocuments(DATABASE_ID, 'todos')
-      return docs.documents.map((doc: Models.Document & Todo) => {
+      const todoIds = listDocs.documents.reduce((todoIds: Set<string>, doc: Models.Document & TodoList) => {
+        return new Set([...todoIds, ...doc.todos])
+      }, new Set())
+      const todoDocs = await databases.listDocuments(DATABASE_ID, 'todos', [Query.equal('$id', [...todoIds])])
+      const todos = todoDocs.documents.map((doc: Models.Document & Todo) => {
         return {
           id: doc.$id,
           name: doc.name,
           completed: doc.completed === null ? false : doc.completed
         }
       })
-    }
+      return {
+        board: {
+          name: boardDoc.name,
+          days: boardDoc.days,
+          weeks: boardDoc.weeks,
+          months: boardDoc.months,
+          id: boardDoc.$id,
+          startDate: boardDoc.startDate
+        },
+        lists,
+        todos
+      }
+    },
   },
   Mutation: {
     updateTodoList: async (_, { todoList }) => await updateTodoListDoc(todoList),

@@ -41,10 +41,14 @@ type User {
   contactPreferences: ContactPreferences!
 }
 
-type Query {
-  todoBoards: [TodoBoard!]!,
-  todoLists: [TodoList!]!,
+type TodoBoardResult {
+  board: TodoBoard!,
+  lists: [TodoList!]!
   todos: [Todo!]!
+}
+
+type Query {
+  getTodoBoard(id: ID!): TodoBoardResult
 }
 
 input TodoListUpdateInput {
