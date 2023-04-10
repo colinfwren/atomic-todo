@@ -93,7 +93,15 @@
                     "default": null
                 }
             ],
-            "indexes": []
+            "indexes": [
+                {
+                    "key": "list_by_level_and_startDate",
+                    "type": "key",
+                    "status": "available",
+                    "attributes": ["startDate", "level"],
+                    "orders": ["ASC", "ASC"]
+                }
+            ]
         },
         {
             "$id": "todoboards",

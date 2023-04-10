@@ -63,6 +63,8 @@ input TodoUpdateInput {
 }
 
 type Mutation {
+#  moveTodo(fromId: ID!, toId: ID!): TodoBoardResult
+  progressBoardByWeek(boardId: ID!): TodoBoardResult
   updateTodoList(todoList: TodoListUpdateInput!): TodoList,
   updateTodoLists(todoLists: [TodoListUpdateInput!]!): [TodoList],
   updateTodo(todo: TodoUpdateInput!): Todo,
