@@ -8,7 +8,7 @@ module.exports = {
     plugins: ["@typescript-eslint"],
     parser: '@typescript-eslint/parser'
   }],
-  ignorePatterns: ["dist", "coverage", "jest.config.js"],
+  ignorePatterns: ["dist", "coverage", "jest.config.cjs"],
   rules: {
     'jsdoc/require-jsdoc': ['error'],
     'no-unused-vars': [1],
