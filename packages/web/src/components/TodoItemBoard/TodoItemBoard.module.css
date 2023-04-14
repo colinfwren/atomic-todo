@@ -26,3 +26,9 @@
 .todoItemBoard .weebs, .todoItemBoard .months {
     margin-top: 2em;
 }
+
+.header {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    gap: 0 20px;
+}

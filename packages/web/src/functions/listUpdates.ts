@@ -36,17 +36,20 @@ export function updateList(list: TodoList, todoId: string, listMap: Map<string, 
  * @returns {Map<string, TodoList>} Updated Map of TodoLists
  */
 export function updateLists(listId: string, todoId: string, listMap: Map<string, TodoList>,  operation: UpdateOperation, direction: TraversalDirection): Map<string, TodoList> {
-  const currentList = listMap.get(listId)!
-  const lists = updateList(currentList, todoId, new Map(listMap), operation)
-  if (direction === TraversalDirection.PARENTS && currentList.parentList !== null) {
-    return updateLists(currentList.parentList!, todoId, lists, operation, direction)
+  const currentList = listMap.get(listId)
+  if (currentList) {
+    const lists = updateList(currentList, todoId, new Map(listMap), operation)
+    if (direction === TraversalDirection.PARENTS && currentList.parentList !== null) {
+      return updateLists(currentList.parentList!, todoId, lists, operation, direction)
+    }
+    if (direction === TraversalDirection.CHILDREN) {
+      return currentList.childLists.reduce((lists: Map<string, TodoList>, childListId: string) => {
+        return updateLists(childListId, todoId, lists, operation, direction)
+      }, lists)
+    }
+    return lists
   }
-  if (direction === TraversalDirection.CHILDREN) {
-    return currentList.childLists.reduce((lists: Map<string, TodoList>, childListId: string) => {
-      return updateLists(childListId, todoId, lists, operation, direction)
-    }, lists)
-  }
-  return lists
+  return listMap
 }
 
 /**

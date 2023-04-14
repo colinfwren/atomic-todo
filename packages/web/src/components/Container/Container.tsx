@@ -18,7 +18,6 @@ export function Container(): JSX.Element {
    * @param {DragEndEvent} event - The drag end event
    */
   function handleDragEnd(event: DragEndEvent) {
-    console.log(event)
     const { active: todo, over: list } = event
     if (list) {
       setLists(

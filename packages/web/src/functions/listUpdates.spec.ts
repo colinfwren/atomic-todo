@@ -1,18 +1,18 @@
 import {updateList, updateLists, updateTodoListMap} from "./listUpdates";
 import {
-  MONTH_TWO_ID,
-  TODO_ID,
-  TODO_FOUR_ID,
-  TODO_SIX_ID,
-  TODO_SEVEN_ID,
-  todoListMap,
-  WEEK_ONE_ID,
-  WEEK_TWO_ID,
-  WEEK_FIVE_ID,
-  WEEK_SIX_ID,
   DAY_ONE_ID,
   DAY_TWO_ID,
-  MONTH_ONE_ID
+  MONTH_ONE_ID,
+  MONTH_TWO_ID,
+  TODO_FOUR_ID,
+  TODO_ID,
+  TODO_SEVEN_ID,
+  TODO_SIX_ID,
+  todoListMap,
+  WEEK_FIVE_ID,
+  WEEK_ONE_ID,
+  WEEK_SIX_ID,
+  WEEK_TWO_ID
 } from "../testData";
 import {TraversalDirection, UpdateOperation} from "../types";
 
@@ -90,6 +90,11 @@ describe('Updating a Map of TodoLists by traversing the graph in a defined direc
   it(`updates current list and all child lists when direction is set to ${TraversalDirection.CHILDREN}`, () => {
     const updatedList = updateLists(MONTH_ONE_ID, TODO_ID, todoListMap, UpdateOperation.REMOVE, TraversalDirection.CHILDREN)
     expect(updatedList).toEqual(expectedResult)
+  })
+
+  it('returns the original list map if unable to find defined list in map', () => {
+    const notUpdatedList = updateLists('MEH', TODO_ID, todoListMap, UpdateOperation.REMOVE, TraversalDirection.PARENTS)
+    expect(notUpdatedList).toEqual(todoListMap)
   })
 })
 

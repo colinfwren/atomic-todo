@@ -2,7 +2,7 @@ import React, {createContext, useEffect, useState} from 'react'
 import {AppProviderProps, AppState, IAppContext} from "../types";
 import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
 // @ts-ignore
-import {TodoList, Todo, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
+import {TodoList, Todo, TodoLevel, TodoBoard} from "@atomic-todo/server/dist/src/generated/graphql";
 import {useQuery, gql, useMutation} from "@apollo/client";
 import { getTodoListName } from "../functions/getTodoListName";
 
@@ -12,7 +12,14 @@ const initialState: AppState = {
   todos: emptyTodoMap
 }
 
-const AppContext = createContext<IAppContext>({ ...initialState, actions: { setLists: () => {}, setTodoCompleted: () => {}, setTodoName: () => {}}})
+const actions = {
+  setLists: () => {},
+  setTodoCompleted: () => {},
+  setTodoName: () => {},
+  progressBoard: () => {}
+}
+
+const AppContext = createContext<IAppContext>({ ...initialState, actions, loading: false})
 const { Provider } = AppContext
 
 const GET_DATA = gql`
@@ -67,6 +74,60 @@ mutation updateTodo($todo: TodoUpdateInput!) {
 }
 `;
 
+const PROGRESS_BOARD_BY_WEEK = gql`
+mutation ProgressBoardByWeek($boardId: ID!) {
+  progressBoardByWeek(boardId: $boardId) {
+    board {
+      id
+      name
+      days
+      weeks
+      months
+      startDate
+    }
+    lists {
+      id
+      name
+      level
+      todos
+      parentList
+      childLists
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+    }
+  }
+}
+`;
+
+/**
+ * Create a map of list ID to list values from an array of lists
+ *
+ * @param {TodoBoard} board - TodoBoard the TodoLists are part of
+ * @param {TodoList[]} lists - Array of TodoLists
+ * @return {Map<string, TodoList>} Map of List ID to TodoList
+ */
+function getListMap(board: TodoBoard, lists: TodoList[]): Map<string, TodoList> {
+  return new Map<string, TodoList>(lists.map((todoList: TodoList) => {
+    return [todoList.id, { ...todoList, name: getTodoListName(board.startDate, todoList.startDate, todoList.level) }]
+  }))
+}
+
+/**
+ * Create a map of Todo ID to Todo value from array of Todos
+ *
+ * @param {Todo[]} todos - Array of Todos
+ * @return {Map<string, Todo>} Map of Todo ID to Todo
+ */
+function getTodoMap(todos: Todo[]): Map<string, Todo> {
+  return new Map<string, Todo>(todos.map((todo: Todo) => {
+    return [todo.id, todo]
+  }))
+}
+
 /**
  * Provider for the AppContext
  *
@@ -86,17 +147,12 @@ export function AppProvider({ children }: AppProviderProps) {
   const initialDataLoad = useQuery(GET_DATA, { variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' }})
   const [updateTodoLists, updateTodoListsData] = useMutation(UPDATE_TODO_LISTS)
   const [updateTodo, updateTodoData] = useMutation(UPDATE_TODO)
+  const [progressBoardByWeek, progressBoardByWeekData] = useMutation(PROGRESS_BOARD_BY_WEEK)
 
   useEffect(() => {
     if (!initialDataLoad.loading && initialDataLoad.data) {
       const { board, lists, todos } = initialDataLoad.data.getTodoBoard
-      const listMap = new Map<string, TodoList>(lists.map((todoList: TodoList) => {
-        return [todoList.id, { ...todoList, name: getTodoListName(board.startDate, todoList.startDate, todoList.level) }]
-      }))
-      const todoMap = new Map<string, Todo>(todos.map((todo: Todo) => {
-        return [todo.id, todo]
-      }))
-      setData({ board, lists: listMap, todos: todoMap })
+      setData({ board, lists: getListMap(board, lists), todos: getTodoMap(todos) })
       setLoading(false)
     }
     if (!initialDataLoad.loading && initialDataLoad.error) {
@@ -106,7 +162,7 @@ export function AppProvider({ children }: AppProviderProps) {
   }, [initialDataLoad])
 
   useEffect(() => {
-    setLoading(updateTodoListsData.loading || updateTodoData.loading)
+    setLoading(updateTodoListsData.loading || updateTodoData.loading || progressBoardByWeekData.loading)
 
     if (updateTodoListsData.error) {
       setError(updateTodoListsData.error.message)
@@ -115,7 +171,17 @@ export function AppProvider({ children }: AppProviderProps) {
     if (updateTodoData.error) {
       setError(updateTodoData.error.message)
     }
-  }, [updateTodoData, updateTodoListsData])
+
+    if (progressBoardByWeekData.error) {
+      setError(progressBoardByWeekData.error.message)
+    }
+
+    if (!progressBoardByWeekData.loading && progressBoardByWeekData.data) {
+      const { board, lists, todos } = progressBoardByWeekData.data.progressBoardByWeek
+      setData({ board, lists: getListMap(board, lists), todos: getTodoMap(todos) })
+    }
+
+  }, [updateTodoData, updateTodoListsData, progressBoardByWeekData])
 
   const state = {
     ...data,
@@ -166,6 +232,11 @@ export function AppProvider({ children }: AppProviderProps) {
           optimisticResponse: {
             updateTodo: update
           }
+        })
+      },
+      progressBoard: () => {
+        progressBoardByWeek({
+          variables: { boardId: state.board.id }
         })
       }
     }

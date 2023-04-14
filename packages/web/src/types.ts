@@ -38,8 +38,10 @@ export type IAppContext = AppState & {
   actions: {
     setLists: (lists: Map<string, TodoList>) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
-    setTodoName: (todo: Todo, value: string) => void
-  }
+    setTodoName: (todo: Todo, value: string) => void,
+    progressBoard: () => void
+  },
+  loading: boolean
 }
 
 export type AppProviderProps = {

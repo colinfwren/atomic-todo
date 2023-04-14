@@ -10,14 +10,24 @@ import {TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
  * @constructor
  */
 export function TodoItemBoard(): JSX.Element {
-  const { board: { name, days, weeks, months }} = useContext(AppContext)
+  const { board: { name, days, weeks, months }, actions: { progressBoard }, loading} = useContext(AppContext)
   const dayLists = days.map((listId: string) =>  <TodoItemList id={listId} level={TodoLevel.Day} key={listId} />)
   const weekLists = weeks.map((listId: string) => <TodoItemList id={listId} level={TodoLevel.Week} key={listId} />)
   const monthLists = months.map((listId: string) => <TodoItemList id={listId} level={TodoLevel.Month} key={listId} />)
 
+  /**
+   * Handle clicking the end of week button
+   */
+  function onEndOfWeekClick() {
+    progressBoard()
+  }
+
   return (
     <div className={styles.todoItemBoard}>
-      <h1>{ name }</h1>
+      <div className={styles.header}>
+        <h1>{ name }</h1>
+        <button type='button' disabled={loading} onClick={onEndOfWeekClick}>End Of Week</button>
+      </div>
       <div className={styles.days}>
         <h2>7 Days</h2>
         <div>
