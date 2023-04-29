@@ -1,21 +1,42 @@
 // @ts-ignore
 import {TodoList} from '@atomic-todo/server/src/generated/graphql'
-import {TodoListMapUpdateData, TraversalDirection, UpdateOperation} from "../types";
+import {FormattedTodoList, TodoListMapUpdateData, TraversalDirection, UpdateOperation} from "../types";
+
+/**
+ * Get an order list of the todos with the new todo at the index that is passed in
+ *
+ * @param {string[]} todos - The list of Todos
+ * @param {string} todoId - The ID of the Todo to add
+ * @param {number} index - The index to add the Todo at
+ * @returns {string[]} - The updated list Todos
+ */
+export function getOrderedTodos(todos: string[], todoId: string, index = -1): string[] {
+  if (index < 0) {
+    return [...todos, todoId]
+  }
+  return [
+    ...todos.slice(0, index),
+    todoId,
+    ...todos.slice(index, todos.length)
+  ]
+}
 
 /**
  * Apply an update to the passed in map of TodoLists and return the updated list
  *
- * @param {TodoList} list - The TodoList to update
+ * @param {FormattedTodoList} list - The TodoList to update
  * @param {string} todoId - The ID of the Todo to add/remove
- * @param {Map<string, TodoList>} listMap - The Map of TodoLists to update
+ * @param {Map<string, FormattedTodoList>} listMap - The Map of TodoLists to update
  * @param {UpdateOperation} operation - The operation to perform
- * @returns {Map<string, TodoList>} Updated Map of TodoLists
+ * @param {number} newIndex - The index to add items into the list at
+ * @returns {Map<string, FormattedTodoList>} Updated Map of TodoLists
  */
-export function updateList(list: TodoList, todoId: string, listMap: Map<string, TodoList>, operation: UpdateOperation): Map<string, TodoList> {
+export function updateList(list: FormattedTodoList, todoId: string, listMap: Map<string, FormattedTodoList>, operation: UpdateOperation, newIndex = -1): Map<string, FormattedTodoList> {
   if (operation === UpdateOperation.ADD) {
+    const newTodos = getOrderedTodos(list.todos.filter((x: string) => x !== todoId), todoId, newIndex)
     return new Map(listMap).set(list.id, {
       ...list,
-      todos: [...new Set([...list.todos, todoId])]
+      todos: [...new Set(newTodos)]
     })
   } else {
     return new Map(listMap).set(list.id, {
@@ -30,20 +51,21 @@ export function updateList(list: TodoList, todoId: string, listMap: Map<string, 
  *
  * @param {string} listId - ID of the TodoList to amend
  * @param {string} todoId - ID of the Todo to amend
- * @param {Map<string, TodoList>} listMap - The map TodoLists to amend
+ * @param {Map<string, FormattedTodoList>} listMap - The map TodoLists to amend
  * @param {UpdateOperation} operation - The operation to perform
  * @param {TraversalDirection} direction - The direction to traverse the graph
- * @returns {Map<string, TodoList>} Updated Map of TodoLists
+ * @param {number} newIndex - The index to put the moved Todo in the list when performing a add operation
+ * @returns {Map<string, FormattedTodoList>} Updated Map of TodoLists
  */
-export function updateLists(listId: string, todoId: string, listMap: Map<string, TodoList>,  operation: UpdateOperation, direction: TraversalDirection): Map<string, TodoList> {
+export function updateLists(listId: string, todoId: string, listMap: Map<string, FormattedTodoList>,  operation: UpdateOperation, direction: TraversalDirection, newIndex = -1): Map<string, FormattedTodoList> {
   const currentList = listMap.get(listId)
   if (currentList) {
-    const lists = updateList(currentList, todoId, new Map(listMap), operation)
+    const lists = updateList(currentList, todoId, new Map(listMap), operation, newIndex)
     if (direction === TraversalDirection.PARENTS && currentList.parentList !== null) {
       return updateLists(currentList.parentList!, todoId, lists, operation, direction)
     }
     if (direction === TraversalDirection.CHILDREN) {
-      return currentList.childLists.reduce((lists: Map<string, TodoList>, childListId: string) => {
+      return currentList.childLists.reduce((lists: Map<string, FormattedTodoList>, childListId: string) => {
         return updateLists(childListId, todoId, lists, operation, direction)
       }, lists)
     }
@@ -58,9 +80,10 @@ export function updateLists(listId: string, todoId: string, listMap: Map<string,
  * @param {string} sourceListId - ID of the source TodoList
  * @param {string} targetListId - ID of the target TodoList
  * @param {Map<string, TodoList>} listMap - Map of TodoLists
+ * @param {number} newIndex - Index to set the moved Todo at when adding to a list
  * @returns {TodoListMapUpdateData[]} List of update operations to apply to TodoList Map
  */
-function getMapUpdateData(sourceListId: string, targetListId: string, listMap: Map<string, TodoList>): TodoListMapUpdateData[] {
+function getMapUpdateData(sourceListId: string, targetListId: string, listMap: Map<string, TodoList>, newIndex = -1): TodoListMapUpdateData[] {
   const sourceList = listMap.get(sourceListId)!
   const targetList = listMap.get(targetListId)!
   const sameLevel = sourceList.level === targetList.level
@@ -68,7 +91,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
     if (sameLevel) {
       return [
         {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
-        {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
+        {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
       ]
     } else if (targetList.level === 'week') {
       if (targetList.id === sourceList.parentList) {
@@ -81,7 +104,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
         return [
           {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
           {listId: sourceWeekList.id, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
-          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
+          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
     } else {
@@ -97,7 +120,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
     if (targetList.level === 'day') {
       if (sourceList.id === targetList.parentList) {
         return [
-          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
+          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
       const targetWeekList = listMap.get(targetList.parentList!)!
@@ -105,14 +128,14 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
         return [
           {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
           {listId: targetWeekList.id, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE},
-          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
+          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
     } else if (targetList.level === 'week') {
       if (sourceList.parentList === targetList.parentList) {
         return [
           {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
-          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
+          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
     } else {
@@ -127,14 +150,14 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
       const targetWeekList = listMap.get(targetList.parentList!)!
       if (targetWeekList.parentList === sourceList.id) {
         return [
-          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE},
+          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex},
           {listId: targetWeekList.id, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE},
         ]
       }
     } else if (targetList.level === 'week') {
       if (targetList.parentList === sourceListId) {
         return [
-          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE}
+          {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
     }
@@ -142,7 +165,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
   return [
     {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.PARENTS},
     {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.CHILDREN},
-    {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.PARENTS}
+    {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.PARENTS, newIndex}
   ]
 }
 
@@ -152,12 +175,13 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
  * @param {string} sourceListId - ID of the TodoList to move the Todo from
  * @param {string} targetListId - ID of the TodoList to move the Todo to
  * @param {string} todoId - ID of the Todo to move between TodoLists
- * @param {Map<string, TodoList>} lists - Map of TodoLists to be updated
- * @returns {Map<string, TodoList>} Updated Map of TodoLists
+ * @param {Map<string, FormattedTodoList>} lists - Map of TodoLists to be updated
+ * @param {number} newIndex - Optional index to place the moved Todo at in the list it's moving to
+ * @returns {Map<string, FormattedTodoList>} Updated Map of TodoLists
  */
-export function updateTodoListMap(sourceListId: string, targetListId: string, todoId: string, lists: Map<string, TodoList>): Map<string, TodoList> {
+export function updateTodoListMap(sourceListId: string, targetListId: string, todoId: string, lists: Map<string, FormattedTodoList>, newIndex = -1): Map<string, FormattedTodoList> {
   return getMapUpdateData(sourceListId, targetListId, lists)
-    .reduce((listMap: Map<string, TodoList>, {listId, operation, direction}) => {
-        return updateLists(listId, todoId, listMap, operation, direction)
+    .reduce((listMap: Map<string, FormattedTodoList>, {listId, operation, direction, newIndex}) => {
+        return updateLists(listId, todoId, listMap, operation, direction, newIndex)
       }, lists)
 }

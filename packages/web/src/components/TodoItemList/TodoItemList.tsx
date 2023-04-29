@@ -1,9 +1,11 @@
 import React, {useContext} from 'react'
-import { useDroppable } from "@dnd-kit/core";
-import {TodoItem} from "../TodoItem/TodoItem";
+import {useDroppable} from "@dnd-kit/core";
 import styles from './TodoItemList.module.css'
 import { TodoItemListProps } from "../../types";
 import AppContext from "../../contexts/AppContext";
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {SortableTodoItem} from "../SortableTodoItem/SortableTodoItem";
+import {TodoItemListTitle} from "../TodoItemListTitle/TodoItemListTitle";
 
 /**
  * Render a TodoList
@@ -11,9 +13,10 @@ import AppContext from "../../contexts/AppContext";
  * @param {TodoItemListProps} props - Props passed into the component
  * @param {string} props.id - ID of the TodoList
  * @param {TodoLevel} props.level - Level of the TodoBoard that the TodoList is rendered under
+ * @param {Date} props.currentDate - The current date
  * @constructor
  */
-export function TodoItemList({ id, level }: TodoItemListProps): JSX.Element | null {
+export function TodoItemList({ id, level, currentDate }: TodoItemListProps): JSX.Element | null {
   const { lists } = useContext(AppContext)
 
   const { isOver, setNodeRef } = useDroppable({
@@ -28,18 +31,19 @@ export function TodoItemList({ id, level }: TodoItemListProps): JSX.Element | nu
     border: '1px solid rgba(0,0,0,0.8)',
   } : undefined
 
+
   const list = lists.get(id)
+
   if (list) {
-    const todoItems = list.todos.map((todoId: string) => <TodoItem id={todoId} key={todoId} level={level} listId={id}/>)
+    const todoIds = list.todos.map((todoId) => `${level}_${todoId}`)
     return (
       <div className={styles.todoItemList}>
-        <h3>{list.name}</h3>
-        <div className={styles.dividerContainer}>
-          <div className={styles.divider} />
-        </div>
-        <div ref={setNodeRef} style={style} className={styles.listContainer}>
-          {todoItems}
-        </div>
+        <TodoItemListTitle list={list} currentDate={currentDate} />
+        <SortableContext items={todoIds} strategy={verticalListSortingStrategy}>
+          <div ref={setNodeRef} style={style} className={styles.listContainer}>
+            {list.todos.map((todoId: string, index) => <SortableTodoItem id={todoId} key={todoId} level={level} listId={id} index={index} />)}
+          </div>
+        </SortableContext>
       </div>
     )
   }

@@ -1,31 +1,48 @@
-import React, { useContext } from 'react'
-import { useDraggable } from "@dnd-kit/core";
+import React, {useContext, useEffect, forwardRef, Ref, memo} from 'react'
 import styles from "./TodoItem.module.css"
 import { TodoItemProps } from "../../types";
 import AppContext from "../../contexts/AppContext";
 import ContentEditable, {ContentEditableEvent} from "react-contenteditable";
 
 /**
- * Render a Todo
+ * Get the classnames for the Todo Item
  *
- * @param {TodoItemProps} props - Properties passed into the component
- * @param {string} props.id - ID of the Todo
- * @param {string} props.level - The level of the TodoList the Todo is rendered in
- * @param {string} props.listId - The ID of the TodoList the Todo is rendered in
+ * @param {boolean} isDragging - If the item is currently being dragged
+ * @returns {string} classNames to use
+ */
+function getClassNames(isDragging?: boolean): string {
+  if (isDragging) return `${styles.todoItemContainer} ${styles.dragging}`
+  return styles.todoItemContainer
+}
+
+/**
+ * Todo Item
+ * @param id
+ * @param index
+ * @param handleProps
+ * @param listeners
+ * @param transform
+ * @param transition
+ * @param dragOverlay
+ * @param ref
  * @constructor
  */
-export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | null {
+function Todo({ id, index, handleProps, listeners, transform, transition, dragOverlay, dragging }: TodoItemProps, ref: Ref<HTMLDivElement>): JSX.Element | null {
+
+  useEffect(() => {
+    if (!dragOverlay) {
+      return;
+    }
+
+    document.body.style.cursor = 'grabbing'
+
+    return () => {
+      document.body.style.cursor = ''
+    }
+  }, [dragOverlay])
 
   const { todos, actions } = useContext(AppContext)
   const todo = todos.get(id)
-
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: `${level}_${id}`,
-    data: {
-      sourceListId: listId,
-      todoId: id
-    }
-  })
 
   /**
    * Callback for when checkbox is clicked
@@ -45,30 +62,53 @@ export function TodoItem({ id, level, listId }: TodoItemProps): JSX.Element | nu
     }
    }
 
-  const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px,0)`} : undefined
+  const style = {
+    transition: [transition]
+      .filter(Boolean)
+      .join(', '),
+    '--translate-x': transform
+      ? `${Math.round(transform.x)}px`
+      : undefined,
+    '--translate-y': transform
+      ? `${Math.round(transform.y)}px`
+      : undefined,
+    '--scale-x': transform?.scaleX
+      ? `${transform.scaleX}`
+      : undefined,
+    '--scale-y': transform?.scaleY
+      ? `${transform.scaleY}`
+      : undefined,
+    '--index': index,
+  }
 
   if (todo) {
+    const classNames = getClassNames(dragging)
     return (
-      <div className={styles.todoItem} style={style}>
-        <div className={styles.menuContainer} ref={setNodeRef} {...listeners} {...attributes}>
-          <div className={styles.menu}>
-            <svg viewBox="0 0 10 10">
-              <path
-                d="M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z"
-              >
+      <div ref={ref} className={classNames} style={style}>
+        <div className={styles.todoItem}>
+          <div className={styles.menuContainer} {...listeners} {...handleProps}>
+            <div className={styles.menu}>
+              <svg viewBox="0 0 10 10">
+                <path
+                  d="M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z"
+                >
 
-              </path>
-            </svg>
+                </path>
+              </svg>
+            </div>
           </div>
-        </div>
-        <div className={styles.inputContainer}>
-          <input type='checkbox' checked={todo.completed} onChange={onClickCheckbox}/>
-        </div>
-        <div className={styles.textContainer}>
-          <ContentEditable html={todo.name} onChange={handleContentChange} />
+          <div className={styles.inputContainer}>
+            <input type='checkbox' checked={todo.completed} onChange={onClickCheckbox}/>
+            <span className={styles.checkmark} onClick={onClickCheckbox}></span>
+          </div>
+          <div className={styles.textContainer}>
+            <ContentEditable html={todo.name} onChange={handleContentChange} />
+          </div>
         </div>
       </div>
     )
   }
   return null
 }
+
+export const TodoItem = memo(forwardRef<HTMLDivElement, TodoItemProps>(Todo))

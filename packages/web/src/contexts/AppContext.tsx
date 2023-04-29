@@ -1,5 +1,5 @@
 import React, {createContext, useEffect, useState} from 'react'
-import {AppProviderProps, AppState, IAppContext} from "../types";
+import {AppProviderProps, AppState, FormattedTodoList, IAppContext} from "../types";
 import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
 // @ts-ignore
 import {TodoList, Todo, TodoLevel, TodoBoard} from "@atomic-todo/server/dist/src/generated/graphql";
@@ -108,11 +108,11 @@ mutation ProgressBoardByWeek($boardId: ID!) {
  *
  * @param {TodoBoard} board - TodoBoard the TodoLists are part of
  * @param {TodoList[]} lists - Array of TodoLists
- * @return {Map<string, TodoList>} Map of List ID to TodoList
+ * @return {Map<string, FormattedTodoList>} Map of List ID to TodoList
  */
-function getListMap(board: TodoBoard, lists: TodoList[]): Map<string, TodoList> {
-  return new Map<string, TodoList>(lists.map((todoList: TodoList) => {
-    return [todoList.id, { ...todoList, name: getTodoListName(board.startDate, todoList.startDate, todoList.level) }]
+function getListMap(board: TodoBoard, lists: TodoList[]): Map<string, FormattedTodoList> {
+  return new Map<string, FormattedTodoList>(lists.map((todoList: TodoList) => {
+    return [todoList.id, { ...todoList, ...getTodoListName(board.startDate, todoList.startDate, todoList.level) }]
   }))
 }
 
@@ -192,21 +192,23 @@ export function AppProvider({ children }: AppProviderProps) {
   const value = {
     ...state,
     actions: {
-      setLists: (lists:Map<string, TodoList>) => {
+      setLists: (lists:Map<string, FormattedTodoList>, sendToServer = true) => {
         setData((currentState: AppState) => ({ ...currentState, lists }))
-        const update = [ ...lists.entries()].map(([id, todoList]) => {
-          return {
-            id,
-            todos: todoList.todos
-          }
-        })
-        const response = [ ...lists.entries()].map(([_, todoList]) => todoList)
-        updateTodoLists({
-          variables: { todoLists: update },
-          optimisticResponse: {
-            updateTodoLists: response
-          }
-        })
+        if (sendToServer) {
+          const update = [...lists.entries()].map(([id, todoList]) => {
+            return {
+              id,
+              todos: todoList.todos
+            }
+          })
+          const response = [...lists.entries()].map(([_, todoList]) => todoList)
+          updateTodoLists({
+            variables: {todoLists: update},
+            optimisticResponse: {
+              updateTodoLists: response
+            }
+          })
+        }
       },
       setTodoCompleted: (todo: Todo, completed: boolean) => {
         const update = {

@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css?family=Quicksand:300,500');
+@import url('https://fonts.googleapis.com/css?family=Nunito:200,300,600');
 
 html {
-  font-size: 112.5%; /*18px*/
+  font-size: 1em;
 }
 
 body {
   background: #191919;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Nunito', sans-serif;
   font-weight: 300;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.81);
@@ -16,8 +16,8 @@ p {margin-bottom: 1rem;}
 
 h1, h2, h3, h4, h5 {
   margin: 3rem 0 1.38rem;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
   line-height: 1.3;
 }
 
@@ -26,11 +26,19 @@ h1 {
   font-size: 2.488rem;
 }
 
-h2 {font-size: 2.074rem;}
+h2 {
+  font-size: 2.074rem;
+}
 
-h3 {font-size: 1.728rem;}
+h3 {
+  font-size: 1.25em;
+}
 
-h4 {font-size: 1.44rem;}
+h4 {
+  font-size: 1.25em;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 200;
+}
 
 h5 {font-size: 1.2rem;}
 

@@ -1,15 +1,33 @@
 .todoItem {
     display: flex;
     align-items: flex-start;
-    width: calc(100% + 20px);
-    padding-left: 2px;
-    margin-left: -20px;
+    width: calc(100% + 32px);
+    padding-left: 10px;
+    margin-left: -32px;
+    margin-bottom: 8px;
+}
+
+.todoItemContainer {
+    display: flex;
+    box-sizing: border-box;
+    transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0) scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
+    transform-origin: 0 0;
+    touch-action: manipulation;
+    /*background-color: red;*/
+}
+
+.todoItemContainer.dragging {
+    opacity: 0;
 }
 
 .inputContainer {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     margin-right: 2px;
     width: 24px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,11 +36,69 @@
     min-height: calc(1.5em + 6px);
 }
 
+.inputContainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: 1px solid #FFFFFF;
+    border-radius: 4px;
+}
+
+/* On mouse-over, add a grey background color */
+.inputContainer:hover input ~ .checkmark {
+    background-color: #F82583;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* When the checkbox is checked, add a blue background */
+.inputContainer input:checked ~ .checkmark {
+    background-color: #F82583;
+    border-color: #F82583;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.inputContainer input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.inputContainer .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
 .textContainer {
     flex: 1 1 0;
     min-width: 1px;
     display: flex;
     flex-direction: column;
+    margin-left: 6px;
 }
 
 .menuContainer {
@@ -41,10 +117,6 @@
     visibility: visible;
 }
 
-.todoItem input {
-    width: 16px;
-    height: 16px;
-}
 
 .todoItem .textContainer > div {
     max-width: 100%;

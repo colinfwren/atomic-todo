@@ -1,0 +1,27 @@
+.progressionButton {
+    background-color: #191919;
+    border: 1px solid #F82583;
+    border-radius: 360px;
+    color: #F82583;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progressionButton:hover {
+    background-color: #F82583;
+}
+
+.progressionButton:hover svg path {
+    stroke: #FFFFFF;
+}
+
+.progressionButton:disabled, .progressionButton[disabled] {
+    border-color: rgba(248, 37, 131, 0.5);
+}
+
+.progressionButton:disabled svg path, .progressionButton[disabled] svg path {
+    stroke: rgba(248, 37, 131, 0.5);
+}

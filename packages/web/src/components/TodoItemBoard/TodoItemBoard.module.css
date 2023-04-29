@@ -6,24 +6,13 @@
     text-align: left;
 }
 
-.todoItemBoard h2 {
-    text-align: left;
-    margin-bottom: 0;
-}
-
-.todoItemBoard .days > div {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 0 46px;
-}
-
-.todoItemBoard .weeks > div, .todoItemBoard .months > div {
+.todoItemBoard .columns {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     gap: 0 46px;
 }
 
-.todoItemBoard .weebs, .todoItemBoard .months {
+.todoItemBoard .weeks, .todoItemBoard .months {
     margin-top: 2em;
 }
 
@@ -31,4 +20,10 @@
     display: grid;
     grid-template-columns: 1fr max-content;
     gap: 0 20px;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 40px 40px;
+    gap: 0 10px;
 }

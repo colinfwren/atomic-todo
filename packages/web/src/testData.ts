@@ -1,5 +1,6 @@
 // @ts-ignore
 import {Todo, TodoBoard, TodoLevel, TodoList} from '@atomic-todo/server/dist/src/generated/graphql'
+import {FormattedTodoList} from "./types";
 
 export const DAY_ONE_ID = 'a7990dea-3b26-4b28-964c-e84b7fa88440'
 export const DAY_TWO_ID = 'fe8235a0-8419-47d7-883c-409579e10253'
@@ -52,18 +53,21 @@ const todos: Todo[] = [
   }
 ]
 
-const days: TodoList[] = [
+const days: FormattedTodoList[] = [
   {
     id: DAY_ONE_ID,
     level: TodoLevel.Day,
     todos: [todos[0].id, todos[1].id],
     childLists: [],
     parentList: WEEK_ONE_ID,
+    name: 'Mon',
+    date: '03/04',
     startDate: '2023-04-03T00:00:00.000+00:00'
   },
   {
     id: DAY_TWO_ID,
-    name: 'Tue (4/4)',
+    name: 'Tue',
+    date: '04/04',
     level: TodoLevel.Day,
     todos: [todos[2].id],
     childLists: [],
@@ -72,6 +76,8 @@ const days: TodoList[] = [
   },
   {
     id: 'adcb06ab-2f63-446d-b88c-ff521870e77a',
+    name: 'Wed',
+    date: '05/04',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -80,6 +86,8 @@ const days: TodoList[] = [
   },
   {
     id: '6ad1f977-48ba-471b-8a73-a58225fc848f',
+    name: 'Thu',
+    date: '06/04',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -88,6 +96,8 @@ const days: TodoList[] = [
   },
   {
     id: 'f90ea05c-4b2b-4082-ab84-68ca423688b1',
+    name: 'Fri',
+    date: '07/04',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -96,6 +106,8 @@ const days: TodoList[] = [
   },
   {
     id: '6c842ea8-3a35-45c7-91e9-4ff41410f151',
+    name: 'Sat',
+    date: '08/04',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -104,6 +116,8 @@ const days: TodoList[] = [
   },
   {
     id: '9db1ebc4-4a14-433c-8c40-20c9f42674f2',
+    name: 'Sun',
+    date: '09/04',
     level: TodoLevel.Day,
     todos: [],
     childLists: [],
@@ -112,9 +126,11 @@ const days: TodoList[] = [
   }
 ]
 
-const weeks: TodoList[] = [
+const weeks: FormattedTodoList[] = [
   {
     id: WEEK_ONE_ID,
+    name: '1 Week',
+    date: '03/04',
     level: TodoLevel.Week,
     todos: [todos[0].id, todos[1].id, todos[2].id],
     parentList: MONTH_ONE_ID,
@@ -123,6 +139,8 @@ const weeks: TodoList[] = [
   },
   {
     id: WEEK_TWO_ID,
+    name: '2 Weeks',
+    date: '10/04',
     level: TodoLevel.Week,
     todos: [todos[3].id, todos[4].id],
     parentList: MONTH_ONE_ID,
@@ -131,6 +149,8 @@ const weeks: TodoList[] = [
   },
   {
     id: '48276bee-0e50-4cb8-90a9-b12dcce9fd3f',
+    name: '3 Weeks',
+    date: '17/04',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_ONE_ID,
@@ -139,6 +159,8 @@ const weeks: TodoList[] = [
   },
   {
     id: '34a1432e-b45e-4f94-b57c-18c3b0efb7ec',
+    name: '4 Weeks',
+    date: '24/04',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_ONE_ID,
@@ -147,6 +169,8 @@ const weeks: TodoList[] = [
   },
   {
     id: WEEK_FIVE_ID,
+    name: '5 Weeks',
+    date: '01/08',
     level: TodoLevel.Week,
     todos: [todos[5].id],
     parentList: MONTH_TWO_ID,
@@ -155,6 +179,8 @@ const weeks: TodoList[] = [
   },
   {
     id: WEEK_SIX_ID,
+    name: '6 Weeks',
+    date: '08/05',
     level: TodoLevel.Week,
     todos: [],
     parentList: MONTH_TWO_ID,
@@ -163,9 +189,11 @@ const weeks: TodoList[] = [
   }
 ]
 
-const months: TodoList[] = [
+const months: FormattedTodoList[] = [
   {
     id: MONTH_ONE_ID,
+    name: '1 Month',
+    date: 'Apr',
     level: TodoLevel.Month,
     todos: [
       todos[0].id,
@@ -185,6 +213,8 @@ const months: TodoList[] = [
   },
   {
     id: MONTH_TWO_ID,
+    name: '2 Months',
+    date: 'May',
     level: TodoLevel.Month,
     todos: [
       todos[5].id,
@@ -199,6 +229,8 @@ const months: TodoList[] = [
   },
   {
     id: 'c52f1cc7-9c90-47dc-8ee5-2b11b620b9e0',
+    name: '3 Months',
+    date: 'Jun',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -207,6 +239,8 @@ const months: TodoList[] = [
   },
   {
     id: 'cf27c8e5-f1ec-48a9-870a-29e4f9cb2f49',
+    name: '4 Months',
+    date: 'Jul',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -215,6 +249,8 @@ const months: TodoList[] = [
   },
   {
     id: '3bf422e1-2ebe-41f1-9bfc-a08ea5fb937b',
+    name: '5 Months',
+    date: 'Aug',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -223,6 +259,8 @@ const months: TodoList[] = [
   },
   {
     id: '78527bc8-13b0-4ed3-b9ba-96b40715cd75',
+    name: '6 Months',
+    date: 'Sep',
     level: TodoLevel.Month,
     todos: [],
     parentList: null,
@@ -231,7 +269,7 @@ const months: TodoList[] = [
   }
 ]
 
-export const todoListMap = new Map<string, TodoList>([...days, ...weeks, ...months].map((list => {
+export const todoListMap = new Map<string, FormattedTodoList>([...days, ...weeks, ...months].map((list => {
   return [list.id, list]
 })))
 
@@ -248,7 +286,7 @@ export const todoBoard: TodoBoard = {
   startDate: '2023-04-03T00:00:00.000+00:00'
 }
 
-export const emptyTodoListMap = new Map<string, TodoList>([...days, ...weeks, ...months].map((list => {
+export const emptyTodoListMap = new Map<string, FormattedTodoList>([...days, ...weeks, ...months].map((list => {
   return [list.id, { ...list, todos: []}]
 })))
 
