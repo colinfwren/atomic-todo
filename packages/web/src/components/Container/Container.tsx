@@ -61,7 +61,7 @@ export function Container(): JSX.Element {
         list.data.current!.listId,
         todo.data.current!.todoId,
         lists
-      ), false)
+      ))
     }
     setActiveId(null)
   }

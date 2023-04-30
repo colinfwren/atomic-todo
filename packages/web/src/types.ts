@@ -5,7 +5,8 @@ import type {Transform} from '@dnd-kit/utilities';
 
 export enum UpdateOperation {
   ADD,
-  REMOVE
+  REMOVE,
+  REORDER
 }
 
 export enum TraversalDirection {
@@ -55,7 +56,7 @@ export type AppState = {
 
 export type IAppContext = AppState & {
   actions: {
-    setLists: (lists: Map<string, FormattedTodoList>, sendToServer: boolean) => void,
+    setLists: (lists: Map<string, FormattedTodoList>, sendToServer?: boolean) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
     progressBoard: () => void
