@@ -92,6 +92,11 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
   const sourceList = listMap.get(sourceListId)!
   const targetList = listMap.get(targetListId)!
   const sameLevel = sourceList.level === targetList.level
+  if (targetListId === sourceListId) {
+    return [
+      {listId: targetListId, operation: UpdateOperation.REORDER, direction: TraversalDirection.NONE, newIndex}
+    ]
+  }
   if (sourceList.level === 'day') {
     if (sameLevel) {
       return [
@@ -127,6 +132,9 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
     if (targetList.level === 'day') {
       if (sourceList.id === targetList.parentList) {
         return [
+          ...sourceList.childLists.map((childListId: string) => {
+            return {listId: childListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE}
+          }),
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
@@ -141,7 +149,7 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
     } else if (targetList.level === 'week') {
       if (sourceList.parentList === targetList.parentList) {
         return [
-          {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.NONE},
+          {listId: sourceListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.CHILDREN},
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
@@ -158,6 +166,9 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
       const targetWeekList = listMap.get(targetList.parentList!)!
       if (targetWeekList.parentList === sourceList.id) {
         return [
+          ...sourceList.childLists.map((childListId: string) => {
+            return { listId: childListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.CHILDREN}
+          }),
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex},
           {listId: targetWeekList.id, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE},
         ]
@@ -165,13 +176,10 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
     } else if (targetList.level === 'week') {
       if (targetList.parentList === sourceListId) {
         return [
+          ...sourceList.childLists.map((childListId: string) => {
+            return { listId: childListId, operation: UpdateOperation.REMOVE, direction: TraversalDirection.CHILDREN}
+          }),
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
-        ]
-      }
-    } else {
-      if (targetListId === sourceListId) {
-        return [
-          {listId: targetListId, operation: UpdateOperation.REORDER, direction: TraversalDirection.NONE, newIndex}
         ]
       }
     }

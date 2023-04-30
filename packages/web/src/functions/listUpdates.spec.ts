@@ -15,6 +15,7 @@ import {
   WEEK_TWO_ID
 } from "../testData";
 import {TraversalDirection, UpdateOperation} from "../types";
+import exp from "constants";
 
 const filterTodo = (todoId: string) => todoId !== TODO_ID
 const dayOneList = todoListMap.get(DAY_ONE_ID)!
@@ -724,6 +725,25 @@ describe('Updating a Map of TodoLists when moving a Todo from one TodoList to an
           )
       expect(updatedMap).toEqual(expectedResult)
     })
+    it('removes Todo from existing Day list when moving from Week to another Day list', () => {
+      const updatedMap = updateTodoListMap(WEEK_ONE_ID, DAY_TWO_ID, TODO_ID, todoListMap)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          DAY_ONE_ID,
+          {
+            ...dayOneList,
+            todos: dayOneList.todos.filter(filterTodo)
+          }
+        )
+        .set(
+          DAY_TWO_ID,
+          {
+            ...dayTwoList,
+            todos: [...dayTwoList.todos, TODO_ID]
+          }
+        )
+      expect(updatedMap).toEqual(expectedResult)
+    })
   })
   describe('Moving a Todo from a Week list to a Week list', () => {
     it('removes the Todo from the source Week list and source Month and adds it to the target Week and it\'s parent Month when moving between Weeks in a different Month', () => {
@@ -760,9 +780,15 @@ describe('Updating a Map of TodoLists when moving a Todo from one TodoList to an
       expect(updatedMap).toEqual(expectedResult)
     })
     it('removes the Todo from the source Week list and adds it to the target Week list and keeps the month intact when moving between Weeks in the same Month', () => {
-      const map = new Map(todoListMap).set(DAY_ONE_ID, { ...dayOneList, todos: dayOneList.todos.filter(filterTodo)})
-      const updatedMap = updateTodoListMap(WEEK_ONE_ID, WEEK_TWO_ID, TODO_ID, map)
-      const expectedResult = new Map(map)
+      const updatedMap = updateTodoListMap(WEEK_ONE_ID, WEEK_TWO_ID, TODO_ID, todoListMap)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          DAY_ONE_ID,
+          {
+            ...dayOneList,
+            todos: dayOneList.todos.filter(filterTodo)
+          }
+        )
         .set(
           WEEK_ONE_ID,
           {
@@ -813,9 +839,15 @@ describe('Updating a Map of TodoLists when moving a Todo from one TodoList to an
       expect(updatedMap).toEqual(expectedResult)
     })
     it('removes the Todo from the source Week list and adds it to the target Week list at the desired index and keeps the month intact when moving between Weeks in the same Month with an index', () => {
-      const map = new Map(todoListMap).set(DAY_ONE_ID, { ...dayOneList, todos: dayOneList.todos.filter(filterTodo)})
-      const updatedMap = updateTodoListMap(WEEK_ONE_ID, WEEK_TWO_ID, TODO_ID, map, 0)
-      const expectedResult = new Map(map)
+      const updatedMap = updateTodoListMap(WEEK_ONE_ID, WEEK_TWO_ID, TODO_ID, todoListMap, 0)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          DAY_ONE_ID,
+          {
+            ...dayOneList,
+            todos: dayOneList.todos.filter(filterTodo)
+          }
+        )
         .set(
           WEEK_ONE_ID,
           {
@@ -1105,6 +1137,32 @@ describe('Updating a Map of TodoLists when moving a Todo from one TodoList to an
               todos: monthTwoList.todos.filter(x => x !== TODO_SEVEN_ID)
             }
           )
+      expect(updatedMap).toEqual(expectedResult)
+    })
+    it('removes Todo from existing Week list and adds to target Week list when moving from Month list to different Week that currently in', () => {
+      const updatedMap = updateTodoListMap(MONTH_ONE_ID, WEEK_TWO_ID, TODO_ID, todoListMap)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          DAY_ONE_ID,
+          {
+            ...dayOneList,
+            todos: dayOneList.todos.filter(filterTodo)
+          }
+        )
+        .set(
+          WEEK_ONE_ID,
+          {
+            ...weekOneList,
+            todos: weekOneList.todos.filter(filterTodo)
+          }
+        )
+        .set(
+          WEEK_TWO_ID,
+          {
+            ...weekTwoList,
+            todos: [...weekTwoList.todos, TODO_ID]
+          }
+        )
       expect(updatedMap).toEqual(expectedResult)
     })
   })
