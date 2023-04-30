@@ -9,7 +9,7 @@ import {
   MouseSensor,
   UniqueIdentifier,
   useSensors,
-  useSensor, DragOverEvent, Over, Active
+  useSensor, DragOverEvent, Over, Active, DragCancelEvent
 } from "@dnd-kit/core";
 import {updateTodoListMap} from "../../functions/listUpdates";
 import {TodoItemBoard} from "../TodoItemBoard/TodoItemBoard";
@@ -43,6 +43,7 @@ const measuringStrategy = {
 export function Container(): JSX.Element {
   const { lists, actions: { setLists }} = useContext(AppContext)
   const [activeId, setActiveId] = useState<UniqueIdentifier|null>(null)
+  const [mapReset, setMapReset] = useState<Map<string, FormattedTodoList>|null>(null)
 
   const sensors = useSensors(
     useSensor(MouseSensor)
@@ -54,16 +55,9 @@ export function Container(): JSX.Element {
    * @param {DragEndEvent} event - The drag end event
    */
   function handleDragEnd(event: DragEndEvent) {
-    const { active: todo, over: list } = event
-    if (list) {
-      setLists(updateTodoListMap(
-        todo.data.current!.sourceListId,
-        list.data.current!.listId,
-        todo.data.current!.todoId,
-        lists
-      ))
-    }
+    setLists(lists)
     setActiveId(null)
+    setMapReset(null)
   }
 
   /**
@@ -75,6 +69,18 @@ export function Container(): JSX.Element {
     if (event.active.data.current) {
       const { level, todoId } = event.active.data.current
       setActiveId(`${level}_${todoId}`)
+      setMapReset(lists)
+    }
+  }
+
+  /**
+   * Handle cancelling the drag
+   *
+   * @param {DragCancelEvent} event - The drag cancel event
+   */
+  function handleDragCancel(event: DragCancelEvent) {
+    if (mapReset !== null) {
+      setLists(mapReset, false)
     }
   }
 
@@ -191,13 +197,11 @@ export function Container(): JSX.Element {
 
     if (!overContainer || !activeContainer) return
 
-    if (activeContainer !== overContainer) {
-      const activeId = active.data.current?.todoId as string
-      const newIndex = getIndexForDraggedItem(lists, over, active)
+    const activeId = active.data.current?.todoId as string
+    const newIndex = getIndexForDraggedItem(lists, over, active)
 
-     const updatedListMap = updateTodoListMap(activeContainer, overContainer, activeId, lists, newIndex)
-     setLists(updatedListMap, false)
-    }
+   const updatedListMap = updateTodoListMap(activeContainer, overContainer, activeId, lists, newIndex)
+   setLists(updatedListMap, false)
   }
 
   return(
@@ -205,6 +209,7 @@ export function Container(): JSX.Element {
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
       onDragStart={handleDragStart}
+      onDragCancel={handleDragCancel}
       measuring={measuringStrategy}
       sensors={sensors}
       // collisionDetection={collisionDetectionStrategy}
