@@ -1,8 +1,8 @@
 import {getTodoBoard} from "./getDocs";
 import {TODOLIST_COL_ID} from "../consts";
 import {TodoBoardDoc, TodoDoc, TodoListDoc} from "../types";
-import {docAttrs, errorMessage} from "./testCommon";
-import {Todo, TodoBoard, TodoLevel, TodoList} from "../generated/graphql";
+import {docAttrs, errorMessage, board} from "./testCommon";
+import {Todo, TodoLevel, TodoList} from "../generated/graphql";
 
 const badBoardId = 'BOOM'
 const badListsBoardId = 'LIST-BOOM'
@@ -36,15 +36,6 @@ const badTodosListDoc: TodoListDoc = {
   level: TodoLevel.Day,
   startDate: '',
   todos: ['bad_todos']
-}
-
-const board: TodoBoard = {
-  name: 'Good Board',
-  startDate: '',
-  id: docAttrs.$id,
-  days: Array(7).fill(0).map( x => 'good_lists'),
-  weeks: Array(6).fill(0).map( x => 'good_lists'),
-  months: Array(6).fill(0).map( x => 'good_lists')
 }
 
 const boardDoc: TodoBoardDoc = {

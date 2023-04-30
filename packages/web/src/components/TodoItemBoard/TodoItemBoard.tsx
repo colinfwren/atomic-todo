@@ -1,10 +1,11 @@
-import React, {useContext} from 'react'
+import React, {useContext, useRef} from 'react'
 import {TodoItemList} from "../TodoItemList/TodoItemList";
 import styles from './TodoItemBoard.module.css'
 import AppContext from "../../contexts/AppContext";
 import {TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
 import { ProgressionButton} from "../ProgressionButton/ProgressionButton";
 import {ProgressButtonDirection } from "../../types";
+import ContentEditable, {ContentEditableEvent} from "react-contenteditable";
 
 /**
  * Render a board of Todo Lists
@@ -12,7 +13,8 @@ import {ProgressButtonDirection } from "../../types";
  * @constructor
  */
 export function TodoItemBoard(): JSX.Element {
-  const { board: { name, days, weeks, months }, actions: { progressBoard }, loading} = useContext(AppContext)
+  const { board: { name, days, weeks, months }, actions: { progressBoard, setBoardName }, loading} = useContext(AppContext)
+  const boardName = useRef(name)
   const rawDate = new Date()
   const currentDate = new Date(rawDate.toISOString())
   currentDate.setHours(0, 0, 0, 0)
@@ -53,11 +55,25 @@ export function TodoItemBoard(): JSX.Element {
 
   }
 
+  /**
+   * handle change to TodoBoard name
+   */
+  function handleChange(event: ContentEditableEvent) {
+    boardName.current = event.target.value
+  }
+
+  /**
+   * handle updating TodoBoard name on blur
+   */
+  function handleBlur() {
+    setBoardName(boardName.current)
+  }
+
   return (
     <div className={styles.todoItemBoard}>
       <div className={styles.header}>
         <div>
-          <h1>{ name }</h1>
+          <h1><ContentEditable html={boardName.current} onChange={handleChange} onBlur={handleBlur} /></h1>
         </div>
         <div className={styles.controls}>
           <ProgressionButton onClick={goBackAWeek} disabled={loading} direction={ProgressButtonDirection.BACKWARD} />

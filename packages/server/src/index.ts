@@ -3,7 +3,13 @@ import {startStandaloneServer} from "@apollo/server/standalone";
 import {Client, Databases} from 'node-appwrite';
 import {readFileSync} from 'fs'
 import { Resolvers } from './generated/graphql'
-import { getTodoBoard, progressBoardByWeek, updateTodoDoc, updateTodoListDoc } from "./functions";
+import {
+  getTodoBoard,
+  progressBoardByWeek,
+  updateTodoDoc,
+  updateTodoListDoc,
+  updateTodoBoardDoc,
+} from "./functions";
 
 const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' })
 
@@ -25,7 +31,8 @@ const resolvers: Resolvers = {
     updateTodo: async (_, { todo }) => await updateTodoDoc(databases, todo),
     updateTodoLists: async (_, { todoLists }) => await Promise.all(todoLists.map(async (todoList) => await updateTodoListDoc(databases, todoList))),
     updateTodos: async (_, { todos }) => await Promise.all(todos.map(async (todo) => await updateTodoDoc(databases, todo))),
-    progressBoardByWeek: async (_, { boardId }) => await progressBoardByWeek(databases, boardId)
+    progressBoardByWeek: async (_, { boardId }) => await progressBoardByWeek(databases, boardId),
+    updateBoardName: async (_, { boardNameUpdate }) => await updateTodoBoardDoc(databases, boardNameUpdate),
   }
 }
 

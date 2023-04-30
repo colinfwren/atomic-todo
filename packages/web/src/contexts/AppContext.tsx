@@ -2,7 +2,13 @@ import React, {createContext, useEffect, useState} from 'react'
 import {AppProviderProps, AppState, FormattedTodoList, IAppContext} from "../types";
 import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
 // @ts-ignore
-import {TodoList, Todo, TodoLevel, TodoBoard} from "@atomic-todo/server/dist/src/generated/graphql";
+import {
+  TodoList,
+  Todo,
+  TodoLevel,
+  TodoBoard,
+  BoardNameUpdateInput
+} from "@atomic-todo/server/dist/src/generated/graphql";
 import {useQuery, gql, useMutation} from "@apollo/client";
 import { getTodoListName } from "../functions/getTodoListName";
 
@@ -16,7 +22,8 @@ const actions = {
   setLists: () => {},
   setTodoCompleted: () => {},
   setTodoName: () => {},
-  progressBoard: () => {}
+  progressBoard: () => {},
+  setBoardName: () => {}
 }
 
 const AppContext = createContext<IAppContext>({ ...initialState, actions, loading: false})
@@ -103,6 +110,14 @@ mutation ProgressBoardByWeek($boardId: ID!) {
 }
 `;
 
+const UPDATE_BOARD_NAME = gql`
+mutation UpdateBoardName($boardNameUpdate: BoardNameUpdateInput!) {
+  updateBoardName(boardNameUpdate: $boardNameUpdate) {
+    name
+  }
+}
+`
+
 /**
  * Create a map of list ID to list values from an array of lists
  *
@@ -148,6 +163,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const [updateTodoLists, updateTodoListsData] = useMutation(UPDATE_TODO_LISTS)
   const [updateTodo, updateTodoData] = useMutation(UPDATE_TODO)
   const [progressBoardByWeek, progressBoardByWeekData] = useMutation(PROGRESS_BOARD_BY_WEEK)
+  const [updateBoardName, updateBoardNameData] = useMutation(UPDATE_BOARD_NAME)
 
   useEffect(() => {
     if (!initialDataLoad.loading && initialDataLoad.data) {
@@ -162,7 +178,7 @@ export function AppProvider({ children }: AppProviderProps) {
   }, [initialDataLoad])
 
   useEffect(() => {
-    setLoading(updateTodoListsData.loading || updateTodoData.loading || progressBoardByWeekData.loading)
+    setLoading(updateTodoListsData.loading || updateTodoData.loading || progressBoardByWeekData.loading || updateBoardNameData.loading)
 
     if (updateTodoListsData.error) {
       setError(updateTodoListsData.error.message)
@@ -176,12 +192,16 @@ export function AppProvider({ children }: AppProviderProps) {
       setError(progressBoardByWeekData.error.message)
     }
 
+    if (updateBoardNameData.error) {
+      setError(updateBoardNameData.error.message)
+    }
+
     if (!progressBoardByWeekData.loading && progressBoardByWeekData.data) {
       const { board, lists, todos } = progressBoardByWeekData.data.progressBoardByWeek
       setData({ board, lists: getListMap(board, lists), todos: getTodoMap(todos) })
     }
 
-  }, [updateTodoData, updateTodoListsData, progressBoardByWeekData])
+  }, [updateTodoData, updateTodoListsData, progressBoardByWeekData, updateBoardNameData])
 
   const state = {
     ...data,
@@ -239,6 +259,20 @@ export function AppProvider({ children }: AppProviderProps) {
       progressBoard: () => {
         progressBoardByWeek({
           variables: { boardId: state.board.id }
+        })
+      },
+      setBoardName: (newName: string) => {
+        const update: BoardNameUpdateInput = {
+          id: state.board.id,
+          name: newName
+        }
+        updateBoardName({
+          variables: { boardNameUpdate: update },
+          optimisticResponse: {
+            updateBoardName: {
+              name: newName
+            }
+          }
         })
       }
     }

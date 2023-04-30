@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, forwardRef, Ref, memo} from 'react'
+import React, {useContext, useEffect, forwardRef, Ref, memo, FocusEventHandler, useRef} from 'react'
 import styles from "./TodoItem.module.css"
 import { TodoItemProps } from "../../types";
 import AppContext from "../../contexts/AppContext";
@@ -42,6 +42,7 @@ function Todo({ id, index, handleProps, listeners, transform, transition, dragOv
   }, [dragOverlay])
 
   const { todos, actions } = useContext(AppContext)
+  const value = useRef('')
   const todo = todos.get(id)
 
   /**
@@ -58,9 +59,18 @@ function Todo({ id, index, handleProps, listeners, transform, transition, dragOv
    */
   function handleContentChange(event: ContentEditableEvent) {
     if (todo) {
-      actions.setTodoName(todo, event.target.value)
+      value.current = event.target.value
     }
    }
+
+  /**
+   * Callback for when focus is removed from the editing (i.e. save on finish)
+   */
+  function handleBlur() {
+    if (todo) {
+      actions.setTodoName(todo, value.current)
+    }
+  }
 
   const style = {
     transition: [transition]
@@ -82,6 +92,7 @@ function Todo({ id, index, handleProps, listeners, transform, transition, dragOv
   }
 
   if (todo) {
+    value.current = todo.name
     const classNames = getClassNames(dragging)
     return (
       <div ref={ref} className={classNames} style={style}>
@@ -102,7 +113,7 @@ function Todo({ id, index, handleProps, listeners, transform, transition, dragOv
             <span className={styles.checkmark} onClick={onClickCheckbox}></span>
           </div>
           <div className={styles.textContainer}>
-            <ContentEditable html={todo.name} onChange={handleContentChange} />
+            <ContentEditable html={value.current} onBlur={handleBlur} onChange={handleContentChange} />
           </div>
         </div>
       </div>

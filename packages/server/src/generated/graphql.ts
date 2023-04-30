@@ -14,6 +14,11 @@ export type Scalars = {
   Float: number;
 };
 
+export type BoardNameUpdateInput = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
 export enum ContactPreferences {
   Marketing = 'Marketing',
   NoMarketing = 'NoMarketing'
@@ -22,6 +27,7 @@ export enum ContactPreferences {
 export type Mutation = {
   __typename?: 'Mutation';
   progressBoardByWeek?: Maybe<TodoBoardResult>;
+  updateBoardName?: Maybe<TodoBoard>;
   updateTodo?: Maybe<Todo>;
   updateTodoList?: Maybe<TodoList>;
   updateTodoLists?: Maybe<Array<Maybe<TodoList>>>;
@@ -31,6 +37,11 @@ export type Mutation = {
 
 export type MutationProgressBoardByWeekArgs = {
   boardId: Scalars['ID'];
+};
+
+
+export type MutationUpdateBoardNameArgs = {
+  boardNameUpdate: BoardNameUpdateInput;
 };
 
 
@@ -193,6 +204,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  BoardNameUpdateInput: BoardNameUpdateInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ContactPreferences: ContactPreferences;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -211,6 +223,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  BoardNameUpdateInput: BoardNameUpdateInput;
   Boolean: Scalars['Boolean'];
   ID: Scalars['ID'];
   Mutation: {};
@@ -227,6 +240,7 @@ export type ResolversParentTypes = {
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   progressBoardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationProgressBoardByWeekArgs, 'boardId'>>;
+  updateBoardName?: Resolver<Maybe<ResolversTypes['TodoBoard']>, ParentType, ContextType, RequireFields<MutationUpdateBoardNameArgs, 'boardNameUpdate'>>;
   updateTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'todo'>>;
   updateTodoList?: Resolver<Maybe<ResolversTypes['TodoList']>, ParentType, ContextType, RequireFields<MutationUpdateTodoListArgs, 'todoList'>>;
   updateTodoLists?: Resolver<Maybe<Array<Maybe<ResolversTypes['TodoList']>>>, ParentType, ContextType, RequireFields<MutationUpdateTodoListsArgs, 'todoLists'>>;

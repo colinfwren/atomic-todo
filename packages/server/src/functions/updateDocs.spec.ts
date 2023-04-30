@@ -1,7 +1,15 @@
-import {updateTodoDoc, updateTodoListDoc} from "./updateDocs";
-import {Todo, TodoLevel, TodoList, TodoListUpdateInput, TodoUpdateInput} from "../generated/graphql";
-import {TodoDoc, TodoListDoc} from "../types";
-import { docAttrs, errorMessage } from "./testCommon";
+import {updateTodoDoc, updateTodoListDoc, updateTodoBoardDoc} from "./updateDocs";
+import {
+  BoardNameUpdateInput,
+  Todo,
+  TodoBoard,
+  TodoLevel,
+  TodoList,
+  TodoListUpdateInput,
+  TodoUpdateInput
+} from "../generated/graphql";
+import {TodoBoardDoc, TodoDoc, TodoListDoc} from "../types";
+import {board, docAttrs, errorMessage} from "./testCommon";
 
 describe('Updating TodoList with values', () => {
   const todoListUpdate: TodoListUpdateInput = {
@@ -65,5 +73,36 @@ describe('Updating Todo with values', () => {
     } as any
     const result = await updateTodoDoc(mockDatabases, todoUpdate)
     expect(result).toEqual(updatedTodo)
+  })
+})
+
+describe('Update Board Name', () => {
+  const boardNameUpdate: BoardNameUpdateInput = {
+    id: 'dead-beef',
+    name: 'Updated Board Name'
+  }
+
+  const updatedTodoBoard: TodoBoard = {
+    ...board,
+    name: boardNameUpdate.name
+  }
+
+  const updatedTodoBoardDoc: TodoBoardDoc = {
+    ...updatedTodoBoard,
+    ...docAttrs
+  }
+
+  it('throws an error if unable to update the TodoBoard doc', async () => {
+    const mockDatabases = {
+      updateDocument: jest.fn().mockRejectedValue(new Error(errorMessage))
+    } as any
+    await expect(updateTodoBoardDoc(mockDatabases, boardNameUpdate)).rejects.toThrowError(errorMessage)
+  })
+  it('returns the update TodoBoard values', async () => {
+    const mockDatabases = {
+      updateDocument: jest.fn().mockResolvedValue(updatedTodoBoardDoc)
+    } as any
+    const result = await updateTodoBoardDoc(mockDatabases, boardNameUpdate)
+    expect(result).toEqual(updatedTodoBoard)
   })
 })
