@@ -168,6 +168,12 @@ function getMapUpdateData(sourceListId: string, targetListId: string, listMap: M
           {listId: targetListId, operation: UpdateOperation.ADD, direction: TraversalDirection.NONE, newIndex}
         ]
       }
+    } else {
+      if (targetListId === sourceListId) {
+        return [
+          {listId: targetListId, operation: UpdateOperation.REORDER, direction: TraversalDirection.NONE, newIndex}
+        ]
+      }
     }
   }
   return [

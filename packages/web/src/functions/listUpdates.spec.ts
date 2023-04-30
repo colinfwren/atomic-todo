@@ -1120,32 +1120,82 @@ describe('Updating a Map of TodoLists when moving a Todo from one TodoList to an
           }
         )
         .set(
-            MONTH_TWO_ID,
-            {
-              ...monthTwoList,
-              todos: monthTwoList.todos.filter(x => x !== TODO_SEVEN_ID)
-            }
-          )
-      expect(updatedMap).toEqual(expectedResult)
-    })
-  })
-  it('removes Todo from the source Month list and adds it to the target Month list at the desired index when passed an index', () => {
-    const updatedMap = updateTodoListMap(MONTH_TWO_ID, MONTH_ONE_ID, TODO_SEVEN_ID, todoListMap, 0)
-    const expectedResult = new Map(todoListMap)
-      .set(
-        MONTH_ONE_ID,
-        {
-          ...monthOneList,
-          todos: [TODO_SEVEN_ID, ...monthOneList.todos]
-        }
-      )
-      .set(
           MONTH_TWO_ID,
           {
             ...monthTwoList,
             todos: monthTwoList.todos.filter(x => x !== TODO_SEVEN_ID)
           }
         )
-    expect(updatedMap).toEqual(expectedResult)
+      expect(updatedMap).toEqual(expectedResult)
+    })
+    it('removes Todo from the source Month list and adds it to the target Month list at the desired index when passed an index', () => {
+      const updatedMap = updateTodoListMap(MONTH_TWO_ID, MONTH_ONE_ID, TODO_SEVEN_ID, todoListMap, 0)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          MONTH_ONE_ID,
+          {
+            ...monthOneList,
+            todos: [TODO_SEVEN_ID, ...monthOneList.todos]
+          }
+        )
+        .set(
+          MONTH_TWO_ID,
+          {
+            ...monthTwoList,
+            todos: monthTwoList.todos.filter(x => x !== TODO_SEVEN_ID)
+          }
+        )
+      expect(updatedMap).toEqual(expectedResult)
+    })
+  })
+  describe('Moving a Todo within the same list to reorder the Todos', () => {
+    it('reorders the Todos in a Day List based on the index', () => {
+      const updatedMap = updateTodoListMap(DAY_ONE_ID, DAY_ONE_ID, TODO_ID, todoListMap, 1)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          DAY_ONE_ID,
+          {
+            ...dayOneList,
+            todos: [
+              dayOneList.todos[1],
+              TODO_ID,
+              ...dayOneList.todos.slice(2, dayOneList.todos.length)
+            ]
+          }
+        )
+      expect(updatedMap).toEqual(expectedResult)
+    })
+    it('reorders the Todos in a Week List based on the index', () => {
+      const updatedMap = updateTodoListMap(WEEK_ONE_ID, WEEK_ONE_ID, TODO_ID, todoListMap, 1)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          WEEK_ONE_ID,
+          {
+            ...weekOneList,
+            todos: [
+              weekOneList.todos[1],
+              TODO_ID,
+              ...weekOneList.todos.slice(2, weekOneList.todos.length)
+            ]
+          }
+        )
+      expect(updatedMap).toEqual(expectedResult)
+    })
+    it('reorders the Todos in a Month List based on the index', () => {
+      const updatedMap = updateTodoListMap(MONTH_ONE_ID, MONTH_ONE_ID, TODO_ID, todoListMap, 1)
+      const expectedResult = new Map(todoListMap)
+        .set(
+          MONTH_ONE_ID,
+          {
+            ...monthOneList,
+            todos: [
+              monthOneList.todos[1],
+              TODO_ID,
+              ...monthOneList.todos.slice(2, monthOneList.todos.length)
+            ]
+          }
+        )
+      expect(updatedMap).toEqual(expectedResult)
+    })
   })
 })
