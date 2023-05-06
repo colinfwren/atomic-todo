@@ -59,7 +59,8 @@ export type IAppContext = AppState & {
     setLists: (lists: Map<string, FormattedTodoList>, sendToServer?: boolean) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
-    progressBoard: () => void,
+    moveBoardForward: () => void,
+    moveBoardBackward: () => void,
     setBoardName: (name: string) => void,
   },
   loading: boolean

@@ -22,7 +22,7 @@ type TodoList {
   todos: [ID!]!
   parentList: ID
   childLists: [ID!]!
-  startDate: String!
+  startDate: Int!
 }
 
 type TodoBoard {
@@ -31,7 +31,7 @@ type TodoBoard {
   days: [ID!]!
   weeks: [ID!]!
   months: [ID!]!
-  startDate: String!
+  startDate: Int!
 }
 
 type User {
@@ -69,7 +69,8 @@ input BoardNameUpdateInput {
 
 type Mutation {
 #  moveTodo(fromId: ID!, toId: ID!): TodoBoardResult
-  progressBoardByWeek(boardId: ID!): TodoBoardResult
+  moveBoardForwardByWeek(boardId: ID!): TodoBoardResult
+  moveBoardBackwardByWeek(boardId: ID!): TodoBoardResult
   updateTodoList(todoList: TodoListUpdateInput!): TodoList,
   updateTodoLists(todoLists: [TodoListUpdateInput!]!): [TodoList],
   updateTodo(todo: TodoUpdateInput!): Todo,

@@ -2,14 +2,9 @@ import {ApolloServer} from "@apollo/server";
 import {startStandaloneServer} from "@apollo/server/standalone";
 import {Client, Databases} from 'node-appwrite';
 import {readFileSync} from 'fs'
-import { Resolvers } from './generated/graphql'
-import {
-  getTodoBoard,
-  progressBoardByWeek,
-  updateTodoDoc,
-  updateTodoListDoc,
-  updateTodoBoardDoc,
-} from "./functions";
+import {Resolvers} from './generated/graphql'
+import {getTodoBoard, moveBoardByWeek, updateTodoBoardDoc, updateTodoDoc, updateTodoListDoc,} from "./functions";
+import {BoardMoveDirection} from "./types";
 
 const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' })
 
@@ -31,7 +26,8 @@ const resolvers: Resolvers = {
     updateTodo: async (_, { todo }) => await updateTodoDoc(databases, todo),
     updateTodoLists: async (_, { todoLists }) => await Promise.all(todoLists.map(async (todoList) => await updateTodoListDoc(databases, todoList))),
     updateTodos: async (_, { todos }) => await Promise.all(todos.map(async (todo) => await updateTodoDoc(databases, todo))),
-    progressBoardByWeek: async (_, { boardId }) => await progressBoardByWeek(databases, boardId),
+    moveBoardForwardByWeek: async (_, { boardId }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.FORWARD),
+    moveBoardBackwardByWeek: async (_, { boardId }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.BACK),
     updateBoardName: async (_, { boardNameUpdate }) => await updateTodoBoardDoc(databases, boardNameUpdate),
   }
 }

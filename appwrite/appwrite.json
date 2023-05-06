@@ -85,11 +85,12 @@
                 },
                 {
                     "key": "startDate",
-                    "type": "datetime",
+                    "type": "integer",
                     "status": "available",
                     "required": true,
                     "array": false,
-                    "format": "",
+                    "min": 0,
+                    "max": null,
                     "default": null
                 }
             ],
@@ -100,6 +101,13 @@
                     "status": "available",
                     "attributes": ["startDate", "level"],
                     "orders": ["ASC", "ASC"]
+                },
+                {
+                    "key": "order_by_startDate",
+                    "type": "key",
+                    "status": "available",
+                    "attributes": ["startDate"],
+                    "orders": ["ASC"]
                 }
             ]
         },
@@ -151,11 +159,12 @@
                 },
                 {
                     "key": "startDate",
-                    "type": "datetime",
+                    "type": "integer",
                     "status": "available",
                     "required": true,
                     "array": false,
-                    "format": "",
+                    "min": 0,
+                    "max": null,
                     "default": null
                 }
             ],

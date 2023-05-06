@@ -11,7 +11,7 @@ const badTodosBoardId = 'TODO-BOOM'
 const badListsBoardDoc: TodoBoardDoc = {
   ...docAttrs,
   name: 'Bad Board',
-  startDate: '',
+  startDate: 568965600,
   id: docAttrs.$id,
   days: ['bad_lists'],
   weeks: [],
@@ -21,7 +21,7 @@ const badListsBoardDoc: TodoBoardDoc = {
 const badTodosBoardDoc: TodoBoardDoc = {
   ...docAttrs,
   name: 'Bad Board',
-  startDate: '',
+  startDate: 568965600,
   id: docAttrs.$id,
   days: ['bad_todos'],
   weeks: [],
@@ -34,7 +34,7 @@ const badTodosListDoc: TodoListDoc = {
   childLists: [],
   parentList: '',
   level: TodoLevel.Day,
-  startDate: '',
+  startDate: 568965600,
   todos: ['bad_todos']
 }
 
@@ -48,7 +48,7 @@ const list: TodoList = {
   childLists: [],
   parentList: '',
   level: TodoLevel.Day,
-  startDate: '',
+  startDate: 568965600,
   todos: ['good_todos']
 }
 

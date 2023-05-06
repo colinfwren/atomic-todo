@@ -10,3 +10,9 @@ export type TodoBoardProgressionArgs = {
   boardDoc: TodoBoardDoc,
   newStartDate: Date
 }
+
+
+export enum BoardMoveDirection {
+  BACK,
+  FORWARD
+}

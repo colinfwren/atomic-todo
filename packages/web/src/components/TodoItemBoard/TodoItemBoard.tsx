@@ -13,7 +13,7 @@ import ContentEditable, {ContentEditableEvent} from "react-contenteditable";
  * @constructor
  */
 export function TodoItemBoard(): JSX.Element {
-  const { board: { name, days, weeks, months }, actions: { progressBoard, setBoardName }, loading} = useContext(AppContext)
+  const { board: { name, days, weeks, months }, actions: { moveBoardForward, moveBoardBackward, setBoardName }, loading} = useContext(AppContext)
   const boardName = useRef(name)
   const rawDate = new Date()
   const currentDate = new Date(rawDate.toISOString())
@@ -45,14 +45,14 @@ export function TodoItemBoard(): JSX.Element {
    * Handle clicking the forward button
    */
   function goForwardAWeek() {
-    progressBoard()
+    moveBoardForward()
   }
 
   /**
    * Handle clicking the backward button
    */
   function goBackAWeek() {
-
+    moveBoardBackward()
   }
 
   /**

@@ -1,16 +1,9 @@
-import {
-  processMonths,
-  DATE_ERROR,
-  processWeeks,
-  FIND_LIST_ERROR,
-  processDays,
-  progressBoardByWeek
-} from "./progressBoard";
-import {TodoBoardDoc, TodoBoardProgressionArgs, TodoListDoc} from "../types";
+import {DATE_ERROR, FIND_LIST_ERROR, moveBoardByWeek, processDays, processMonths, processWeeks} from "./progressBoard";
+import {BoardMoveDirection, TodoBoardDoc, TodoBoardProgressionArgs, TodoListDoc} from "../types";
 import {docAttrs} from "./testCommon";
 import {TodoLevel} from "../generated/graphql";
-import { asyncPipe } from "./utils";
-import { getTodoBoard } from "./getDocs";
+import {asyncPipe} from "./utils";
+import {getTodoBoard} from "./getDocs";
 
 jest.mock('node-appwrite')
 jest.mock('./utils')
@@ -25,7 +18,7 @@ const mockListDoc: TodoListDoc = {
   childLists: [],
   parentList: '',
   level: TodoLevel.Day,
-  startDate: '2023-05-08T00:00:00.000Z',
+  startDate: 1683500400,
   todos: ['bad_todos']
 }
 
@@ -36,7 +29,7 @@ const mockDatabases = {
 const mockBoardDoc: TodoBoardDoc = {
   ...docAttrs,
   name: 'Todo Board',
-  startDate: '2023-04-03T00:00:00.000Z',
+  startDate: 1680476400,
   id: docAttrs.$id,
   days: Array(7).fill(0).map( (x, i) => `day-list-${i}`),
   weeks: Array(6).fill(0).map( (x, i) => `week-list-${i}`),
@@ -61,7 +54,7 @@ describe('Processing the Month level TodoLists for a TodoBoard that has progress
   it('throws an error if unable to parse the startDate of the current TodoBoard', () => {
     const boardWithBadStartDate = {
       ...mockBoardDoc,
-      startDate: 'this will fail'
+      startDate: -1
     }
     expect(() => processMonths({ ...mockArgs, boardDoc: boardWithBadStartDate })).rejects.toThrowError(DATE_ERROR)
   })
@@ -251,7 +244,7 @@ describe('Progressing the board scope forward a week', () => {
         throw new Error(DOCUMENT_READ_ERROR)
       })
     } as any
-    expect(() => progressBoardByWeek(databases, mockBoardDoc.id)).rejects.toThrowError(DOCUMENT_READ_ERROR)
+    expect(() => moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)).rejects.toThrowError(DOCUMENT_READ_ERROR)
   })
   it('throws an error if unable to parse the startDate of the current TodoBoard', () => {
     const databases = {
@@ -262,7 +255,7 @@ describe('Progressing the board scope forward a week', () => {
         })
       })
     } as any
-    expect(() => progressBoardByWeek(databases, mockBoardDoc.id)).rejects.toThrowError(DATE_ERROR)
+    expect(() => moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)).rejects.toThrowError(DATE_ERROR)
   })
   it('throws an error if an error is thrown when processing the new TodoLists', () => {
     (asyncPipe as jest.Mock).mockImplementation(() => {
@@ -273,7 +266,7 @@ describe('Progressing the board scope forward a week', () => {
         return Promise.resolve(mockBoardDoc)
       })
     } as any
-    expect(() => progressBoardByWeek(databases, mockBoardDoc.id)).rejects.toThrowError(DATE_ERROR)
+    expect(() => moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)).rejects.toThrowError(DATE_ERROR)
   })
   it('throws an error if unable to update the TodoBoard doc with the new TodoBoard data', () => {
     (asyncPipe as jest.Mock).mockImplementation(() => {
@@ -287,7 +280,7 @@ describe('Progressing the board scope forward a week', () => {
         throw new Error(DATE_ERROR)
       })
     } as any
-    expect(() => progressBoardByWeek(databases, mockBoardDoc.id)).rejects.toThrowError(DATE_ERROR)
+    expect(() => moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)).rejects.toThrowError(DATE_ERROR)
   })
   it('throws an error if unable to read the updated TodoBoard, TodoLists and Todo docs', () => {
     (asyncPipe as jest.Mock).mockImplementation(() => {
@@ -304,7 +297,7 @@ describe('Progressing the board scope forward a week', () => {
         return Promise.resolve(mockBoardDoc)
       })
     } as any
-    expect(() => progressBoardByWeek(databases, mockBoardDoc.id)).rejects.toThrowError(DOCUMENT_READ_ERROR)
+    expect(() => moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)).rejects.toThrowError(DOCUMENT_READ_ERROR)
   })
   it('returns the updated TodoBoard, TodoLists, Todo data', async () => {
     (asyncPipe as jest.Mock).mockImplementation(() => {
@@ -318,7 +311,7 @@ describe('Progressing the board scope forward a week', () => {
         return Promise.resolve(mockBoardDoc)
       })
     } as any
-    await progressBoardByWeek(databases, mockBoardDoc.id)
+    await moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)
     expect(getTodoBoard).toHaveBeenCalledWith(databases, mockBoardDoc.id)
   })
 })

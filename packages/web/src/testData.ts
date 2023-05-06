@@ -62,7 +62,7 @@ const days: FormattedTodoList[] = [
     parentList: WEEK_ONE_ID,
     name: 'Mon',
     date: '03/04',
-    startDate: '2023-04-03T00:00:00.000+00:00'
+    startDate: new Date('2023-04-03T00:00:00.000+00:00').getTime()
   },
   {
     id: DAY_TWO_ID,
@@ -72,7 +72,7 @@ const days: FormattedTodoList[] = [
     todos: [todos[2].id],
     childLists: [],
     parentList: WEEK_ONE_ID,
-    startDate: '2023-04-04T00:00:00.000+00:00'
+    startDate: new Date('2023-04-04T00:00:00.000+00:00').getTime()
   },
   {
     id: 'adcb06ab-2f63-446d-b88c-ff521870e77a',
@@ -82,7 +82,7 @@ const days: FormattedTodoList[] = [
     todos: [],
     childLists: [],
     parentList: WEEK_ONE_ID,
-    startDate: '2023-04-05T00:00:00.000+00:00'
+    startDate: new Date('2023-04-05T00:00:00.000+00:00').getTime()
   },
   {
     id: '6ad1f977-48ba-471b-8a73-a58225fc848f',
@@ -92,7 +92,7 @@ const days: FormattedTodoList[] = [
     todos: [],
     childLists: [],
     parentList: WEEK_ONE_ID,
-    startDate: '2023-04-06T00:00:00.000+00:00'
+    startDate: new Date('2023-04-06T00:00:00.000+00:00').getTime()
   },
   {
     id: 'f90ea05c-4b2b-4082-ab84-68ca423688b1',
@@ -102,7 +102,7 @@ const days: FormattedTodoList[] = [
     todos: [],
     childLists: [],
     parentList: WEEK_ONE_ID,
-    startDate: '2023-04-07T00:00:00.000+00:00'
+    startDate: new Date('2023-04-07T00:00:00.000+00:00').getTime()
   },
   {
     id: '6c842ea8-3a35-45c7-91e9-4ff41410f151',
@@ -112,7 +112,7 @@ const days: FormattedTodoList[] = [
     todos: [],
     childLists: [],
     parentList: WEEK_ONE_ID,
-    startDate: '2023-04-08T00:00:00.000+00:00'
+    startDate: new Date('2023-04-08T00:00:00.000+00:00').getTime()
   },
   {
     id: '9db1ebc4-4a14-433c-8c40-20c9f42674f2',
@@ -122,7 +122,7 @@ const days: FormattedTodoList[] = [
     todos: [],
     childLists: [],
     parentList: WEEK_ONE_ID,
-    startDate: '2023-04-09T00:00:00.000+00:00'
+    startDate: new Date('2023-04-09T00:00:00.000+00:00').getTime()
   }
 ]
 
@@ -135,7 +135,7 @@ const weeks: FormattedTodoList[] = [
     todos: [todos[0].id, todos[1].id, todos[2].id],
     parentList: MONTH_ONE_ID,
     childLists: days.map(x => x.id),
-    startDate: '2023-04-03T00:00:00.000+00:00'
+    startDate: new Date('2023-04-03T00:00:00.000+00:00').getTime()
   },
   {
     id: WEEK_TWO_ID,
@@ -145,7 +145,7 @@ const weeks: FormattedTodoList[] = [
     todos: [todos[3].id, todos[4].id],
     parentList: MONTH_ONE_ID,
     childLists: [],
-    startDate: '2023-04-10T00:00:00.000+00:00'
+    startDate: new Date('2023-04-10T00:00:00.000+00:00').getTime()
   },
   {
     id: '48276bee-0e50-4cb8-90a9-b12dcce9fd3f',
@@ -155,7 +155,7 @@ const weeks: FormattedTodoList[] = [
     todos: [],
     parentList: MONTH_ONE_ID,
     childLists: [],
-    startDate: '2023-04-17T00:00:00.000+00:00'
+    startDate: new Date('2023-04-17T00:00:00.000+00:00').getTime()
   },
   {
     id: '34a1432e-b45e-4f94-b57c-18c3b0efb7ec',
@@ -165,7 +165,7 @@ const weeks: FormattedTodoList[] = [
     todos: [],
     parentList: MONTH_ONE_ID,
     childLists: [],
-    startDate: '2023-04-24T00:00:00.000+00:00'
+    startDate: new Date('2023-04-24T00:00:00.000+00:00').getTime()
   },
   {
     id: WEEK_FIVE_ID,
@@ -175,7 +175,7 @@ const weeks: FormattedTodoList[] = [
     todos: [todos[5].id],
     parentList: MONTH_TWO_ID,
     childLists: [],
-    startDate: '2023-05-01T00:00:00.000+00:00'
+    startDate: new Date('2023-05-01T00:00:00.000+00:00').getTime()
   },
   {
     id: WEEK_SIX_ID,
@@ -185,7 +185,7 @@ const weeks: FormattedTodoList[] = [
     todos: [],
     parentList: MONTH_TWO_ID,
     childLists: [],
-    startDate: '2023-05-08T00:00:00.000+00:00'
+    startDate: new Date('2023-05-08T00:00:00.000+00:00').getTime()
   }
 ]
 
@@ -209,7 +209,7 @@ const months: FormattedTodoList[] = [
       weeks[2].id,
       weeks[3].id,
     ],
-    startDate: '2023-04-01T00:00:00.000+00:00'
+    startDate: new Date('2023-04-01T00:00:00.000+00:00').getTime()
   },
   {
     id: MONTH_TWO_ID,
@@ -225,7 +225,7 @@ const months: FormattedTodoList[] = [
       weeks[4].id,
       weeks[5].id
     ],
-    startDate: '2023-05-01T00:00:00.000+00:00'
+    startDate: new Date('2023-05-01T00:00:00.000+00:00').getTime()
   },
   {
     id: 'c52f1cc7-9c90-47dc-8ee5-2b11b620b9e0',
@@ -235,7 +235,7 @@ const months: FormattedTodoList[] = [
     todos: [],
     parentList: null,
     childLists: [],
-    startDate: '2023-06-01T00:00:00.000+00:00'
+    startDate: new Date('2023-06-01T00:00:00.000+00:00').getTime()
   },
   {
     id: 'cf27c8e5-f1ec-48a9-870a-29e4f9cb2f49',
@@ -245,7 +245,7 @@ const months: FormattedTodoList[] = [
     todos: [],
     parentList: null,
     childLists: [],
-    startDate: '2023-07-01T00:00:00.000+00:00'
+    startDate: new Date('2023-07-01T00:00:00.000+00:00').getTime()
   },
   {
     id: '3bf422e1-2ebe-41f1-9bfc-a08ea5fb937b',
@@ -255,7 +255,7 @@ const months: FormattedTodoList[] = [
     todos: [],
     parentList: null,
     childLists: [],
-    startDate: '2023-08-01T00:00:00.000+00:00'
+    startDate: new Date('2023-08-01T00:00:00.000+00:00').getTime()
   },
   {
     id: '78527bc8-13b0-4ed3-b9ba-96b40715cd75',
@@ -265,7 +265,7 @@ const months: FormattedTodoList[] = [
     todos: [],
     parentList: null,
     childLists: [],
-    startDate: '2023-09-01T00:00:00.000+00:00'
+    startDate: new Date('2023-09-01T00:00:00.000+00:00').getTime()
   }
 ]
 
@@ -283,7 +283,7 @@ export const todoBoard: TodoBoard = {
   days: days.map(x => x.id),
   weeks: weeks.map(x => x.id),
   months: months.map(x => x.id),
-  startDate: '2023-04-03T00:00:00.000+00:00'
+  startDate: new Date('2023-04-03T00:00:00.000+00:00').getTime()
 }
 
 export const emptyTodoListMap = new Map<string, FormattedTodoList>([...days, ...weeks, ...months].map((list => {

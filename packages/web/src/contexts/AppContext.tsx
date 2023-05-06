@@ -22,7 +22,8 @@ const actions = {
   setLists: () => {},
   setTodoCompleted: () => {},
   setTodoName: () => {},
-  progressBoard: () => {},
+  moveBoardForward: () => {},
+  moveBoardBackward: () => {},
   setBoardName: () => {}
 }
 
@@ -81,9 +82,38 @@ mutation updateTodo($todo: TodoUpdateInput!) {
 }
 `;
 
-const PROGRESS_BOARD_BY_WEEK = gql`
-mutation ProgressBoardByWeek($boardId: ID!) {
-  progressBoardByWeek(boardId: $boardId) {
+const MOVE_BOARD_FORWARD_BY_WEEK = gql`
+mutation moveBoardForwardByWeek($boardId: ID!) {
+  moveBoardForwardByWeek(boardId: $boardId) {
+    board {
+      id
+      name
+      days
+      weeks
+      months
+      startDate
+    }
+    lists {
+      id
+      name
+      level
+      todos
+      parentList
+      childLists
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+    }
+  }
+}
+`;
+
+const MOVE_BOARD_BACKWARD_BY_WEEK = gql`
+mutation moveBoardBackwardByWeek($boardId: ID!) {
+  moveBoardBackwardByWeek(boardId: $boardId) {
     board {
       id
       name
@@ -127,7 +157,14 @@ mutation UpdateBoardName($boardNameUpdate: BoardNameUpdateInput!) {
  */
 function getListMap(board: TodoBoard, lists: TodoList[]): Map<string, FormattedTodoList> {
   return new Map<string, FormattedTodoList>(lists.map((todoList: TodoList) => {
-    return [todoList.id, { ...todoList, ...getTodoListName(board.startDate, todoList.startDate, todoList.level) }]
+    return [
+      todoList.id,
+      {
+        ...todoList,
+        startDate: (todoList.startDate * 1000),
+        ...getTodoListName((board.startDate * 1000), (todoList.startDate * 1000), todoList.level)
+      }
+    ]
   }))
 }
 
@@ -159,49 +196,31 @@ export function AppProvider({ children }: AppProviderProps) {
     todos: initialState.todos
   })
 
-  const initialDataLoad = useQuery(GET_DATA, { variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' }})
-  const [updateTodoLists, updateTodoListsData] = useMutation(UPDATE_TODO_LISTS)
-  const [updateTodo, updateTodoData] = useMutation(UPDATE_TODO)
-  const [progressBoardByWeek, progressBoardByWeekData] = useMutation(PROGRESS_BOARD_BY_WEEK)
-  const [updateBoardName, updateBoardNameData] = useMutation(UPDATE_BOARD_NAME)
-
-  useEffect(() => {
-    if (!initialDataLoad.loading && initialDataLoad.data) {
-      const { board, lists, todos } = initialDataLoad.data.getTodoBoard
-      setData({ board, lists: getListMap(board, lists), todos: getTodoMap(todos) })
+  useQuery(GET_DATA, {
+    variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' },
+    onCompleted: (data) => {
+      const { board, lists, todos } = data.getTodoBoard
+      setData({
+        board: {
+          ...board,
+          startDate: (board.startDate * 1000)
+        },
+        lists: getListMap(board, lists),
+        todos: getTodoMap(todos)
+      })
+      setLoading(false)
+    },
+    onError: (error) => {
+      setError(error.message)
       setLoading(false)
     }
-    if (!initialDataLoad.loading && initialDataLoad.error) {
-      setError(initialDataLoad.error.message)
-      setLoading(false)
-    }
-  }, [initialDataLoad])
+  })
 
-  useEffect(() => {
-    setLoading(updateTodoListsData.loading || updateTodoData.loading || progressBoardByWeekData.loading || updateBoardNameData.loading)
-
-    if (updateTodoListsData.error) {
-      setError(updateTodoListsData.error.message)
-    }
-
-    if (updateTodoData.error) {
-      setError(updateTodoData.error.message)
-    }
-
-    if (progressBoardByWeekData.error) {
-      setError(progressBoardByWeekData.error.message)
-    }
-
-    if (updateBoardNameData.error) {
-      setError(updateBoardNameData.error.message)
-    }
-
-    if (!progressBoardByWeekData.loading && progressBoardByWeekData.data) {
-      const { board, lists, todos } = progressBoardByWeekData.data.progressBoardByWeek
-      setData({ board, lists: getListMap(board, lists), todos: getTodoMap(todos) })
-    }
-
-  }, [updateTodoData, updateTodoListsData, progressBoardByWeekData, updateBoardNameData])
+  const [updateTodoLists] = useMutation(UPDATE_TODO_LISTS)
+  const [updateTodo] = useMutation(UPDATE_TODO)
+  const [moveBoardForwardByWeek] = useMutation(MOVE_BOARD_FORWARD_BY_WEEK)
+  const [moveBoardBackwardByWeek] = useMutation(MOVE_BOARD_BACKWARD_BY_WEEK)
+  const [updateBoardName] = useMutation(UPDATE_BOARD_NAME)
 
   const state = {
     ...data,
@@ -222,10 +241,18 @@ export function AppProvider({ children }: AppProviderProps) {
             }
           })
           const response = [...lists.entries()].map(([_, todoList]) => todoList)
+          setLoading(true)
           updateTodoLists({
             variables: {todoLists: update},
             optimisticResponse: {
               updateTodoLists: response
+            },
+            onError: (error) => {
+              setError(error.message)
+              setLoading(false)
+            },
+            onCompleted: () => {
+              setLoading(false)
             }
           })
         }
@@ -236,10 +263,18 @@ export function AppProvider({ children }: AppProviderProps) {
           name: todo.name,
           completed
         }
+        setLoading(true)
         updateTodo({
           variables: { todo: update },
           optimisticResponse: {
             updateTodo: update
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted: () => {
+            setLoading(false)
           }
         })
       },
@@ -249,16 +284,65 @@ export function AppProvider({ children }: AppProviderProps) {
           completed: todo.completed,
           name: value
         }
+        setLoading(true)
         updateTodo({
           variables: { todo: update },
           optimisticResponse: {
             updateTodo: update
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted: () => {
+            setLoading(false)
           }
         })
       },
-      progressBoard: () => {
-        progressBoardByWeek({
-          variables: { boardId: state.board.id }
+      moveBoardForward: () => {
+        setLoading(true)
+        moveBoardForwardByWeek({
+          variables: { boardId: state.board.id },
+          fetchPolicy: 'no-cache',
+          onCompleted: (data) => {
+            const { board, lists, todos } = data.moveBoardForwardByWeek
+            setData({
+              board: {
+                ...board,
+                startDate: (board.startDate * 1000)
+              },
+              lists: getListMap(board, lists),
+              todos: getTodoMap(todos)
+            })
+            setLoading(false)
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          }
+        })
+      },
+      moveBoardBackward: () => {
+        setLoading(true)
+        moveBoardBackwardByWeek({
+          variables: { boardId: state.board.id },
+          fetchPolicy: 'no-cache',
+          onCompleted: (data) => {
+            const { board, lists, todos } = data.moveBoardBackwardByWeek
+            setData({
+              board: {
+                ...board,
+                startDate: (board.startDate * 1000)
+              },
+              lists: getListMap(board, lists),
+              todos: getTodoMap(todos)
+            })
+            setLoading(false)
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          }
         })
       },
       setBoardName: (newName: string) => {
@@ -266,15 +350,23 @@ export function AppProvider({ children }: AppProviderProps) {
           id: state.board.id,
           name: newName
         }
+        setLoading(true)
         updateBoardName({
           variables: { boardNameUpdate: update },
           optimisticResponse: {
             updateBoardName: {
               name: newName
             }
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted: () => {
+            setLoading(false)
           }
         })
-      }
+      },
     }
   }
 

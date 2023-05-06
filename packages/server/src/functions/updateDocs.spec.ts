@@ -22,7 +22,7 @@ describe('Updating TodoList with values', () => {
     level: TodoLevel.Day,
     parentList: '',
     childLists: [],
-    startDate: ''
+    startDate: 568965600
   }
 
   const updatedTodoListDoc: TodoListDoc = {

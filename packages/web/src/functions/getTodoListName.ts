@@ -12,7 +12,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
  * @param {TodoLevel} level - Level of the TodoList
  * @returns {string} the text to name to show in the header
  */
-export function getTodoListName(boardStartDate: string, listStartDate: string, level: TodoLevel): TodoListTitle {
+export function getTodoListName(boardStartDate: number, listStartDate: number, level: TodoLevel): TodoListTitle {
   const listDate = new Date(listStartDate)
   if (level === TodoLevel.Day) {
     return {
