@@ -5,7 +5,6 @@ import { DATABASE_ID, TODOLIST_COL_ID, TODO_COL_ID, TODOBOARD_COL_ID } from "../
 
 export async function getTodoBoard(databases: Databases, id: string): Promise<TodoBoardResult> {
   const boardDoc: TodoBoardDoc = await databases.getDocument(DATABASE_ID, TODOBOARD_COL_ID, id)
-  console.log('[getTodoBoard] board doc' , boardDoc)
   const listDocs = await databases.listDocuments(DATABASE_ID, TODOLIST_COL_ID, [Query.equal('$id', [ ...boardDoc.days, ...boardDoc.weeks, ...boardDoc.months])])
   const lists = listDocs.documents.map((doc: TodoListDoc) => {
     return {
@@ -17,11 +16,9 @@ export async function getTodoBoard(databases: Databases, id: string): Promise<To
       startDate: doc.startDate
     }
   })
-  console.log('[getTodoBoard] list Docs total' , listDocs.total)
   const todoIds = listDocs.documents.reduce((todoIds: Set<string>, doc: TodoListDoc) => {
     return new Set([...todoIds, ...doc.todos])
   }, new Set())
-  console.log('[getTodoBoard] todoIds' , [...todoIds])
   if (todoIds.size < 1) {
     return {
        board: {
@@ -44,7 +41,6 @@ export async function getTodoBoard(databases: Databases, id: string): Promise<To
       completed: doc.completed === null ? false : doc.completed
     }
   })
-  console.log('[getTodoBoard] todo Docs total' , todoDocs.total)
   return {
     board: {
       name: boardDoc.name,

@@ -16,3 +16,8 @@ export enum BoardMoveDirection {
   BACK,
   FORWARD
 }
+
+export type GetListMapAndListsToCreateResult = {
+  listMap: Map<number, TodoListDoc>,
+  listsToCreate: number[]
+}

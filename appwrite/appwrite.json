@@ -101,13 +101,6 @@
                     "status": "available",
                     "attributes": ["startDate", "level"],
                     "orders": ["ASC", "ASC"]
-                },
-                {
-                    "key": "order_by_startDate",
-                    "type": "key",
-                    "status": "available",
-                    "attributes": ["startDate"],
-                    "orders": ["ASC"]
                 }
             ]
         },
