@@ -194,7 +194,7 @@ const TEST_DAY_TIMESTAMPS_LEAP_YEAR = [
 
 describe('Getting the start dates of month lists for the next six months', () => {
   it.each([
-    { startDate: '2023-01-12T00:00:00.000Z', expectedTimestamps: MONTH_TIMESTAMPS.slice(0, 6)},
+    { startDate: '2023-01-30T00:00:00.000Z', expectedTimestamps: MONTH_TIMESTAMPS.slice(0, 6)}, // needs to be 30th to check that Feb gets generated as had bug where ordering of date setting 2 marches
     { startDate: '2023-02-12T00:00:00.000Z', expectedTimestamps: MONTH_TIMESTAMPS.slice(1, 7)},
     { startDate: '2023-03-12T00:00:00.000Z', expectedTimestamps: MONTH_TIMESTAMPS.slice(2, 8)},
     { startDate: '2023-04-12T00:00:00.000Z', expectedTimestamps: MONTH_TIMESTAMPS.slice(3, 9)},

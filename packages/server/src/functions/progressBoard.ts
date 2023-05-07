@@ -18,8 +18,8 @@ export const LIST_UPDATE_ERROR = 'Unable to update list'
 export function getNextSixMonths(startDate: Date) {
   return [0, 1, 2, 3, 4, 5].map((monthsToAdd) => {
     const monthDate = new Date(startDate)
-    monthDate.setMonth(monthDate.getMonth() + monthsToAdd)
     monthDate.setDate(1)
+    monthDate.setMonth(monthDate.getMonth() + monthsToAdd)
     return convertDateToUTC(monthDate).getTime() / 1000
   })
 }
@@ -91,7 +91,7 @@ export async function createWeekLists(databases: Databases, { listMap, listsToCr
       TODOLIST_COL_ID,
       [
         Query.equal('level', TodoLevel.Month),
-        Query.equal('startDate', monthForWeekDate.getTime() / 1000)
+        Query.equal('startDate', convertDateToUTC(monthForWeekDate).getTime() / 1000)
       ]
     )
     if (monthSearch.total === 0) throw new Error(FIND_LIST_ERROR)
@@ -104,7 +104,6 @@ export async function createWeekLists(databases: Databases, { listMap, listsToCr
       parentList: month.$id
     }
     const createdWeek = await databases.createDocument(DATABASE_ID, TODOLIST_COL_ID, ID.unique(), weekData)
-    // update month children
     await databases.updateDocument(DATABASE_ID, TODOLIST_COL_ID, month.$id, { childLists: [...month.childLists, createdWeek.$id]})
     return createdWeek
   }))
@@ -128,7 +127,7 @@ export async function createDayLists(databases: Databases, { listMap, listsToCre
   createdLists.forEach((doc: TodoListDoc) => {
     listMap.set(doc.startDate, doc)
   })
-  await databases.updateDocument(DATABASE_ID, TODOLIST_COL_ID, firstWeekId, { childLists: [ ...listMap.keys() ]})
+  await databases.updateDocument(DATABASE_ID, TODOLIST_COL_ID, firstWeekId, { childLists: [ ...listMap.values() ].map((doc: TodoListDoc) => doc.$id)})
   return listMap
 }
 
@@ -150,6 +149,7 @@ export async function processMonths({ databases, boardDoc, newStartDate }: TodoB
     return getUpdatedTodoBoardProgressionArgs({ databases, boardDoc, newStartDate}, existingListSearch.documents, 'months')
   }
   const listMap = await createMonthLists(databases, getListMapAndListsToCreate(existingListSearch, nextListDates))
+  console.log('[processMonths] about to return lists for board', [...listMap.keys()].map(x => convertDateToUTC(new Date(x * 1000)).toISOString()), 'nextListDates was ', nextListDates.map(x => new Date(x * 1000).toISOString()))
   return getUpdatedTodoBoardProgressionArgs({ databases, boardDoc, newStartDate}, [...listMap.values()], 'months')
 }
 
@@ -186,13 +186,13 @@ export async function moveBoardByWeek(databases: Databases, boardId: string, dir
     processMonths,
     processWeeks,
     processDays
-  )({ databases, boardDoc: currentBoardDoc, newStartDate })
+  )({ databases, boardDoc: currentBoardDoc, newStartDate: convertDateToUTC(newStartDate) })
   const newBoardData: Omit<TodoBoard, 'id'> = {
     name: boardDoc.name,
     days: boardDoc.days,
     weeks: boardDoc.weeks,
     months: boardDoc.months,
-    startDate: newStartDate.getTime() / 1000
+    startDate: convertDateToUTC(newStartDate).getTime() / 1000
   }
   const updatedBoard = await databases.updateDocument(DATABASE_ID, TODOBOARD_COL_ID, boardId, newBoardData)
   return getTodoBoard(databases, updatedBoard.$id)
