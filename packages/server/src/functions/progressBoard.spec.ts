@@ -7,7 +7,7 @@ import {
   getListMapAndListsToCreate,
   getNextSevenDays,
   getNextSixMonths,
-  getNextSixWeeks,
+  getNextSixWeeks, LIST_UPDATE_ERROR,
   moveBoardByWeek,
   processDays,
   processMonths,
@@ -381,6 +381,23 @@ describe('Creating week level TodoLists that need to be created', () => {
     } as any
     expect(() => createWeekLists(databases, mapAndIds)).rejects.toThrowError(CREATE_MONTH_ERROR)
   })
+  it('throws an error if there is an issue updating the parent month TodoLost', () => {
+    const databases = {
+      listDocuments: jest.fn().mockImplementation(() => {
+        return Promise.resolve({
+          total: 1,
+          documents: [ mockListDoc ]
+        })
+      }),
+      createDocument: jest.fn().mockImplementation(() => {
+        return Promise.resolve(mockListDoc)
+      }),
+      updateDocument: jest.fn().mockImplementation(() => {
+        throw new Error(LIST_UPDATE_ERROR)
+      })
+    } as any
+    expect(() => createWeekLists(databases, mapAndIds)).rejects.toThrowError(LIST_UPDATE_ERROR)
+  })
   it('creates the week level TodoLists and updates the listMap with the new documents', async () => {
     const databases = {
       listDocuments: jest.fn().mockImplementation(() => {
@@ -394,7 +411,8 @@ describe('Creating week level TodoLists that need to be created', () => {
           ...mockListDoc,
           ...data
         })
-      })
+      }),
+      updateDocument: jest.fn()
     } as any
     const expectedResult = new Map<number, TodoListDoc>([1, 2, 3, 4, 5, 6].map((id) => [id, { ...mockListDoc, startDate: id, level: TodoLevel.Week, todos: [], parentList: monthId }]))
     const result = await createWeekLists(databases, mapAndIds)
@@ -416,6 +434,20 @@ describe('Create day level TodoLists that need to be created', () => {
     } as any
     expect(() => createDayLists(databases, mapAndIds, weekId)).rejects.toThrowError(CREATE_MONTH_ERROR)
   })
+  it('throws an error if there was an issue updating the week TodoList with childList value', () => {
+    const databases = {
+      createDocument: jest.fn().mockImplementation((dbId, colId, docId, data) => {
+        return Promise.resolve({
+          ...mockListDoc,
+          ...data
+        })
+      }),
+      updateDocument: jest.fn().mockImplementation(() => {
+        throw new Error(LIST_UPDATE_ERROR)
+      })
+    } as any
+    expect(() => createDayLists(databases, mapAndIds, weekId)).rejects.toThrowError(LIST_UPDATE_ERROR)
+  })
   it('creates the day level TodoLists and updates the listMap with the new documents', async () => {
     const databases = {
       createDocument: jest.fn().mockImplementation((dbId, colId, docId, data) => {
@@ -423,7 +455,8 @@ describe('Create day level TodoLists that need to be created', () => {
           ...mockListDoc,
           ...data
         })
-      })
+      }),
+      updateDocument: jest.fn()
     } as any
     const expectedResult = new Map<number, TodoListDoc>([1, 2, 3, 4, 5, 6].map((id) => [id, { ...mockListDoc, startDate: id, level: TodoLevel.Day, todos: [], parentList: weekId }]))
     const result = await createDayLists(databases, mapAndIds, weekId)
@@ -607,7 +640,8 @@ describe('Processing the Week level TodoLists for a TodoBoard that has changes s
             ...data,
             $id: `${data.startDate}`
           })
-        })
+        }),
+        updateDocument: jest.fn()
       } as any
     }
     const expectedResult = {
@@ -700,7 +734,8 @@ describe('Processing the Day level TodoLists for a TodoBoard that has changes st
             ...data,
             $id: `${data.startDate}`
           })
-        })
+        }),
+        updateDocument: jest.fn()
       } as any
     }
     const expectedResult = {
