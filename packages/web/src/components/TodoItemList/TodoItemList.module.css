@@ -3,6 +3,20 @@
 }
 
 .todoItemList .listContainer {
-    padding-bottom: 2em;
-    /*background-color: blue;*/
+}
+
+.addButton {
+    width: 100%;
+    padding: 8px;
+    background-color: #191919;
+    border: 0;
+    color: #F82583;
+    border-radius: 8px;
+    opacity: 0;
+}
+
+.addButton:hover {
+    background-color: #F82583;
+    color: #FFFFFF;
+    opacity: 1;
 }

@@ -17,7 +17,7 @@ import {TodoItemListTitle} from "../TodoItemListTitle/TodoItemListTitle";
  * @constructor
  */
 export function TodoItemList({ id, level, currentDate }: TodoItemListProps): JSX.Element | null {
-  const { lists } = useContext(AppContext)
+  const { lists, actions: { addTodoToList }, loading } = useContext(AppContext)
 
   const { isOver, setNodeRef } = useDroppable({
     id: `${level}_${id}`,
@@ -34,6 +34,15 @@ export function TodoItemList({ id, level, currentDate }: TodoItemListProps): JSX
 
   const list = lists.get(id)
 
+  /**
+   * Add Todo to list when add button clicked
+   */
+  function handleAddTodo() {
+    if (!loading) {
+      addTodoToList(id)
+    }
+  }
+
   if (list) {
     const todoIds = list.todos.map((todoId) => `${level}_${todoId}`)
     return (
@@ -44,6 +53,9 @@ export function TodoItemList({ id, level, currentDate }: TodoItemListProps): JSX
             {list.todos.map((todoId: string, index) => <SortableTodoItem id={todoId} key={todoId} level={level} listId={id} index={index} />)}
           </div>
         </SortableContext>
+        <div className={styles.addContainer}>
+          <button className={styles.addButton} onClick={handleAddTodo}>Add Todo</button>
+        </div>
       </div>
     )
   }

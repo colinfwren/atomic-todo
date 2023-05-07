@@ -149,7 +149,6 @@ export async function processMonths({ databases, boardDoc, newStartDate }: TodoB
     return getUpdatedTodoBoardProgressionArgs({ databases, boardDoc, newStartDate}, existingListSearch.documents, 'months')
   }
   const listMap = await createMonthLists(databases, getListMapAndListsToCreate(existingListSearch, nextListDates))
-  console.log('[processMonths] about to return lists for board', [...listMap.keys()].map(x => convertDateToUTC(new Date(x * 1000)).toISOString()), 'nextListDates was ', nextListDates.map(x => new Date(x * 1000).toISOString()))
   return getUpdatedTodoBoardProgressionArgs({ databases, boardDoc, newStartDate}, [...listMap.values()], 'months')
 }
 

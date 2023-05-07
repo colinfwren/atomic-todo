@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useState} from 'react'
+import React, {createContext, useState} from 'react'
 import {AppProviderProps, AppState, FormattedTodoList, IAppContext} from "../types";
 import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
 // @ts-ignore
@@ -24,7 +24,8 @@ const actions = {
   setTodoName: () => {},
   moveBoardForward: () => {},
   moveBoardBackward: () => {},
-  setBoardName: () => {}
+  setBoardName: () => {},
+  addTodoToList: () => {}
 }
 
 const AppContext = createContext<IAppContext>({ ...initialState, actions, loading: false})
@@ -148,6 +149,35 @@ mutation UpdateBoardName($boardNameUpdate: BoardNameUpdateInput!) {
 }
 `
 
+const ADD_TODO = gql`
+mutation addTodo($boardId: ID!, $listId: ID!) {
+  addTodo(boardId: $boardId, listId: $listId) {
+    board {
+      id
+      name
+      days
+      weeks
+      months
+      startDate
+    }
+    lists {
+      id
+      name
+      level
+      todos
+      parentList
+      childLists
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+    }
+  }
+}
+`;
+
 /**
  * Create a map of list ID to list values from an array of lists
  *
@@ -221,6 +251,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const [moveBoardForwardByWeek] = useMutation(MOVE_BOARD_FORWARD_BY_WEEK)
   const [moveBoardBackwardByWeek] = useMutation(MOVE_BOARD_BACKWARD_BY_WEEK)
   const [updateBoardName] = useMutation(UPDATE_BOARD_NAME)
+  const [addTodo] = useMutation(ADD_TODO)
 
   const state = {
     ...data,
@@ -367,6 +398,31 @@ export function AppProvider({ children }: AppProviderProps) {
           }
         })
       },
+      addTodoToList: (listId: string) => {
+        setLoading(true)
+        addTodo({
+          variables: {
+            boardId: state.board.id,
+            listId
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted: (data) => {
+            const { board, lists, todos } = data.addTodo
+            setData({
+              board: {
+                ...board,
+                startDate: (board.startDate * 1000)
+              },
+              lists: getListMap(board, lists),
+              todos: getTodoMap(todos)
+            })
+            setLoading(false)
+          }
+        })
+      }
     }
   }
 

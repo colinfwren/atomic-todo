@@ -62,6 +62,7 @@ export type IAppContext = AppState & {
     moveBoardForward: () => void,
     moveBoardBackward: () => void,
     setBoardName: (name: string) => void,
+    addTodoToList: (listId: string) => void
   },
   loading: boolean
 }

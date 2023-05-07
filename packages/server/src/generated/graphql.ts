@@ -26,6 +26,7 @@ export enum ContactPreferences {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addTodo?: Maybe<TodoBoardResult>;
   moveBoardBackwardByWeek?: Maybe<TodoBoardResult>;
   moveBoardForwardByWeek?: Maybe<TodoBoardResult>;
   updateBoardName?: Maybe<TodoBoard>;
@@ -33,6 +34,12 @@ export type Mutation = {
   updateTodoList?: Maybe<TodoList>;
   updateTodoLists?: Maybe<Array<Maybe<TodoList>>>;
   updateTodos?: Maybe<Array<Maybe<Todo>>>;
+};
+
+
+export type MutationAddTodoArgs = {
+  boardId: Scalars['ID'];
+  listId: Scalars['ID'];
 };
 
 
@@ -247,6 +254,7 @@ export type ResolversParentTypes = {
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationAddTodoArgs, 'boardId' | 'listId'>>;
   moveBoardBackwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardBackwardByWeekArgs, 'boardId'>>;
   moveBoardForwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardForwardByWeekArgs, 'boardId'>>;
   updateBoardName?: Resolver<Maybe<ResolversTypes['TodoBoard']>, ParentType, ContextType, RequireFields<MutationUpdateBoardNameArgs, 'boardNameUpdate'>>;

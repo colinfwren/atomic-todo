@@ -13,8 +13,8 @@ import {
   processMonths,
   processWeeks
 } from "./progressBoard";
-import {BoardMoveDirection, TodoBoardDoc, TodoBoardProgressionArgs, TodoListDoc} from "../types";
-import {docAttrs} from "./testCommon";
+import {BoardMoveDirection, TodoBoardProgressionArgs, TodoListDoc} from "../types";
+import { mockListDoc, mockBoardDoc} from "./testCommon";
 import {TodoLevel} from "../generated/graphql";
 import {asyncPipe} from "./utils";
 import {getTodoBoard} from "./getDocs";
@@ -34,29 +34,9 @@ jest.mock('./getDocs')
 const CREATE_MONTH_ERROR = 'Error creating new month'
 const DOCUMENT_READ_ERROR = 'Error reading doc'
 
-const mockListDoc: TodoListDoc = {
-  ...docAttrs,
-  id: docAttrs.$id,
-  childLists: [],
-  parentList: '',
-  level: TodoLevel.Day,
-  startDate: 1683500400,
-  todos: ['bad_todos']
-}
-
 const mockDatabases = {
   createDocument: jest.fn()
 } as any
-
-const mockBoardDoc: TodoBoardDoc = {
-  ...docAttrs,
-  name: 'Todo Board',
-  startDate: 1680476400,
-  id: docAttrs.$id,
-  days: Array(7).fill(0).map( (x, i) => `day-list-${i}`),
-  weeks: Array(6).fill(0).map( (x, i) => `week-list-${i}`),
-  months: Array(6).fill(0).map( (x, i) => `month-list-${i}`)
-}
 
 const mockStartDate = new Date('2023-04-03T00:00:00.000Z')
 
