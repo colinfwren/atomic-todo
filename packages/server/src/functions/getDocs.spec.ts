@@ -60,7 +60,8 @@ const listDoc: TodoListDoc = {
 const todo: Todo = {
   name: 'Good Todo',
   completed: true,
-  id: docAttrs.$id
+  id: docAttrs.$id,
+  deleted: false
 }
 
 const todoDoc: TodoDoc = {

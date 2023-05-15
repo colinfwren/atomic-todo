@@ -28,6 +28,14 @@
                     "array": false,
                     "size": 256,
                     "default": "Todo"
+                },
+                {
+                    "key": "deleted",
+                    "type": "boolean",
+                    "status": "available",
+                    "required": false,
+                    "array": false,
+                    "default": false
                 }
             ],
             "indexes": []
@@ -101,6 +109,13 @@
                     "status": "available",
                     "attributes": ["startDate", "level"],
                     "orders": ["ASC", "ASC"]
+                },
+                {
+                    "key": "search_by_todoId",
+                    "type": "fulltext",
+                    "status": "available",
+                    "attributes": ["todos"],
+                    "orders": ["ASC"]
                 }
             ]
         },

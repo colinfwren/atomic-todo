@@ -5,6 +5,7 @@ import {readFileSync} from 'fs'
 import {Resolvers} from './generated/graphql'
 import {
   addTodo,
+  deleteTodo,
   getTodoBoard,
   moveBoardByWeek,
   updateTodoBoardDoc,
@@ -36,7 +37,8 @@ const resolvers: Resolvers = {
     moveBoardForwardByWeek: async (_, { boardId }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.FORWARD),
     moveBoardBackwardByWeek: async (_, { boardId }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.BACK),
     updateBoardName: async (_, { boardNameUpdate }) => await updateTodoBoardDoc(databases, boardNameUpdate),
-    addTodo: async (_, { boardId, listId }) => await addTodo(databases, boardId, listId)
+    addTodo: async (_, { boardId, listId }) => await addTodo(databases, boardId, listId),
+    deleteTodo: async (_, { boardId, todoId }) => await deleteTodo(databases, boardId, todoId)
   }
 }
 

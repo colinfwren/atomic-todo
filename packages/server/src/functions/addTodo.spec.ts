@@ -1,33 +1,19 @@
 import {FIND_LIST_ERROR, LIST_UPDATE_ERROR} from "./progressBoard";
 import {addTodo, addToListAndParents} from "./addTodo";
-import {docAttrs, board, mockListDoc} from "./testCommon";
-
-const TODO_ID = 'dead-beef'
-const LIST_ID = 'beef-dead'
-const MONTH_ID = 'month'
-const WEEK_ID = 'week'
-const DAY_ID = 'day'
-const BOARD_ID = 'board'
-
-const MONTH_LIST = {
-  ...mockListDoc,
-  $id: MONTH_ID,
-  id: MONTH_ID
-}
-
-const WEEK_LIST = {
-  ...mockListDoc,
-  $id: WEEK_ID,
-  id: WEEK_ID,
-  parentList: MONTH_ID
-}
-
-const DAY_LIST = {
-  ...mockListDoc,
-  $id: DAY_ID,
-  id: DAY_ID,
-  parentList: WEEK_ID
-}
+import {
+  docAttrs,
+  board,
+  mockListDoc,
+  TODO_ID,
+  LIST_ID,
+  WEEK_LIST,
+  WEEK_ID,
+  MONTH_ID,
+  MONTH_LIST,
+  DAY_ID,
+  DAY_LIST,
+  BOARD_ID
+} from "./testCommon";
 
 describe('Adding Todo to list and it\'s parents', () => {
   it('throws an error if unable to read list document', () => {

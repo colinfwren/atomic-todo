@@ -49,11 +49,12 @@ describe('Updating Todo with values', () => {
   const todoUpdate: TodoUpdateInput = {
     id: 'dead-beef',
     completed: false,
-    name: 'Test Todo'
+    name: 'Test Todo',
   }
 
   const updatedTodo: Todo = {
-    ...todoUpdate
+    ...todoUpdate,
+    deleted: false
   }
 
   const updatedTodoDoc: TodoDoc = {

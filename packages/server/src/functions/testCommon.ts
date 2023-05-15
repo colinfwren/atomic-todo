@@ -1,5 +1,12 @@
 import {TodoBoard, TodoLevel} from "../generated/graphql";
-import {TodoBoardDoc, TodoListDoc} from "../types";
+import {TodoBoardDoc, TodoDoc, TodoListDoc} from "../types";
+
+export const TODO_ID = 'dead-beef'
+export const LIST_ID = 'beef-dead'
+export const MONTH_ID = 'month'
+export const WEEK_ID = 'week'
+export const DAY_ID = 'day'
+export const BOARD_ID = 'board'
 
 export const docAttrs = {
   $id: 'dead-beef',
@@ -31,6 +38,14 @@ export const mockListDoc: TodoListDoc = {
   todos: ['bad_todos']
 }
 
+export const mockTodoDoc: TodoDoc = {
+  ...docAttrs,
+  id: docAttrs.$id,
+  name: 'Foo',
+  completed: false,
+  deleted: false,
+}
+
 export const mockBoardDoc: TodoBoardDoc = {
   ...docAttrs,
   name: 'Todo Board',
@@ -39,4 +54,24 @@ export const mockBoardDoc: TodoBoardDoc = {
   days: Array(7).fill(0).map( (x, i) => `day-list-${i}`),
   weeks: Array(6).fill(0).map( (x, i) => `week-list-${i}`),
   months: Array(6).fill(0).map( (x, i) => `month-list-${i}`)
+}
+
+export const MONTH_LIST = {
+  ...mockListDoc,
+  $id: MONTH_ID,
+  id: MONTH_ID
+}
+
+export const WEEK_LIST = {
+  ...mockListDoc,
+  $id: WEEK_ID,
+  id: WEEK_ID,
+  parentList: MONTH_ID
+}
+
+export const DAY_LIST = {
+  ...mockListDoc,
+  $id: DAY_ID,
+  id: DAY_ID,
+  parentList: WEEK_ID
 }

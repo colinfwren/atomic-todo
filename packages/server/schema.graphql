@@ -13,6 +13,7 @@ type Todo {
   id: ID!
   name: String!
   completed: Boolean!
+  deleted: Boolean!
 }
 
 type TodoList {
@@ -76,4 +77,5 @@ type Mutation {
   updateTodos(todos: [TodoUpdateInput!]!): [Todo]
   updateBoardName(boardNameUpdate: BoardNameUpdateInput!): TodoBoard
   addTodo(boardId: ID!, listId: ID!): TodoBoardResult
+  deleteTodo(boardId: ID!, todoId: ID!): TodoBoardResult
 }

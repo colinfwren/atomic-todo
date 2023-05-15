@@ -38,7 +38,8 @@ export async function getTodoBoard(databases: Databases, id: string): Promise<To
     return {
       id: doc.$id,
       name: doc.name,
-      completed: doc.completed === null ? false : doc.completed
+      completed: doc.completed === null ? false : doc.completed,
+      deleted: doc.deleted
     }
   })
   return {

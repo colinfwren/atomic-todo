@@ -27,6 +27,7 @@ export enum ContactPreferences {
 export type Mutation = {
   __typename?: 'Mutation';
   addTodo?: Maybe<TodoBoardResult>;
+  deleteTodo?: Maybe<TodoBoardResult>;
   moveBoardBackwardByWeek?: Maybe<TodoBoardResult>;
   moveBoardForwardByWeek?: Maybe<TodoBoardResult>;
   updateBoardName?: Maybe<TodoBoard>;
@@ -40,6 +41,12 @@ export type Mutation = {
 export type MutationAddTodoArgs = {
   boardId: Scalars['ID'];
   listId: Scalars['ID'];
+};
+
+
+export type MutationDeleteTodoArgs = {
+  boardId: Scalars['ID'];
+  todoId: Scalars['ID'];
 };
 
 
@@ -90,6 +97,7 @@ export type QueryGetTodoBoardArgs = {
 export type Todo = {
   __typename?: 'Todo';
   completed: Scalars['Boolean'];
+  deleted: Scalars['Boolean'];
   id: Scalars['ID'];
   name: Scalars['String'];
 };
@@ -255,6 +263,7 @@ export type ResolversParentTypes = {
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationAddTodoArgs, 'boardId' | 'listId'>>;
+  deleteTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'boardId' | 'todoId'>>;
   moveBoardBackwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardBackwardByWeekArgs, 'boardId'>>;
   moveBoardForwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardForwardByWeekArgs, 'boardId'>>;
   updateBoardName?: Resolver<Maybe<ResolversTypes['TodoBoard']>, ParentType, ContextType, RequireFields<MutationUpdateBoardNameArgs, 'boardNameUpdate'>>;
@@ -270,6 +279,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {
   completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

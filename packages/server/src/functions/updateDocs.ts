@@ -29,7 +29,8 @@ export async function updateTodoDoc(databases: Databases, todo: TodoUpdateInput)
   return {
     id: doc.$id,
     name: doc.name,
-    completed: doc.completed
+    completed: doc.completed,
+    deleted: doc.deleted,
   }
 }
 
