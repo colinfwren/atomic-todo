@@ -18,6 +18,7 @@ import AppContext from "../../contexts/AppContext";
 import {TodoItem} from "../TodoItem/TodoItem";
 import {createPortal} from "react-dom";
 import {FormattedTodoList} from "../../types";
+import {Modal} from "../Modal/Modal";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -41,12 +42,16 @@ const measuringStrategy = {
  * @returns {JSX.Element} Drag 'n' Drop wrapper over TodoItemBoard
  */
 export function Container(): JSX.Element {
-  const { lists, actions: { setLists }} = useContext(AppContext)
+  const { lists, modal, actions: { setLists }} = useContext(AppContext)
   const [activeId, setActiveId] = useState<UniqueIdentifier|null>(null)
   const [mapReset, setMapReset] = useState<Map<string, FormattedTodoList>|null>(null)
 
   const sensors = useSensors(
-    useSensor(MouseSensor)
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8
+      }
+    })
   );
 
   /**
@@ -221,6 +226,10 @@ export function Container(): JSX.Element {
         <DragOverlay adjustScale={false} dropAnimation={dropAnimation}>
           {activeId ? <TodoItem id={(activeId as string).split('_')[1]} index={0} dragOverlay /> : null}
         </DragOverlay>,
+        document.body
+      )}
+      {modal.visible && createPortal(
+        <Modal />,
         document.body
       )}
     </DndContext>

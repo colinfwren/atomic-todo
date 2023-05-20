@@ -19,37 +19,44 @@ const todos: Todo[] = [
   {
     id: TODO_ID,
     name: 'Set up Apollo Server',
-    completed: true
+    completed: true,
+    deleted: false,
   },
   {
     id: 'c6d2ada5-3f82-42be-bb07-cc03d2b0ff87',
     name: 'Set up Apollo Codegen',
-    completed: true
+    completed: true,
+    deleted: false,
   },
   {
     id: '2d9814bb-efdd-443a-9cc9-ef73c22591d7',
     name: 'Use types generated from GraphQL in TypeScript',
-    completed: true
+    completed: true,
+    deleted: false,
   },
   {
     id: TODO_FOUR_ID,
     name: 'Set up schema for Atomic Todo',
-    completed: true
+    completed: true,
+    deleted: false,
   },
   {
     id: '65bfb1e4-d041-49b5-8fe9-4f6bd2a37682',
     name: 'Create test data for Atomic Todo schema',
-    completed: true
+    completed: true,
+    deleted: false,
   },
   {
     id: TODO_SIX_ID,
     name: 'The same thing we do every friday night',
-    completed: false
+    completed: false,
+    deleted: false,
   },
   {
     id: TODO_SEVEN_ID,
     name: 'Try to take over the world',
-    completed: false
+    completed: false,
+    deleted: false,
   }
 ]
 

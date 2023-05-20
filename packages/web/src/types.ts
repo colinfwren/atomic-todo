@@ -62,9 +62,13 @@ export type IAppContext = AppState & {
     moveBoardForward: () => void,
     moveBoardBackward: () => void,
     setBoardName: (name: string) => void,
-    addTodoToList: (listId: string) => void
+    addTodoToList: (listId: string) => void,
+    showModal: (todoId: string) => void,
+    hideModal: () => void,
+    deleteTodo: (todoId: string) => void,
   },
-  loading: boolean
+  loading: boolean,
+  modal: ModalProps
 }
 
 export type AppProviderProps = {
@@ -92,4 +96,9 @@ export interface ProgressionButtonProps {
 export interface TodoItemListTitleProps {
   list: FormattedTodoList,
   currentDate: Date
+}
+
+export interface ModalProps {
+  visible: boolean,
+  todoId: string|null
 }

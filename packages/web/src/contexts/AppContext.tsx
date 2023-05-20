@@ -1,5 +1,5 @@
 import React, {createContext, useState} from 'react'
-import {AppProviderProps, AppState, FormattedTodoList, IAppContext} from "../types";
+import {AppProviderProps, AppState, FormattedTodoList, IAppContext, ModalProps} from "../types";
 import {todoBoard, emptyTodoMap, emptyTodoListMap} from "../testData";
 // @ts-ignore
 import {
@@ -25,10 +25,13 @@ const actions = {
   moveBoardForward: () => {},
   moveBoardBackward: () => {},
   setBoardName: () => {},
-  addTodoToList: () => {}
+  addTodoToList: () => {},
+  showModal: (todoId: string) => {},
+  hideModal: () => {},
+  deleteTodo: (todoId: string) => {}
 }
 
-const AppContext = createContext<IAppContext>({ ...initialState, actions, loading: false})
+const AppContext = createContext<IAppContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
 const { Provider } = AppContext
 
 const GET_DATA = gql`
@@ -178,6 +181,35 @@ mutation addTodo($boardId: ID!, $listId: ID!) {
 }
 `;
 
+const DELETE_TODO = gql`
+mutation deleteTodo($boardId: ID!, $todoId: ID!) {
+  deleteTodo(boardId: $boardId, todoId: $todoId) {
+    board {
+      id
+      name
+      days
+      weeks
+      months
+      startDate
+    }
+    lists {
+      id
+      name
+      level
+      todos
+      parentList
+      childLists
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+    }
+  }
+}
+`
+
 /**
  * Create a map of list ID to list values from an array of lists
  *
@@ -220,6 +252,7 @@ function getTodoMap(todos: Todo[]): Map<string, Todo> {
 export function AppProvider({ children }: AppProviderProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string|null>(null)
+  const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
   const [data, setData] = useState<AppState>({
     board: initialState.board,
     lists: initialState.lists,
@@ -252,11 +285,13 @@ export function AppProvider({ children }: AppProviderProps) {
   const [moveBoardBackwardByWeek] = useMutation(MOVE_BOARD_BACKWARD_BY_WEEK)
   const [updateBoardName] = useMutation(UPDATE_BOARD_NAME)
   const [addTodo] = useMutation(ADD_TODO)
+  const [deleteTodo] = useMutation(DELETE_TODO)
 
   const state = {
     ...data,
     loading,
-    error
+    error,
+    modal
   }
 
   const value = {
@@ -411,6 +446,37 @@ export function AppProvider({ children }: AppProviderProps) {
           },
           onCompleted: (data) => {
             const { board, lists, todos } = data.addTodo
+            setData({
+              board: {
+                ...board,
+                startDate: (board.startDate * 1000)
+              },
+              lists: getListMap(board, lists),
+              todos: getTodoMap(todos)
+            })
+            setLoading(false)
+          }
+        })
+      },
+      showModal: (todoId: string) => {
+        setModal({ visible: true, todoId})
+      },
+      hideModal: () => {
+        setModal({ visible: false, todoId: null })
+      },
+      deleteTodo: (todoId: string) => {
+        setLoading(true)
+        deleteTodo({
+          variables: {
+            boardId: state.board.id,
+            todoId
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted: (data) => {
+            const { board, lists, todos } = data.deleteTodo
             setData({
               board: {
                 ...board,
