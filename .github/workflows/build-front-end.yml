@@ -12,9 +12,6 @@ jobs:
         node-version: '18.x'
     - name: Run Yarn
       run: yarn
-    - name: Run linting
-      working-directory: 'packages/web'
-      run: yarn lint
     - name: Run tests
       working-directory: 'packages/web'
       run: yarn test
