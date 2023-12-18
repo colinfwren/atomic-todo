@@ -1,0 +1,21 @@
+name: Build Front-end
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+    - name: Run Yarn
+      run: yarn
+    - name: Run linting
+      working-director: 'packages/web'
+      run: yarn lint
+    - name: Run tests
+      working-directory: 'packages/web'
+      run: yarn test
+
