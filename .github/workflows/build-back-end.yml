@@ -2,6 +2,11 @@ name: Build Back-end
 
 on:
   push:
+    branches:
+      - main
+    pull_request:
+      branches:
+        - main
     paths-ignore:
       - "packages/web/**" # don't run if only web has changed
 
