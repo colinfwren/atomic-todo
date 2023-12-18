@@ -3,6 +3,8 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TZ: "UTC"
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -10,10 +12,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
-    - name: Set timezone to UTC
-      uses: szenius/set-timezone@v1.2
-      with:
-        timezoneLinux: "UTC"
     - name: Run Yarn
       run: yarn
     - name: Generate types from server
