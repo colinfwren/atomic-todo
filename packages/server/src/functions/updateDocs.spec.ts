@@ -1,59 +1,27 @@
-import {updateTodoDoc, updateTodoListDoc, updateTodoBoardDoc} from "./updateDocs";
+import {updateTodoDoc, updateTodoBoardDoc} from "./updateDocs";
 import {
   BoardNameUpdateInput,
   Todo,
   TodoBoard,
-  TodoLevel,
-  TodoList,
-  TodoListUpdateInput,
   TodoUpdateInput
 } from "../generated/graphql";
-import {TodoBoardDoc, TodoDoc, TodoListDoc} from "../types";
+import {TodoBoardDoc, TodoDoc} from "../types";
 import {board, docAttrs, errorMessage} from "./testCommon";
-
-describe('Updating TodoList with values', () => {
-  const todoListUpdate: TodoListUpdateInput = {
-    id: 'dead-beef',
-    todos: []
-  }
-
-  const updatedTodoList: TodoList = {
-    ...todoListUpdate,
-    level: TodoLevel.Day,
-    parentList: '',
-    childLists: [],
-    startDate: 568965600
-  }
-
-  const updatedTodoListDoc: TodoListDoc = {
-    ...updatedTodoList,
-    ...docAttrs,
-  }
-
-  it('throws an error if unable to update the TodoList doc', async () => {
-    const mockDatabases = {
-      updateDocument: jest.fn().mockRejectedValue(new Error(errorMessage))
-    } as any
-    await expect(updateTodoListDoc(mockDatabases, todoListUpdate)).rejects.toThrowError(errorMessage)
-  })
-  it('returns the updated TodoList values', async () => {
-    const mockDatabases = {
-      updateDocument: jest.fn().mockResolvedValue(updatedTodoListDoc)
-    } as any
-    const result = await updateTodoListDoc(mockDatabases, todoListUpdate)
-    expect(result).toEqual(updatedTodoList)
-  })
-})
 
 describe('Updating Todo with values', () => {
   const todoUpdate: TodoUpdateInput = {
     id: 'dead-beef',
     completed: false,
     name: 'Test Todo',
+    startDate: 1735516800,
+    endDate: 1736121600,
+    showInYear: true,
+    showInMonth: true,
+    showInWeek: true
   }
 
   const updatedTodo: Todo = {
-    ...todoUpdate,
+    ...todoUpdate as Todo,
     deleted: false
   }
 

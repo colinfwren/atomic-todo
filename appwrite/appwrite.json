@@ -104,33 +104,6 @@
                     "default": "Todos"
                 },
                 {
-                    "key": "days",
-                    "type": "string",
-                    "status": "available",
-                    "required": false,
-                    "array": true,
-                    "size": 36,
-                    "default": null
-                },
-                {
-                    "key": "weeks",
-                    "type": "string",
-                    "status": "available",
-                    "required": false,
-                    "array": true,
-                    "size": 36,
-                    "default": null
-                },
-                {
-                    "key": "months",
-                    "type": "string",
-                    "status": "available",
-                    "required": false,
-                    "array": true,
-                    "size": 36,
-                    "default": null
-                },
-                {
                     "key": "startDate",
                     "type": "integer",
                     "status": "available",

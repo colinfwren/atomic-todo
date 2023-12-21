@@ -14,24 +14,16 @@ type Todo {
   name: String!
   completed: Boolean!
   deleted: Boolean!
-}
-
-type TodoList {
-  id: ID!
-  name: String
-  level: TodoLevel!
-  todos: [ID!]!
-  parentList: ID
-  childLists: [ID!]!
   startDate: Int!
+  endDate: Int!,
+  showInYear: Boolean!
+  showInMonth: Boolean!
+  showInWeek: Boolean!
 }
 
 type TodoBoard {
   id: ID!
   name: String!
-  days: [ID!]!
-  weeks: [ID!]!
-  months: [ID!]!
   startDate: Int!
 }
 
@@ -44,7 +36,6 @@ type User {
 
 type TodoBoardResult {
   board: TodoBoard!,
-  lists: [TodoList!]!
   todos: [Todo!]!
 }
 
@@ -52,15 +43,15 @@ type Query {
   getTodoBoard(id: ID!): TodoBoardResult
 }
 
-input TodoListUpdateInput {
-  id: ID!,
-  todos: [ID!]!
-}
-
 input TodoUpdateInput {
   id: ID!
-  name: String!
-  completed: Boolean!
+  name: String
+  completed: Boolean
+  startDate: Int
+  endDate: Int
+  showInYear: Boolean
+  showInMonth: Boolean
+  showInWeek: Boolean
 }
 
 input BoardNameUpdateInput {
@@ -71,11 +62,9 @@ input BoardNameUpdateInput {
 type Mutation {
   moveBoardForwardByWeek(boardId: ID!): TodoBoardResult
   moveBoardBackwardByWeek(boardId: ID!): TodoBoardResult
-  updateTodoList(todoList: TodoListUpdateInput!): TodoList,
-  updateTodoLists(todoLists: [TodoListUpdateInput!]!): [TodoList],
   updateTodo(todo: TodoUpdateInput!): Todo,
   updateTodos(todos: [TodoUpdateInput!]!): [Todo]
   updateBoardName(boardNameUpdate: BoardNameUpdateInput!): TodoBoard
-  addTodo(boardId: ID!, listId: ID!): TodoBoardResult
+  addTodo(boardId: ID!, startDate: Int!, endDate: Int!): TodoBoardResult
   deleteTodo(boardId: ID!, todoId: ID!): TodoBoardResult
 }
