@@ -2,26 +2,11 @@ import {
   BoardNameUpdateInput,
   Todo,
   TodoBoard,
-  TodoList,
-  TodoListUpdateInput,
   TodoUpdateInput
 } from "../generated/graphql";
 import {Databases} from "node-appwrite";
-import {TodoBoardDoc, TodoDoc, TodoListDoc} from "../types";
-import { DATABASE_ID, TODOLIST_COL_ID, TODO_COL_ID, TODOBOARD_COL_ID } from "../consts";
-
-export async function updateTodoListDoc(databases: Databases, todoList: TodoListUpdateInput): Promise<TodoList> {
-  const { id, ...values } = todoList
-  const doc: TodoListDoc = await databases.updateDocument(DATABASE_ID, TODOLIST_COL_ID, id, values)
-  return {
-    id: doc.$id,
-    level: doc.level,
-    todos: doc.todos,
-    parentList: doc.parentList,
-    childLists: doc.childLists,
-    startDate: doc.startDate
-  }
-}
+import {TodoBoardDoc, TodoDoc} from "../types";
+import { DATABASE_ID, TODO_COL_ID, TODOBOARD_COL_ID } from "../consts";
 
 export async function updateTodoDoc(databases: Databases, todo: TodoUpdateInput): Promise<Todo> {
   const { id, ...values } = todo
@@ -31,6 +16,11 @@ export async function updateTodoDoc(databases: Databases, todo: TodoUpdateInput)
     name: doc.name,
     completed: doc.completed,
     deleted: doc.deleted,
+    startDate: doc.startDate,
+    endDate: doc.endDate,
+    showInYear: doc.showInYear,
+    showInMonth: doc.showInMonth,
+    showInWeek: doc.showInWeek
   }
 }
 
@@ -39,9 +29,6 @@ export async function updateTodoBoardDoc(databases: Databases, boardNameUpdate: 
   const boardDoc: TodoBoardDoc = await databases.updateDocument(DATABASE_ID, TODOBOARD_COL_ID, id, values)
   return {
     name: boardDoc.name,
-    days: boardDoc.days,
-    weeks: boardDoc.weeks,
-    months: boardDoc.months,
     id: boardDoc.$id,
     startDate: boardDoc.startDate
   }

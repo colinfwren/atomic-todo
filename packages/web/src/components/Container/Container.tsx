@@ -11,13 +11,11 @@ import {
   useSensors,
   useSensor, DragOverEvent, Over, Active, DragCancelEvent
 } from "@dnd-kit/core";
-import {updateTodoListMap} from "../../functions/listUpdates";
 import {TodoItemBoard} from "../TodoItemBoard/TodoItemBoard";
 import React, {useContext, useState} from "react";
 import AppContext from "../../contexts/AppContext";
 import {TodoItem} from "../TodoItem/TodoItem";
 import {createPortal} from "react-dom";
-import {FormattedTodoList} from "../../types";
 import {Modal} from "../Modal/Modal";
 
 const dropAnimation: DropAnimation = {
@@ -42,9 +40,8 @@ const measuringStrategy = {
  * @returns {JSX.Element} Drag 'n' Drop wrapper over TodoItemBoard
  */
 export function Container(): JSX.Element {
-  const { lists, modal, actions: { setLists }} = useContext(AppContext)
+  const { modal } = useContext(AppContext)
   const [activeId, setActiveId] = useState<UniqueIdentifier|null>(null)
-  const [mapReset, setMapReset] = useState<Map<string, FormattedTodoList>|null>(null)
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -60,9 +57,7 @@ export function Container(): JSX.Element {
    * @param {DragEndEvent} event - The drag end event
    */
   function handleDragEnd(event: DragEndEvent) {
-    setLists(lists)
     setActiveId(null)
-    setMapReset(null)
   }
 
   /**
@@ -74,7 +69,6 @@ export function Container(): JSX.Element {
     if (event.active.data.current) {
       const { level, todoId } = event.active.data.current
       setActiveId(`${level}_${todoId}`)
-      setMapReset(lists)
     }
   }
 
@@ -84,9 +78,6 @@ export function Container(): JSX.Element {
    * @param {DragCancelEvent} event - The drag cancel event
    */
   function handleDragCancel(event: DragCancelEvent) {
-    if (mapReset !== null) {
-      setLists(mapReset, false)
-    }
   }
 
   /**
@@ -163,29 +154,28 @@ export function Container(): JSX.Element {
   /**
    * Calculate the new index of the active item in the list of todos in the list being dragged over
    *
-   * @param {Map<string, FormattedTodoList>} lists - Map of lists
    * @param {Over} over - The Todo the item is being dragged over
    * @param {Active} active - The Todo item being dragged
    * @returns {number} - The index the active todo would be in the list being dragged over
    */
-  function getIndexForDraggedItem(lists: Map<string, FormattedTodoList>, over: Over, active: Active): number {
-    const overId = over?.data.current?.todoId as string
-    const overContainer = over?.data.current?.listId
-    const overItems = lists.get(overContainer)!.todos
-    const overIndex = overItems.indexOf(overId)
-    if (lists.has(overId)) {
-      return overItems.length + 1;
-    } else {
-      const isBelowOverItem =
-        over &&
-        active.rect.current.translated &&
-        active.rect.current.translated.top >
-          over.rect.top + over.rect.height;
-
-      const modifier = isBelowOverItem ? 1 : 0;
-
-      return overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-    }
+  function getIndexForDraggedItem(over: Over, active: Active) {
+    // const overId = over?.data.current?.todoId as string
+    // const overContainer = over?.data.current?.listId
+    // const overItems = lists.get(overContainer)!.todos
+    // const overIndex = overItems.indexOf(overId)
+    // if (lists.has(overId)) {
+    //   return overItems.length + 1;
+    // } else {
+    //   const isBelowOverItem =
+    //     over &&
+    //     active.rect.current.translated &&
+    //     active.rect.current.translated.top >
+    //       over.rect.top + over.rect.height;
+    //
+    //   const modifier = isBelowOverItem ? 1 : 0;
+    //
+    //   return overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+    // }
   }
 
   /**
@@ -194,19 +184,19 @@ export function Container(): JSX.Element {
    * @param {DragOverEvent} event - The drag over event
    */
   function handleDragOver({ active, over }: DragOverEvent) {
-    const overId = over?.id
-    if (overId == null) return
-
-    const overContainer = over?.data.current?.listId
-    const activeContainer = active.data.current?.listId
-
-    if (!overContainer || !activeContainer) return
-
-    const activeId = active.data.current?.todoId as string
-    const newIndex = getIndexForDraggedItem(lists, over, active)
-
-   const updatedListMap = updateTodoListMap(activeContainer, overContainer, activeId, lists, newIndex)
-   setLists(updatedListMap, false)
+   //  const overId = over?.id
+   //  if (overId == null) return
+   //
+   //  const overContainer = over?.data.current?.listId
+   //  const activeContainer = active.data.current?.listId
+   //
+   //  if (!overContainer || !activeContainer) return
+   //
+   //  const activeId = active.data.current?.todoId as string
+   //  const newIndex = getIndexForDraggedItem(lists, over, active)
+   //
+   // const updatedListMap = updateTodoListMap(activeContainer, overContainer, activeId, lists, newIndex)
+   // setLists(updatedListMap, false)
   }
 
   return(

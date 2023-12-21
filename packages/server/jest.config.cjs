@@ -2,5 +2,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testPathIgnorePatterns: ['dist']
+  testPathIgnorePatterns: ['dist'],
+  globalSetup: './global-setup.cjs'
 };

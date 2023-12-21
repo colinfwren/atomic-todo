@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, forwardRef, Ref, memo, FocusEventHandler, useRef} from 'react'
+import React, {useContext, useEffect, forwardRef, Ref, memo, useRef} from 'react'
 import styles from "./TodoItem.module.css"
 import { TodoItemProps } from "../../types";
 import AppContext from "../../contexts/AppContext";
@@ -44,7 +44,7 @@ function Todo({ id, index, handleProps, listeners, transform, transition, dragOv
 
   const { todos, actions } = useContext(AppContext)
   const value = useRef('')
-  const todo = todos.get(id)
+  const todo = todos.find((todo) => todo.id === id)
 
   /**
    * Callback for when checkbox is clicked
