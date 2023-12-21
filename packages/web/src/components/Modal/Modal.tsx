@@ -12,7 +12,7 @@ export function Modal() {
   const { todos, modal: { todoId }, actions: { hideModal, deleteTodo }} = useContext(AppContext)
   const scrimRef = useRef<HTMLDivElement>(null)
 
-  const todo = todos.get(todoId as string)
+  const todo = todos.find((todo) => todo.id === todoId)
 
   /**
    * Close the modal

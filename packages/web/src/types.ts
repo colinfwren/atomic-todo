@@ -1,4 +1,4 @@
-import {Todo, TodoBoard, TodoLevel, TodoList} from '@atomic-todo/server/src/generated/graphql'
+import {Todo, TodoBoard, TodoLevel} from '@atomic-todo/server/src/generated/graphql'
 import React, {MouseEventHandler} from "react";
 import {DraggableSyntheticListeners} from "@dnd-kit/core";
 import type {Transform} from '@dnd-kit/utilities';
@@ -24,8 +24,9 @@ export type TodoListMapUpdateData = {
 
 export type SortableTodoItemProps = {
   id: string
-  level: TodoLevel
-  listId: string
+  granularity: TodoLevel
+  listStartDate: Date,
+  listEndDate: Date,
   index: number,
 }
 
@@ -44,27 +45,27 @@ export type TodoItemProps = {
 
 export type TodoItemListProps = {
   id: string
-  level: TodoLevel,
-  currentDate: Date
+  granularity: TodoLevel,
+  currentDate: Date,
+  listStartDate: Date,
+  listPeriodDelta: number
 }
 
 export type AppState = {
   board: TodoBoard
-  lists: Map<string, FormattedTodoList>
-  todos: Map<string, Todo>
+  todos: Todo[]
 }
 
 export type IAppContext = AppState & {
   actions: {
-    setLists: (lists: Map<string, FormattedTodoList>, sendToServer?: boolean) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
     moveBoardForward: () => void,
     moveBoardBackward: () => void,
     setBoardName: (name: string) => void,
-    addTodoToList: (listId: string) => void,
     showModal: (todoId: string) => void,
     hideModal: () => void,
+    addTodo: (listStartDate: Date, listEndDate: Date) => void,
     deleteTodo: (todoId: string) => void,
   },
   loading: boolean,
@@ -80,8 +81,6 @@ export type TodoListTitle = {
   date: string,
 }
 
-export type FormattedTodoList = TodoList & { date: string }
-
 export enum ProgressButtonDirection {
   FORWARD,
   BACKWARD
@@ -94,8 +93,10 @@ export interface ProgressionButtonProps {
 }
 
 export interface TodoItemListTitleProps {
-  list: FormattedTodoList,
+  granularity: TodoLevel
+  listStartDate: Date
   currentDate: Date
+  listPeriodDelta: number
 }
 
 export interface ModalProps {
