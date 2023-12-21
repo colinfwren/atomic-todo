@@ -26,8 +26,5 @@
     "compile": "npm run generate && tsc",
     "start": "npm run compile && node --experimental-modules --es-module-specifier-resolution=node ./dist/src/index.js",
     "test": "jest"
-  },
-  "jest": {
-    "globalSetup": "./global-setup.js"
   }
 }
