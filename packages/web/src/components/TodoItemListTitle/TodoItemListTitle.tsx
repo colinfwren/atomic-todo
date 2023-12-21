@@ -2,6 +2,7 @@ import styles from "./TodoItemListTitle.module.css";
 import React from "react";
 import {TodoItemListTitleProps} from "../../types";
 import {TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
+import { getTodoListTitleDate } from "../../functions/getTodoListTitleDate";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -39,7 +40,7 @@ function getClassNames(listStartDate: Date, currentDate: Date, granularity: Todo
 }
 
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 
 /**
  * Create a string that represents the delta at the granularity the list represents
@@ -59,22 +60,7 @@ function getListName(listStartDate: Date, granularity: TodoLevel, delta: number)
   }
 }
 
-/**
- * Create a string that represents the date of the list's start date
- *
- * @param {TodoLevel} granularity - The granularity of time the list represents
- * @param {Date} listStartDate - The date the list starts on
- */
-function getListDate(listStartDate: Date, granularity: TodoLevel): string {
-  switch (granularity) {
-    case TodoLevel.Day:
-    case TodoLevel.Week:
-       return `${String(listStartDate.getDate()).padStart(2, '0')}/${String(listStartDate.getMonth() + 1).padStart(2, '0')}`
-    case TodoLevel.Month:
-      return monthNames[listStartDate.getMonth()]
-  }
 
-}
 
 /**
  * Render the Todo Item List's title
@@ -89,7 +75,7 @@ function getListDate(listStartDate: Date, granularity: TodoLevel): string {
 export function TodoItemListTitle({ listStartDate, granularity, currentDate, listPeriodDelta }: TodoItemListTitleProps): JSX.Element {
   const classNames = getClassNames(listStartDate, currentDate, granularity)
   const listName = getListName(listStartDate, granularity, listPeriodDelta)
-  const listDate = getListDate(listStartDate, granularity)
+  const listDate = getTodoListTitleDate(listStartDate, granularity)
   return (
     <div className={classNames}>
       <h3>{listName}</h3>
