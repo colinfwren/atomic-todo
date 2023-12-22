@@ -60,6 +60,7 @@ export type IAppContext = AppState & {
   actions: {
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
+    setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => void,
     moveBoardForward: () => void,
     moveBoardBackward: () => void,
     setBoardName: (name: string) => void,

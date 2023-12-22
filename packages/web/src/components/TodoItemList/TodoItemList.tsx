@@ -48,8 +48,10 @@ export function TodoItemList({ id, granularity, currentDate, listStartDate, list
   const { isOver, setNodeRef } = useDroppable({
     id: `${granularity}_${id}`,
     data: {
+      type: 'list',
       listStartDate,
-      listEndDate
+      listEndDate,
+      granularity
     }
   })
 
@@ -67,7 +69,7 @@ export function TodoItemList({ id, granularity, currentDate, listStartDate, list
     }
   }
 
-  const todoItems = todos.filter(({ startDate, endDate, showInWeek, showInMonth }) => {
+  const todoItems = todos.filter(({ startDate, endDate, showInWeek, showInMonth, name }) => {
     const todoStartDate = new Date(startDate * 1000)
     const todoEndDate = new Date(endDate * 1000)
     switch(granularity) {
@@ -76,7 +78,7 @@ export function TodoItemList({ id, granularity, currentDate, listStartDate, list
       case TodoLevel.Week:
         return showInWeek && todoStartDate >= listStartDate && todoEndDate <= listEndDate
       case TodoLevel.Month:
-        return showInMonth && todoStartDate >= listStartDate && todoStartDate <= listEndDate
+        return showInMonth && todoStartDate >= listStartDate && todoEndDate <= listEndDate
     }
   })
 

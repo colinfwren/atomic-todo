@@ -3,6 +3,7 @@
 }
 
 .todoItemList .listContainer {
+    min-height: 3rem;
 }
 
 .addButton {
