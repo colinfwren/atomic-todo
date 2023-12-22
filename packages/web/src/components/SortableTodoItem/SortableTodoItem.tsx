@@ -30,6 +30,7 @@ export function SortableTodoItem({ id, granularity, listStartDate, listEndDate, 
   } = useSortable({
     id: itemId,
     data: {
+      type: 'todo',
       granularity,
       listStartDate,
       listEndDate,

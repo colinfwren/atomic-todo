@@ -47,6 +47,7 @@ export function getStartDateForList(boardStartDate: Date, granularity: TodoLevel
       listStartDate.setDate(listStartDate.getDate() + (delta * 7))
       break;
     case TodoLevel.Month:
+      listStartDate.setDate(1)
       listStartDate.setMonth(listStartDate.getMonth() + delta)
       break;
   }

@@ -2,13 +2,8 @@ import React, {createContext, useState} from 'react'
 import {AppProviderProps, AppState, IAppContext, ModalProps} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
-import {
-  Todo,
-  TodoLevel,
-  TodoBoard,
-  BoardNameUpdateInput
-} from "@atomic-todo/server/dist/src/generated/graphql";
-import {useQuery, gql, useMutation} from "@apollo/client";
+import {BoardNameUpdateInput, Todo, TodoBoard, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
+import {gql, useMutation, useQuery} from "@apollo/client";
 
 const initialState: AppState = {
   board: todoBoard,
@@ -19,6 +14,7 @@ const actions = {
   setLists: () => {},
   setTodoCompleted: () => {},
   setTodoName: () => {},
+  setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => {},
   moveBoardForward: () => {},
   moveBoardBackward: () => {},
   setBoardName: () => {},
@@ -165,6 +161,22 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
 `
 
 /**
+ * Get the appropriate flag to update on the Todo for the granularity of the list it moved to
+ *
+ * @param {TodoLevel} granularity - The list granularity
+ */
+function getGranularityKey(granularity: TodoLevel): string {
+  switch (granularity) {
+    case TodoLevel.Month:
+      return 'showInMonth'
+    case TodoLevel.Week:
+      return 'showInWeek'
+    default:
+      return 'showInYear'
+  }
+}
+
+/**
  * Provider for the AppContext
  *
  * @param {AppProviderProps} props - Props passed into context
@@ -225,13 +237,25 @@ export function AppProvider({ children }: AppProviderProps) {
         updateTodo({
           variables: { todo: update },
           optimisticResponse: {
-            updateTodo: update
+            updateTodo: {
+              ...todo,
+              ...update
+            }
           },
           onError: (error) => {
             setError(error.message)
             setLoading(false)
           },
-          onCompleted: () => {
+          onCompleted: ({ updateTodo }) => {
+            setData((state) => ({
+              ...state,
+              todos: state.todos.map((todo) => {
+                if (todo.id === updateTodo.id) {
+                  return updateTodo
+                }
+                return todo
+              })
+            }))
             setLoading(false)
           }
         })
@@ -246,13 +270,61 @@ export function AppProvider({ children }: AppProviderProps) {
         updateTodo({
           variables: { todo: update },
           optimisticResponse: {
-            updateTodo: update
+            updateTodo: {
+              ...todo,
+              ...update
+            }
           },
           onError: (error) => {
             setError(error.message)
             setLoading(false)
           },
-          onCompleted: () => {
+          onCompleted: ({ updateTodo }) => {
+            setData((state) => ({
+              ...state,
+              todos: state.todos.map((todo) => {
+                if (todo.id === updateTodo.id) {
+                  return updateTodo
+                }
+                return todo
+              })
+            }))
+            setLoading(false)
+          }
+        })
+      },
+      setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => {
+        const granularityKey = getGranularityKey(granularity)
+        const update = {
+          id: todo.id,
+          startDate: startDate.getTime() / 1000,
+          endDate: endDate.getTime() / 1000,
+          [granularityKey]: true
+        }
+        console.log('about to set date span', update, todo)
+        setLoading(true)
+        updateTodo({
+          variables: { todo: update },
+          optimisticResponse: {
+            updateTodo: {
+              ...todo,
+              ...update,
+            }
+          },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted: ({ updateTodo }) => {
+            setData((state) => ({
+              ...state,
+              todos: state.todos.map((todo) => {
+                if (todo.id === updateTodo.id) {
+                  return updateTodo
+                }
+                return todo
+              })
+            }))
             setLoading(false)
           }
         })
@@ -358,8 +430,8 @@ export function AppProvider({ children }: AppProviderProps) {
         addTodo({
           variables: {
             boardId: state.board.id,
-            listStartDate: listStartDate.getTime() / 1000,
-            listEndDate: listEndDate.getTime() / 1000
+            startDate: listStartDate.getTime() / 1000,
+            endDate: listEndDate.getTime() / 1000
           },
           onError: (error) => {
             setError(error.message)
