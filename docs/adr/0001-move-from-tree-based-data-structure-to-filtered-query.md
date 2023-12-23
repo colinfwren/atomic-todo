@@ -40,12 +40,13 @@ classDiagram
 ```
 
 Which was turned into a tree in the front-end like:
+
 ```mermaid
 ---
 title: Tree structure used in the front-end
 ---
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-flowchart
+graph TB
     todo1[<em>Todo:</em> A todo that appears in a month 1 only]
     todo2[<em>Todo:</em> A todo that appears in month 1 and week 2 lists]
     todo3[<em>Todo:</em> A todo that appears in month 1, week 1 and day 2 lists]
@@ -67,8 +68,8 @@ flowchart
     monthTodoList1["Month 1"]
     monthTodoList2["Month 2"]
     
-    todos[<code>todos: Map&lt;string, Todo&gt;</code>]
-    lists[<code>lists: Map&lt;string, TodoList&gt;</code>]
+    todos[<code>todos:</code> <code>Map</code> of <code>string</code> and <code>Todo</code>]
+    lists[<code>lists:</code> <code>Map</code> of <code>string</code> and <code>TodoList</code>]
     board[<code>board: TodoBoard</code>]
     
     subgraph appState.todos
@@ -180,10 +181,10 @@ flowchart
     monthTodoList1["Month 1"]
     monthTodoList2["Month 2"]
     
-    todos[<code>todos: Todo&lsqb;&rsqb;</code>]
-    monthRow[<code>monthRow: TodoList&lsqb;&rsqb;</code>]
-    weekRow[<code>weekRow: TodoList&lsqb;&rsqb;</code>]
-    dayRow[<code>dayRow: TodoList&lsqb;&rsqb;</code>]
+    todos["`todos: Todo[]`"]
+    monthRow["`monthRow: TodoList[]`"]
+    weekRow["`weekRow: TodoList[]`"]
+    dayRow["`dayRow: TodoList[]`"]
     
     todos-->todo1
     todos-->todo2
