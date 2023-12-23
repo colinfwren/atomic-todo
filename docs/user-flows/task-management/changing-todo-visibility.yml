@@ -1,0 +1,52 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user changes visibility of Todo in TodoList granularity
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Change visibility of Todo in TodoList granularity
+          steps:
+            - name: Change visibility of Todo in TodoList granularity
+              system-actions:
+                - name: Call API to update Todo
+                  services:
+                    - front-end
+                    - back-end
+                - name: Update Todo
+                  services:
+                    - appwrite
+                - name: Confirm Todo updated
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Update TodoBoard with new TodoBoard data
+                  services:
+                    - front-end
+  - title: User with timed-out session attempts to change visibility of Todo in TodoList granularity
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Change visibility of Todo in TodoList granularity
+          steps:
+            - name: Change visibility of Todo in TodoList granularity
+              system-actions:
+                - name: Call API to update Todo
+                  services:
+                    - front-end
+                    - back-end
+                - name: Reject Todo update
+                  services:
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Redirect user to login form
+                  services:
+                    - front-end
+                - name: Show user message telling them their session expired
+                  services:
+                    - front-end

@@ -1,0 +1,52 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user renames TodoBoard
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Rename TodoBoard
+          steps:
+            - name: Rename TodoBoard
+              system-actions:
+                - name: Call API to rename TodoBoard
+                  services:
+                    - front-end
+                    - back-end
+                - name: Update TodoBoard
+                  services:
+                    - appwrite
+                - name: Confirm TodoBoard updated
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Update TodoBoard data
+                  services:
+                    - front-end
+  - title: User with timed-out session attempts to rename TodoBoard
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Rename TodoBoard
+          steps:
+            - name: Rename TodoBoard
+              system-actions:
+                - name: Call API to rename TodoBoard
+                  services:
+                    - front-end
+                    - back-end
+                - name: Reject update of TodoBoard
+                  services:
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Redirect user to login form
+                  services:
+                    - front-end
+                - name: Show user message telling them their session expired
+                  services:
+                    - front-end

@@ -1,0 +1,65 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: User with an account logs into account
+    scenario-type: success
+    actor: User with an account
+    steps:
+      - page: Homepage
+        user-action:
+          name: Log into account
+          steps:
+            - name: Open login form
+            - name: Fill out account details
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - front-end
+            - name: Submit login form
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - front-end
+                - name: Call API to authenticate user
+                  services:
+                    - front-end
+                    - back-end
+                - name: Authenticate user
+                  services:
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Redirect user to dashboard
+                  services:
+                    - front-end
+  - title: User without an account attempts to log into account
+    scenario-type: failure
+    actor: User without an account
+    steps:
+      - page: Homepage
+        user-action:
+          name: Log into account
+          steps:
+            - name: Open login form
+            - name: Fill out account details
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - front-end
+            - name: Submit login form
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - front-end
+                - name: Call API to authenticate user
+                  services:
+                    - front-end
+                    - back-end
+                - name: Reject authentication
+                  services:
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Display error message
+                  services:
+                    - front-end

@@ -1,0 +1,52 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user creates a new Todo in TodoList
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Create new Todo in TodoList
+          steps:
+            - name: Create new Todo in TodoList
+              system-actions:
+                - name: Call API to create new Todo
+                  services:
+                    - front-end
+                    - back-end
+                - name: Create new Todo
+                  services:
+                    - appwrite
+                - name: Confirm Todo created
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Update TodoBoard with new TodoBoard data
+                  services:
+                    - front-end
+  - title: User with timed-out session attempts to create a Todo in TodoList
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Create new Todo in TodoList
+          steps:
+            - name: Create new Todo in TodoList
+              system-actions:
+                - name: Call API to create new Todo
+                  services:
+                    - front-end
+                    - back-end
+                - name: Reject creation of Todo
+                  services:
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Redirect user to login form
+                  services:
+                    - front-end
+                - name: Show user message telling them their session expired
+                  services:
+                    - front-end

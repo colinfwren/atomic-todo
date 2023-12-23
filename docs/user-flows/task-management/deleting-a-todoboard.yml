@@ -1,0 +1,73 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user deletes a TodoBoard that belongs to them
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Delete TodoBoard
+          steps:
+            - name: Delete TodoBoard
+              system-actions:
+                - name: Confirm that user wants to delete TodoBoard
+                  services:
+                    - front-end
+                - name: Call API to delete TodoBoard
+                  services:
+                    - front-end
+                    - back-end
+                - name: Delete TodoBoard
+                  services:
+                    - appwrite
+                - name: Confirm TodoBoard deleted
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Update Dashboard data
+                  services:
+                    - front-end
+  - title: Authenticated user attempts to delete a TodoBoard that doesn't belong to them
+    scenario-type: failure
+    actor: Authenticated user
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Delete TodoBoard
+          steps:
+            - name: Delete TodoBoard
+              system-actions:
+                - - name: Conform that user wants to delete TodoBoard
+                    services:
+                      - front-end
+                - name: Call API to delete TodoBoard
+                  services:
+                    - front-end
+                    - back-end
+                - name: Reject deletion of TodoBoard data
+                  services:
+                    - appwrite
+                    - back-end
+                    - front-end
+                - name: Display error message
+                    - front-end
+  - title: User with timed-out session attempts to delete a TodoBoard that belongs to them
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Delete TodoBoard
+          steps:
+            - name: Delete TodoBoard
+              system-actions:
+                - name: Check user's session is valid
+                  services:
+                    - front-end
+                - name: Redirect user to login form
+                  services:
+                    - front-end
+                - name: Show user message telling them their session expired
+                  services:
+                    - front-end
