@@ -13,18 +13,19 @@ user-flows:
               system-actions:
                 - name: Call API to rename TodoBoard
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Update TodoBoard
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm TodoBoard updated
                     - appwrite
-                    - back-end
-                    - front-end
-                - name: Update TodoBoard data
+                    - backend
+                    - frontend
+                - name: Update TodoBoard with new TodoBoard data
                   services:
-                    - front-end
+                    - frontend
   - title: User with timed-out session attempts to rename TodoBoard
     scenario-type: failure
     actor: User with timed-out session
@@ -33,20 +34,25 @@ user-flows:
         user-action:
           name: Rename TodoBoard
           steps:
-            - name: Rename TodoBoard
+            - name: Reject renaming TodoBoard
               system-actions:
                 - name: Call API to rename TodoBoard
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
+                - name: Update TodoBoard
+                  services:
+                    - backend
+                    - appwrite
                 - name: Reject update of TodoBoard
                   services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Redirect user to login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Show user message telling them their session expired
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage

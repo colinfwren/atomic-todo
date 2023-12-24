@@ -5,7 +5,7 @@ user-flows:
     scenario-type: success
     actor: User with an account
     steps:
-      - page: Account Settings
+      - page: AccountSettings
         user-action:
           name: Delete account
           steps:
@@ -13,18 +13,20 @@ user-flows:
               system-actions:
                 - name: Ask user to confirm they want to delete their account
                   services:
-                    - front-end
+                    - frontend
                 - name: Call API to delete user's account
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Delete user's account and de-authenticate them
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm account deletion
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Redirect user to Homepage
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage

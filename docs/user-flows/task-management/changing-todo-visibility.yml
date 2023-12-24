@@ -13,18 +13,19 @@ user-flows:
               system-actions:
                 - name: Call API to update Todo
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Update Todo
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm Todo updated
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Update TodoBoard with new TodoBoard data
                   services:
-                    - front-end
+                    - frontend
   - title: User with timed-out session attempts to change visibility of Todo in TodoList granularity
     scenario-type: failure
     actor: User with timed-out session
@@ -33,20 +34,21 @@ user-flows:
         user-action:
           name: Change visibility of Todo in TodoList granularity
           steps:
-            - name: Change visibility of Todo in TodoList granularity
+            - name: Reject changing visibility of Todo in TodoList granularity
               system-actions:
                 - name: Call API to update Todo
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Reject Todo update
                   services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Redirect user to login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Show user message telling them their session expired
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage

@@ -14,24 +14,26 @@ user-flows:
               system-actions:
                 - name: Validate login form
                   services:
-                    - front-end
+                    - frontend
             - name: Submit login form
               system-actions:
                 - name: Validate login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Call API to authenticate user
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Authenticate user
                   services:
+                    - backend
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Redirect user to dashboard
                   services:
-                    - front-end
+                    - frontend
+      - page: Dashboard
   - title: User without an account attempts to log into account
     scenario-type: failure
     actor: User without an account
@@ -45,21 +47,25 @@ user-flows:
               system-actions:
                 - name: Validate login form
                   services:
-                    - front-end
+                    - frontend
             - name: Submit login form
               system-actions:
                 - name: Validate login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Call API to authenticate user
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
+                - name: Authenticate user
+                  services:
+                    - backend
+                    - appwrite
                 - name: Reject authentication
                   services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Display error message
                   services:
-                    - front-end
+                    - frontend

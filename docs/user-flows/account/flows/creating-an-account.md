@@ -11,6 +11,7 @@ Persona: [User without an account](../personas/user-without-an-account.md)
 title: User without an account creates an account
 ---
 stateDiagram-v2
+    direction LR
     [*] --> Homepage: Sign up for account
     Homepage --> Dashboard: Start onboarding
     Dashboard --> TodoBoard: Complete onboarding
@@ -57,21 +58,21 @@ title: Sign up for account
 ---
 sequenceDiagram
     actor user
-    participant front-end
-    participant back-end
+    participant frontend
+    participant backend
     participant appwrite
 
-    user-->>front-end: Open sign up form
-    user-->>front-end: fill out account details
-    front-end->>front-end: Validate sign in form
-    user-->>front-end: Submit sign up form
-    front-end->>front-end: Validate sign in form
-    front-end->>back-end: Call API to create account
-    back-end->>appwrite: Check account can be created
+    user-->>frontend: Open sign up form
+    user-->>frontend: fill out account details
+    frontend->>frontend: Validate sign in form
+    user-->>frontend: Submit sign up form
+    frontend->>frontend: Validate sign in form
+    frontend->>backend: Call API to create account
+    backend->>appwrite: Check account can be created
     appwrite->>appwrite: Create account
-    appwrite->>back-end: Authenticate user
-    back-end->>front-end: Authenticated user
-    front-end-->>user: Redirect user to dashboard
+    appwrite->>backend: Authenticate user
+    backend->>frontend: Authenticated user
+    frontend-->>user: Redirect user to dashboard
 ```
 
 ##### Start Onboarding
@@ -81,21 +82,21 @@ title: Learn how to create a TodoBoard
 ---
 sequenceDiagram
     actor user
-    participant front-end
-    participant back-end
+    participant frontend
+    participant backend
     participant appwrite
 
-    user-->>front-end: Follow onboarding prompt to create a TodoBoard
-    front-end->>back-end: Call API to create a TodoBoard
-    back-end->>appwrite: Create TodoBoard
-    appwrite->>back-end: Confirm TodoBoard created
-    back-end->>front-end: Confirm TodoBoard created
-    front-end-->>user: Redirect to TodoBoard
-    front-end->>back-end: Call API to get TodoBoard Data
-    back-end->>appwrite: Get TodoBoard Data
-    appwrite->>back-end: Get TodoBoard Data
-    back-end->>front-end: Get TodoBoard Data
-    front-end-->>user: Display TodoBoard Data
+    user-->>frontend: Follow onboarding prompt to create a TodoBoard
+    frontend->>backend: Call API to create a TodoBoard
+    backend->>appwrite: Create TodoBoard
+    appwrite->>backend: Confirm TodoBoard created
+    backend->>frontend: Confirm TodoBoard created
+    frontend-->>user: Redirect to TodoBoard
+    frontend->>backend: Call API to get TodoBoard Data
+    backend->>appwrite: Get TodoBoard Data
+    appwrite->>backend: Get TodoBoard Data
+    backend->>frontend: Get TodoBoard Data
+    frontend-->>user: Display TodoBoard Data
 ```
 
 ##### Complete Onboarding
@@ -105,52 +106,52 @@ title: Complete onboarding
 ---
 sequenceDiagram
     actor user
-    participant front-end
-    participant back-end
+    participant frontend
+    participant backend
     participant appwrite
 
-    user-->>front-end: Follow onboarding prompt to create a Todo
-    front-end->>back-end: Call API to create a Todo
-    back-end->>appwrite: Create Todo
-    appwrite->>back-end: Confirm Todo created
-    back-end->>front-end: Confirm Todo created
-    front-end-->>user: Display updated TodoBoard
+    user-->>frontend: Follow onboarding prompt to create a Todo
+    frontend->>backend: Call API to create a Todo
+    backend->>appwrite: Create Todo
+    appwrite->>backend: Confirm Todo created
+    backend->>frontend: Confirm Todo created
+    frontend-->>user: Display updated TodoBoard
 
-    user-->>front-end: Follow onboarding prompt to move Todo from one TodoList to another
-    front-end->>front-end: Handle move of Todo from one TodoList to another
-    front-end->>back-end: Call API to Update Todo with new TodoList's start and end date
-    back-end->>appwrite: Update Todo
-    appwrite->>back-end: Confirm Todo Updated
-    back-end->>front-end: Confirm Todo Updated
-    front-end-->>user: Display updated TodoBoard
+    user-->>frontend: Follow onboarding prompt to move Todo from one TodoList to another
+    frontend->>frontend: Handle move of Todo from one TodoList to another
+    frontend->>backend: Call API to Update Todo with new TodoList's start and end date
+    backend->>appwrite: Update Todo
+    appwrite->>backend: Confirm Todo Updated
+    backend->>frontend: Confirm Todo Updated
+    frontend-->>user: Display updated TodoBoard
 
-    user-->>front-end: Follow onboarding prompt to move TodoBoard date forward a week
-    front-end->>back-end: Call API to move TodoBoard date forward a week
-    back-end->>appwrite: Update TodoBoard with new date
-    appwrite->>back-end: Confirm TodoBoard updated
-    back-end->>front-end: Confirm TodoBoard updated
-    front-end-->>user: Display updated TodoBoard
+    user-->>frontend: Follow onboarding prompt to move TodoBoard date forward a week
+    frontend->>backend: Call API to move TodoBoard date forward a week
+    backend->>appwrite: Update TodoBoard with new date
+    appwrite->>backend: Confirm TodoBoard updated
+    backend->>frontend: Confirm TodoBoard updated
+    frontend-->>user: Display updated TodoBoard
 
-    user-->>front-end: Follow onboarding prompt to move TodoBoard date back a week
-    front-end->>back-end: Call API to move TodoBoard date back a week
-    back-end->>appwrite: Update TodoBoard with new date
-    appwrite->>back-end: Confirm TodoBoard updated
-    back-end->>front-end: Confirm TodoBoard updated
-    front-end-->>user: Display updated TodoBoard
+    user-->>frontend: Follow onboarding prompt to move TodoBoard date back a week
+    frontend->>backend: Call API to move TodoBoard date back a week
+    backend->>appwrite: Update TodoBoard with new date
+    appwrite->>backend: Confirm TodoBoard updated
+    backend->>frontend: Confirm TodoBoard updated
+    frontend-->>user: Display updated TodoBoard
 
-    user-->>front-end: Follow onboarding prompt to hide Todo at a granularity
-    front-end->>back-end: Call API to update Todo
-    back-end->>appwrite: Update Todo
-    appwrite->>back-end: Confirm Todo Updated
-    back-end->>front-end: Confirm Todo Updated
-    front-end-->>user: Display updated TodoBoard
+    user-->>frontend: Follow onboarding prompt to hide Todo at a granularity
+    frontend->>backend: Call API to update Todo
+    backend->>appwrite: Update Todo
+    appwrite->>backend: Confirm Todo Updated
+    backend->>frontend: Confirm Todo Updated
+    frontend-->>user: Display updated TodoBoard
 
-    user-->>front-end: Follow onboarding prompt to delete todo
-    front-end->>back-end: Call API to delete Todo
-    back-end->>appwrite: Delete Todo
-    appwrite->>back-end: Confirm Todo deleted
-    back-end->>front-end: Confirm Todo deleted
-    front-end-->>user: Display updated TodoBoard
+    user-->>frontend: Follow onboarding prompt to delete todo
+    frontend->>backend: Call API to delete Todo
+    backend->>appwrite: Delete Todo
+    appwrite->>backend: Confirm Todo deleted
+    backend->>frontend: Confirm Todo deleted
+    frontend-->>user: Display updated TodoBoard
 ```
 
 ## Alternate Path Flows
@@ -164,6 +165,7 @@ Persona: [User with an account](../personas/user-with-an-account.md)
 title: User with an account attempts to create an account
 ---
 stateDiagram-v2
+    direction LR
     [*] --> Homepage: Sign up for account
 
     state Homepage {
@@ -185,18 +187,18 @@ title: Sign up for account
 ---
 sequenceDiagram
     actor user
-    participant front-end
-    participant back-end
+    participant frontend
+    participant backend
     participant appwrite
 
-    user-->>front-end: Open sign up form
-    user-->>front-end: fill out account details
-    front-end->>front-end: Validate sign in form
-    user-->>front-end: Submit sign up form
-    front-end->>front-end: Validate sign in form
-    front-end->>back-end: Call API to create account
-    back-end->>appwrite: Check account can be created
-    appwrite->>back-end: Reject account creation
-    back-end->>front-end: Reject account creation
-    front-end-->>user: Display error message
+    user-->>frontend: Open sign up form
+    user-->>frontend: fill out account details
+    frontend->>frontend: Validate sign in form
+    user-->>frontend: Submit sign up form
+    frontend->>frontend: Validate sign in form
+    frontend->>backend: Call API to create account
+    backend->>appwrite: Check account can be created
+    appwrite->>backend: Reject account creation
+    backend->>frontend: Reject account creation
+    frontend-->>user: Display error message
 ```

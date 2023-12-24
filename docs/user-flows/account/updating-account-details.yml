@@ -5,7 +5,7 @@ user-flows:
     scenario-type: success
     actor: User with an account
     steps:
-      - page: Account Settings
+      - page: AccountSettings
         user-action:
           name: Update password
           steps:
@@ -13,28 +13,33 @@ user-flows:
               system-actions:
                 - name: Validate passwords meet rules
                   services:
-                    - front-end
+                    - frontend
             - name: Update password
               system-actions:
                 - name: Validate passwords meet rules
                   services:
-                    - front-end
+                    - frontend
                 - name: Call API to update user's password
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Update password for user's account
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm user's password was updated
+                  services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
+                - name: Display message confirming password was updated
+                  services:
+                    - frontend
   - title: User with an account updates email address for their account
     scenario-type: success
     actor: User with an account
     steps:
-      - page: Account Settings
+      - page: AccountSettings
         user-action:
           name: Update email address
           steps:
@@ -42,20 +47,25 @@ user-flows:
               system-actions:
                 - name: Validate email address update form
                   services:
-                    - front-end
+                    - frontend
             - name: Update email address
               system-actions:
                 - name: Validate email address update form
                   services:
-                    - front-end
+                    - frontend
                 - name: Call API to update user's email address
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Update email address for user's account
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm user's email address was updated
+                  services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
+                - name: Display message confirming email address was updated
+                  services:
+                    - frontend

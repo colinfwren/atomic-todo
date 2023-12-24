@@ -13,18 +13,19 @@ user-flows:
               system-actions:
                 - name: Redirect user to TodoBoard
                   services:
-                    - front-end
+                    - frontend
                 - name: Call API to load TodoBoard
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Get data for TodoBoard
                   services:
+                    - backend
                     - appwrite
                 - name: Display data for TodoBoard
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
   - title: Authenticated user attempts to view a TodoBoard that doesn't belong to them
     scenario-type: failure
     actor: Authenticated user
@@ -37,18 +38,18 @@ user-flows:
               system-actions:
                 - - name: Redirect user to TodoBoard
                     services:
-                      - front-end
+                      - frontend
                 - name: Call API to load TodoBoard
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Reject loading of TodoBoard data
                   services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Display error message
-                    - front-end
+                    - frontend
   - title: User with timed-out session attempts to view a TodoBoard that belongs to them
     scenario-type: failure
     actor: User with timed-out session
@@ -59,12 +60,24 @@ user-flows:
           steps:
             - name: Open TodoBoard
               system-actions:
+                - name: Redirect user to TodoBoard
+                  services:
+                    - frontend
+                - name: Call API to load TodoBoard
+                  services:
+                    - frontend
+                    - backend
+                - name: Reject loading TodoBoard data
+                  services:
+                    - backend
+                    - appwrite
                 - name: Redirect user to login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Show user message telling them their session expired
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage
   - title: Unauthenticated user attempts to view a TodoBoard
     scenario-type: failure
     actor: Unauthenticated user
@@ -73,8 +86,17 @@ user-flows:
         user-action:
           name: Load TodoBoard
           steps:
-            - name: Load TodoBoard
+            - name: Reject Load TodoBoard
               system-actions:
+                - name: Call API to load TodoBoard
+                  services:
+                    - frontend
+                    - backend
+                - name: Reject loading TodoBoard data
+                  services:
+                    - backend
+                    - appwrite
                 - name: Redirect user to login form
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage

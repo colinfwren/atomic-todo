@@ -13,18 +13,20 @@ user-flows:
               system-actions:
                 - name: Call API to create new TodoBoard
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Create new TodoBoard
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm TodoBoard created
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Redirect user to newly created TodoBoard
                   services:
-                    - front-end
+                    - frontend
+      - page: TodoBoard
   - title: User with timed-out session attempts to create a TodoBoard
     scenario-type: failure
     actor: User with timed-out session
@@ -33,14 +35,24 @@ user-flows:
         user-action:
           name: Create new TodoBoard
           steps:
-            - name: Create new TodoBoard
+            - name: Reject creating new TodoBoard
               system-actions:
-                - name: Check user's session is valid
+                - name: Call API to create new TodoBoard
                   services:
-                    - front-end
+                    - frontend
+                    - backend
+                - name: Create new TodoBoard
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject creating new TodoBoard
+                  services:
+                    - appwrite
+                    - backend
                 - name: Redirect user to login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Show user message telling them their session expired
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage

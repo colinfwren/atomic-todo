@@ -13,18 +13,19 @@ user-flows:
               system-actions:
                 - name: Call API to move TodoBoard forward a week
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Update TodoBoard dates
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm TodoBoard dates updated
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Update TodoBoard data
                   services:
-                    - front-end
+                    - frontend
   - title: User with timed-out session attempts to move TodoBoard date forward by a week
     scenario-type: failure
     actor: User with timed-out session
@@ -33,23 +34,24 @@ user-flows:
         user-action:
           name: Move TodoBoard dates forward a week
           steps:
-            - name: Move TodoBoard dates forward a week
+            - name: Reject moving TodoBoard dates forward a week
               system-actions:
                 - name: Call API to move TodoBoard forward a week
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Reject update of TodoBoard
                   services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Redirect user to login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Show user message telling them their session expired
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage
   - title: Authenticated user moves TodoBoard date backward by a week
     scenario-type: success
     actor: Authenticated user
@@ -62,18 +64,19 @@ user-flows:
               system-actions:
                 - name: Call API to move TodoBoard back a week
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Update TodoBoard dates
                   services:
+                    - backend
                     - appwrite
                 - name: Confirm TodoBoard dates updated
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Update TodoBoard data
                   services:
-                    - front-end
+                    - frontend
   - title: User with timed-out session attempts to move TodoBoard date backward by a week
     scenario-type: failure
     actor: User with timed-out session
@@ -86,16 +89,17 @@ user-flows:
               system-actions:
                 - name: Call API to move TodoBoard back a week
                   services:
-                    - front-end
-                    - back-end
+                    - frontend
+                    - backend
                 - name: Reject update of TodoBoard
                   services:
                     - appwrite
-                    - back-end
-                    - front-end
+                    - backend
+                    - frontend
                 - name: Redirect user to login form
                   services:
-                    - front-end
+                    - frontend
                 - name: Show user message telling them their session expired
                   services:
-                    - front-end
+                    - frontend
+      - page: Homepage
