@@ -1,0 +1,71 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: User with an account logs into account
+    scenario-type: success
+    actor: User with an account
+    steps:
+      - page: Homepage
+        user-action:
+          name: Log into account
+          steps:
+            - name: Open login form
+            - name: Fill out account details
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - frontend
+            - name: Submit login form
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - frontend
+                - name: Call API to authenticate user
+                  services:
+                    - frontend
+                    - backend
+                - name: Authenticate user
+                  services:
+                    - backend
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Redirect user to dashboard
+                  services:
+                    - frontend
+      - page: Dashboard
+  - title: User without an account attempts to log into account
+    scenario-type: failure
+    actor: User without an account
+    steps:
+      - page: Homepage
+        user-action:
+          name: Log into account
+          steps:
+            - name: Open login form
+            - name: Fill out account details
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - frontend
+            - name: Submit login form
+              system-actions:
+                - name: Validate login form
+                  services:
+                    - frontend
+                - name: Call API to authenticate user
+                  services:
+                    - frontend
+                    - backend
+                - name: Authenticate user
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject authentication
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Display error message
+                  services:
+                    - frontend

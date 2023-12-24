@@ -1,0 +1,71 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: User with an account updates password for their account
+    scenario-type: success
+    actor: User with an account
+    steps:
+      - page: AccountSettings
+        user-action:
+          name: Update password
+          steps:
+            - name: Fill out password update form
+              system-actions:
+                - name: Validate passwords meet rules
+                  services:
+                    - frontend
+            - name: Update password
+              system-actions:
+                - name: Validate passwords meet rules
+                  services:
+                    - frontend
+                - name: Call API to update user's password
+                  services:
+                    - frontend
+                    - backend
+                - name: Update password for user's account
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm user's password was updated
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Display message confirming password was updated
+                  services:
+                    - frontend
+  - title: User with an account updates email address for their account
+    scenario-type: success
+    actor: User with an account
+    steps:
+      - page: AccountSettings
+        user-action:
+          name: Update email address
+          steps:
+            - name: Fill out email address update form
+              system-actions:
+                - name: Validate email address update form
+                  services:
+                    - frontend
+            - name: Update email address
+              system-actions:
+                - name: Validate email address update form
+                  services:
+                    - frontend
+                - name: Call API to update user's email address
+                  services:
+                    - frontend
+                    - backend
+                - name: Update email address for user's account
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm user's email address was updated
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Display message confirming email address was updated
+                  services:
+                    - frontend

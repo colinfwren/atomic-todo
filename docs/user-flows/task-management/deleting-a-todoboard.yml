@@ -1,0 +1,91 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user deletes a TodoBoard that belongs to them
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Delete TodoBoard
+          steps:
+            - name: Delete TodoBoard
+              system-actions:
+                - name: Confirm that user wants to delete TodoBoard
+                  services:
+                    - frontend
+                - name: Call API to delete TodoBoard
+                  services:
+                    - frontend
+                    - backend
+                - name: Delete TodoBoard
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm TodoBoard deleted
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Update Dashboard data
+                  services:
+                    - frontend
+  - title: Authenticated user attempts to delete a TodoBoard that doesn't belong to them
+    scenario-type: failure
+    actor: Authenticated user
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Delete TodoBoard
+          steps:
+            - name: Delete TodoBoard
+              system-actions:
+                - - name: Confirm that user wants to delete TodoBoard
+                    services:
+                      - frontend
+                - name: Call API to delete TodoBoard
+                  services:
+                    - frontend
+                    - backend
+                - name: Delete TodoBoard
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject deleting of TodoBoard
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Display error message
+                    - frontend
+  - title: User with timed-out session attempts to delete a TodoBoard that belongs to them
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Delete TodoBoard
+          steps:
+            - name: Reject deleting TodoBoard
+              system-actions:
+                - name: Confirm that user wants to delete TodoBoard
+                  services:
+                    - frontend
+                - name: Call API to delete TodoBoard
+                  services:
+                    - frontend
+                    - backend
+                - name: Delete TodoBoard
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject deleting TodoBoard
+                  services:
+                    - appwrite
+                    - backend
+                - name: Redirect user to login form
+                  services:
+                    - frontend
+                - name: Show user message telling them their session expired
+                  services:
+                    - frontend
+      - page: Homepage

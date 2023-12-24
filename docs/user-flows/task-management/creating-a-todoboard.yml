@@ -1,0 +1,58 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user creates a TodoBoard
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Create new TodoBoard
+          steps:
+            - name: Create new TodoBoard
+              system-actions:
+                - name: Call API to create new TodoBoard
+                  services:
+                    - frontend
+                    - backend
+                - name: Create new TodoBoard
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm TodoBoard created
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Redirect user to newly created TodoBoard
+                  services:
+                    - frontend
+      - page: TodoBoard
+  - title: User with timed-out session attempts to create a TodoBoard
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: Dashboard
+        user-action:
+          name: Create new TodoBoard
+          steps:
+            - name: Reject creating new TodoBoard
+              system-actions:
+                - name: Call API to create new TodoBoard
+                  services:
+                    - frontend
+                    - backend
+                - name: Create new TodoBoard
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject creating new TodoBoard
+                  services:
+                    - appwrite
+                    - backend
+                - name: Redirect user to login form
+                  services:
+                    - frontend
+                - name: Show user message telling them their session expired
+                  services:
+                    - frontend
+      - page: Homepage

@@ -1,0 +1,242 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: User without an account creates an account
+    scenario-type: success
+    actor: User without an account
+    steps:
+      - page: Homepage
+        user-action:
+          name: Sign up for account
+          steps:
+            - name: Open sign up form
+            - name: Fill out account details
+              system-actions:
+                - name: Validate sign in form
+                  services:
+                    - frontend
+            - name: Submit sign up form
+              system-actions:
+                - name: Validate sign up form
+                  services:
+                    - frontend
+                - name: Call API to create account
+                  services:
+                    - frontend
+                    - backend
+                - name: Check account can be created
+                  services:
+                    - backend
+                    - appwrite
+                - name: Create account
+                  services:
+                    - appwrite
+                - name: Authenticate user
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Redirect user to dashboard
+                  services:
+                    - frontend
+      - page: Dashboard
+        user-action: 
+            name: Start onboarding
+            steps:
+              - name: Learn how to create a TodoBoard
+                steps:
+                  - name: Follow onboarding prompt to create a TodoBoard
+                    system-actions:
+                      - name: Call API to create a TodoBoard
+                        services:
+                          - frontend
+                          - backend
+                      - name: Create TodoBoard
+                        services:
+                          - backend
+                          - appwrite
+                      - name: Confirm TodoBoard created
+                        services:
+                          - appwrite
+                          - backend
+                          - frontend
+                      - name: Redirect to TodoBoard
+                        services:
+                          - frontend
+                      - name: Call API to get TodoBoard data
+                        services:
+                          - frontend
+                          - backend
+                      - name: Get TodoBoard data
+                        services:
+                          - backend
+                          - appwrite
+                          - backend
+                          - frontend
+                      - name: Display TodoBoard data
+                        services:
+                          - frontend
+      - page: TodoBoard
+        user-action:
+          name: Complete onboarding
+          steps:
+          - name: Learn how to create a Todo
+            steps:
+              - name: Follow onboarding prompt to create a Todo
+                system-actions:
+                  - name: Call API to create a Todo
+                    services:
+                      - frontend
+                      - backend
+                  - name: Create Todo
+                    services:
+                      - backend
+                      - appwrite
+                  - name: Confirm Todo created
+                    services:
+                      - appwrite
+                      - backend
+                      - frontend
+                  - name: Display updated TodoBoard
+                    services:
+                      - frontend
+          - name: Learn how to move a Todo between TodoLists of a different granularity
+            steps:
+              - name: Follow onboarding prompt to move Todo from one TodoList to another
+                system-actions:
+                  - name: Handle move of Todo from one TodoList to another
+                    services:
+                      - frontend
+                  - name: Call API to Update Todo with new TodoList's start and end date
+                    services:
+                      - frontend
+                      - backend
+                  - name: Update Todo
+                    services:
+                      - backend
+                      - appwrite
+                  - name: Confirm Todo updated
+                    services:
+                      - appwrite
+                      - backend
+                      - frontend
+                  - name: Display updated TodoBoard
+                    services:
+                      - frontend
+          - name: Learn how to move the TodoBoard date forward a week
+            steps:
+              - name: Follow onboarding prompt to move TodoBoard date forward a week
+                system-actions:
+                  - name: Call API to move TodoBoard date forward a week
+                    services:
+                      - frontend
+                      - backend
+                  - name: Update TodoBoard with new date
+                    services:
+                      - backend
+                      - appwrite
+                  - name: Confirm TodoBoard updated
+                    services:
+                      - appwrite
+                      - backend
+                      - frontend
+                  - name: Display updated TodoBoard
+                    services:
+                      - frontend
+          - name: Learn how to move the TodoBoard date back a week
+            steps:
+              - name: Follow onboarding prompt to move TodoBoard date back a week
+                system-actions:
+                  - name: Call API to move TodoBoard data back a week
+                    services:
+                      - frontend
+                      - backend
+                  - name: Update TodoBoard with new date
+                    services:
+                      - backend
+                      - appwrite
+                  - name: Confirm TodoBoard updated
+                    services:
+                      - appwrite
+                      - backend
+                      - frontend
+                  - name: Display updated TodoBoard
+                    services:
+                      - appwrite
+                      - backend
+                      - frontend
+          - name: Learn how to hide a Todo in a granularity
+            steps:
+              - name: Follow onboarding prompt to hide Todo at a granularity
+                system-actions:
+                  - name: Call API to update Todo
+                    services:
+                      - frontend
+                      - backend
+                  - name: Update Todo
+                    services:
+                      - backend
+                      - appwrite
+                  - name: Confirm Todo updated
+                    services:
+                      - appwrite
+                      - backend
+                      - frontend
+                  - name: Display updated TodoBoard
+                    services:
+                      - frontend
+          - name: Learn how to delete a Todo
+            steps:
+              - name: Follow onboarding prompt to delete Todo
+                system-actions:
+                  - name: Call API to delete Todo
+                    services:
+                      - frontend
+                      - backend
+                  - name: Delete Todo
+                    services:
+                      - backend
+                      - appwrite
+                  - name: Confirm Todo deleted
+                    services:
+                      - appwrite
+                      - backend
+                      - frontend
+                  - name: Display updated TodoBoard
+                    services:
+                      - frontend
+  - title: User with an account attempts to create an account
+    scenario-type: failure
+    actor: User with an account
+    steps:
+      - page: Homepage
+        user-action:
+          name: Sign up for account
+          steps:
+            - name: Open sign up form
+            - name: Fill out account details
+              system-actions:
+                - name: Validate sign in form
+                  services:
+                    - frontend
+            - name: Submit sign up form
+              system-actions:
+                - name: Validate sign up form
+                  services:
+                    - frontend
+                - name: Call API to create account
+                  services:
+                    - frontend
+                    - backend
+                - name: Check account can be created
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject account creation
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Display error message
+                  services:
+                    - frontend

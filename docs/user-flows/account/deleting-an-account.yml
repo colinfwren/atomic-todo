@@ -1,0 +1,32 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: User with an account deletes their account
+    scenario-type: success
+    actor: User with an account
+    steps:
+      - page: AccountSettings
+        user-action:
+          name: Delete account
+          steps:
+            - name: Delete account
+              system-actions:
+                - name: Ask user to confirm they want to delete their account
+                  services:
+                    - frontend
+                - name: Call API to delete user's account
+                  services:
+                    - frontend
+                    - backend
+                - name: Delete user's account and de-authenticate them
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm account deletion
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Redirect user to Homepage
+                  services:
+                    - frontend
+      - page: Homepage

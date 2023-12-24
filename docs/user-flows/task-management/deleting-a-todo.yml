@@ -1,0 +1,58 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user deletes Todo from TodoList
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Delete Todo in TodoList
+          steps:
+            - name: Delete Todo in TodoList
+              system-actions:
+                - name: Call API to delete Todo
+                  services:
+                    - frontend
+                    - backend
+                - name: Delete Todo
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm Todo deleted
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Update TodoBoard with new TodoBoard data
+                  services:
+                    - frontend
+  - title: User with timed-out session attempts to delete Todo from TodoList
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Delete Todo in TodoList
+          steps:
+            - name: Reject deleting Todo in TodoList
+              system-actions:
+                - name: Call API to delete Todo
+                  services:
+                    - frontend
+                    - backend
+                - name: Delete Todo
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject deletion of Todo
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Redirect user to login form
+                  services:
+                    - frontend
+                - name: Show user message telling them their session expired
+                  services:
+                    - frontend
+      - page: Homepage

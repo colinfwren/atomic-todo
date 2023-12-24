@@ -1,0 +1,131 @@
+---
+creation-date: 2023-12-23
+user-flows:
+  - title: Authenticated user changes position of Todo in TodoList
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Change position of Todo in TodoList
+          steps:
+            - name: Change position of Todo in TodoList
+              system-actions:
+                - name: Handle repositioning of Todo in TodoList
+                  services:
+                    - frontend
+                - name: Call API to update positions of Todos
+                  services:
+                    - frontend
+                    - backend
+                - name: Update Todos
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm Todos updated
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Update TodoBoard with new TodoBoard data
+                  services:
+                    - frontend
+  - title: User with timed-out session attempts to change position of Todo in TodoList
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Change position Todo in TodoList
+          steps:
+            - name: Reject changing position Todo in TodoList
+              system-actions:
+                - name: Handle repositioning of Todo in TodoList
+                  services:
+                    - frontend
+                - name: Call API to update positions of Todos
+                  services:
+                    - frontend
+                    - backend
+                - name: Update Todos
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject update of Todos
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Redirect user to login form
+                  services:
+                    - frontend
+                - name: Show user message telling them their session expired
+                  services:
+                    - frontend
+  - title: Authenticated user moves Todo from one TodoList to another TodoList
+    scenario-type: success
+    actor: Authenticated user
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Move Todo from one TodoList to another TodoList
+          steps:
+            - name: Move Todo from one TodoList to another TodoList
+              system-actions:
+                - name: Handle reposition of Todo in target TodoList
+                  services:
+                    - frontend
+                - name: Handle repositioning of Todos in source TodoList
+                  services:
+                    - frontend
+                - name: Call API to update Todos in source and target TodoLists
+                  services:
+                    - frontend
+                    - backend
+                - name: Update Todos
+                  services:
+                    - backend
+                    - appwrite
+                - name: Confirm Todos updated
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Update TodoBoard with new TodoBoard data
+                  services:
+                    - frontend
+  - title: User with timed-out session attempts to move Todo from one TodoList to another TodoList
+    scenario-type: failure
+    actor: User with timed-out session
+    steps:
+      - page: TodoBoard
+        user-action:
+          name: Move Todo from one TodoList to another TodoList
+          steps:
+            - name: Reject moving Todo from one TodoList to another TodoList
+              system-actions:
+                - name: Handle reposition of Todo in target TodoList
+                  services:
+                    - frontend
+                - name: Handle repositioning of Todos in source TodoList
+                  services:
+                    - frontend
+                - name: Call API to update Todos in source and target TodoLists
+                  services:
+                    - frontend
+                    - backend
+                - name: Update Todos
+                  services:
+                    - backend
+                    - appwrite
+                - name: Reject update of Todos
+                  services:
+                    - appwrite
+                    - backend
+                    - frontend
+                - name: Redirect user to login form
+                  services:
+                    - frontend
+                - name: Show user message telling them their session expired
+                  services:
+                    - frontend
+      - page: Homepage
