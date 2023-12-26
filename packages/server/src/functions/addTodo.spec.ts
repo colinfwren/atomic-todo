@@ -16,7 +16,7 @@ describe('Creating a new Todo', () => {
         throw new Error(CREATE_APPWRITE_DOCUMENT_ERROR)
       })
     } as any
-    expect(() => addTodo(databases, BOARD_ID, TODO_START_DATE, TODO_END_DATE)).rejects.toThrowError(CREATE_APPWRITE_DOCUMENT_ERROR)
+    expect(() => addTodo(databases, BOARD_ID, TODO_START_DATE, TODO_END_DATE, [])).rejects.toThrowError(CREATE_APPWRITE_DOCUMENT_ERROR)
   })
   it('returns updated board with todo in the appropriate TodoLists', async () => {
     const expectedResult = {
@@ -35,7 +35,11 @@ describe('Creating a new Todo', () => {
           endDate: TODO_END_DATE,
           showInYear: true,
           showInMonth: true,
-          showInWeek: true
+          showInWeek: true,
+          posInYear: 0,
+          posInMonth: 0,
+          posInWeek: 0,
+          posInDay: 0
         })
       }),
       getDocument: jest.fn().mockImplementation(() => {
@@ -52,7 +56,7 @@ describe('Creating a new Todo', () => {
         })
       })
     } as any
-    const result = await addTodo(databases, BOARD_ID, TODO_START_DATE, TODO_END_DATE)
+    const result = await addTodo(databases, BOARD_ID, TODO_START_DATE, TODO_END_DATE, [])
     expect(result).toEqual(expectedResult)
   })
 })

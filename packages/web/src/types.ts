@@ -1,4 +1,4 @@
-import {Todo, TodoBoard, TodoLevel} from '@atomic-todo/server/src/generated/graphql'
+import {Todo, TodoBoard, TodoLevel, TodoPositionInput} from '@atomic-todo/server/src/generated/graphql'
 import React, {MouseEventHandler} from "react";
 import {DraggableSyntheticListeners} from "@dnd-kit/core";
 import type {Transform} from '@dnd-kit/utilities';
@@ -66,7 +66,7 @@ export type IAppContext = AppState & {
     setBoardName: (name: string) => void,
     showModal: (todoId: string) => void,
     hideModal: () => void,
-    addTodo: (listStartDate: Date, listEndDate: Date) => void,
+    addTodo: (listStartDate: Date, listEndDate: Date, positions: TodoPositionInput[]) => void,
     deleteTodo: (todoId: string) => void,
   },
   loading: boolean,

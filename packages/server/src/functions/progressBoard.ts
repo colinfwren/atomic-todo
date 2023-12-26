@@ -9,7 +9,6 @@ import {getTodoBoard} from './getDocs'
 import {convertDateToUTC} from "./utils";
 
 export const DATE_ERROR = 'Invalid Dates provided'
-export const FIND_LIST_ERROR = 'Unable to find list'
 export const UPDATE_APPWRITE_DOCUMENT_ERROR = 'Unable to update list'
 export const CREATE_APPWRITE_DOCUMENT_ERROR = 'Unable to create document'
 

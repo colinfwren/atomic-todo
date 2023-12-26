@@ -33,7 +33,11 @@ export const mockTodoDoc: TodoDoc = {
   endDate: TODO_END_DATE,
   showInYear: true,
   showInMonth: true,
-  showInWeek: true
+  showInWeek: true,
+  posInYear: 0,
+  posInMonth: 0,
+  posInWeek: 0,
+  posInDay: 0
 }
 
 export const mockBoardDoc: TodoBoardDoc = {

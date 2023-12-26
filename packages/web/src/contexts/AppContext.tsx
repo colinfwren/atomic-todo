@@ -2,7 +2,12 @@ import React, {createContext, useState} from 'react'
 import {AppProviderProps, AppState, IAppContext, ModalProps} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
-import {BoardNameUpdateInput, Todo, TodoBoard, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
+import {
+  BoardNameUpdateInput,
+  Todo,
+  TodoLevel,
+  TodoPositionInput
+} from "@atomic-todo/server/dist/src/generated/graphql";
 import {gql, useMutation, useQuery} from "@apollo/client";
 
 const initialState: AppState = {
@@ -18,7 +23,7 @@ const actions = {
   moveBoardForward: () => {},
   moveBoardBackward: () => {},
   setBoardName: () => {},
-  addTodo: (listStartDate: Date, listEndDate: Date) => {},
+  addTodo: (listStartDate: Date, listEndDate: Date, positions: TodoPositionInput[]) => {},
   showModal: (todoId: string) => {},
   hideModal: () => {},
   deleteTodo: (todoId: string) => {}
@@ -44,6 +49,9 @@ query getData($boardId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -60,6 +68,9 @@ mutation updateTodo($todo: TodoUpdateInput!) {
     showInYear
     showInMonth
     showInWeek
+    posInMonth
+    posInWeek
+    posInDay
   }
 }
 `;
@@ -81,6 +92,9 @@ mutation moveBoardForwardByWeek($boardId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -103,6 +117,9 @@ mutation moveBoardBackwardByWeek($boardId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -117,8 +134,8 @@ mutation UpdateBoardName($boardNameUpdate: BoardNameUpdateInput!) {
 `
 
 const ADD_TODO = gql`
-mutation addTodo($boardId: ID!, $startDate: Int!, $endDate: Int!) {
-  addTodo(boardId: $boardId, startDate: $startDate, endDate: $endDate) {
+mutation addTodo($boardId: ID!, $startDate: Int!, $endDate: Int!, $positions: [TodoPositionInput]!) {
+  addTodo(boardId: $boardId, startDate: $startDate, endDate: $endDate, positions: $positions) {
     board {
       id
       name
@@ -133,6 +150,9 @@ mutation addTodo($boardId: ID!, $startDate: Int!, $endDate: Int!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -155,6 +175,9 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -425,13 +448,14 @@ export function AppProvider({ children }: AppProviderProps) {
           }
         })
       },
-      addTodo: (listStartDate: Date, listEndDate: Date) => {
+      addTodo: (listStartDate: Date, listEndDate: Date, positions: TodoPositionInput[]) => {
         setLoading(true)
         addTodo({
           variables: {
             boardId: state.board.id,
             startDate: listStartDate.getTime() / 1000,
-            endDate: listEndDate.getTime() / 1000
+            endDate: listEndDate.getTime() / 1000,
+            positions
           },
           onError: (error) => {
             setError(error.message)
