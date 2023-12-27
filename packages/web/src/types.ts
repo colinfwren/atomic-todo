@@ -3,25 +3,6 @@ import React, {MouseEventHandler} from "react";
 import {DraggableSyntheticListeners} from "@dnd-kit/core";
 import type {Transform} from '@dnd-kit/utilities';
 
-export enum UpdateOperation {
-  ADD,
-  REMOVE,
-  REORDER
-}
-
-export enum TraversalDirection {
-  PARENTS,
-  CHILDREN,
-  NONE
-}
-
-export type TodoListMapUpdateData = {
-  listId: string,
-  operation: UpdateOperation,
-  direction: TraversalDirection,
-  newIndex?: number
-}
-
 export type SortableTodoItemProps = {
   id: string
   granularity: TodoLevel
@@ -43,17 +24,38 @@ export type TodoItemProps = {
   dragOverlay?: boolean
 }
 
-export type TodoItemListProps = {
-  id: string
-  granularity: TodoLevel,
-  currentDate: Date,
-  listStartDate: Date,
+export type TodoItemListProps = TodoItemList & {
   listPeriodDelta: number
 }
 
+export enum TodoListEra {
+  past  = 'past',
+  current = 'current',
+  future = 'future'
+}
+
+export type TodoItemList = {
+  id: string,
+  granularity: TodoLevel,
+  listStartDate: Date,
+  listEndDate: Date,
+  todos: string[]
+  era: TodoListEra
+}
+
+export type TodoListMap = Map<string, TodoItemList>
+export type TodoMap = Map<string, Todo>
+export type AppTodoBoard = Omit<TodoBoard, 'startDate'> & {
+  startDate: Date
+  months: string[]
+  weeks: string[]
+  days: string[]
+}
+
 export type AppState = {
-  board: TodoBoard
-  todos: Todo[]
+  board: AppTodoBoard
+  todos: TodoMap,
+  lists: TodoListMap
 }
 
 export type IAppContext = AppState & {
@@ -77,11 +79,6 @@ export type AppProviderProps = {
   children: JSX.Element | JSX.Element[]
 }
 
-export type TodoListTitle = {
-  name: string,
-  date: string,
-}
-
 export enum ProgressButtonDirection {
   FORWARD,
   BACKWARD
@@ -96,7 +93,7 @@ export interface ProgressionButtonProps {
 export interface TodoItemListTitleProps {
   granularity: TodoLevel
   listStartDate: Date
-  currentDate: Date
+  era: TodoListEra
   listPeriodDelta: number
 }
 

@@ -1,5 +1,5 @@
 import React, {createContext, useState} from 'react'
-import {AppProviderProps, AppState, IAppContext, ModalProps} from "../types";
+import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
 import {
@@ -9,10 +9,15 @@ import {
   TodoPositionInput
 } from "@atomic-todo/server/dist/src/generated/graphql";
 import {gql, useMutation, useQuery} from "@apollo/client";
+import {getTodoMapFromTodos} from "../functions/getTodoMapFromTodos";
+import {getListMapFromTodos} from "../functions/getListMapFromTodos";
+import {getAppStateFromTodoBoardResult} from "../functions/getAppStateFromTodoBoardResult";
+import {getTodoMapFromUpdate} from "../functions/getTodoMapFromUpdate";
 
 const initialState: AppState = {
   board: todoBoard,
-  todos: []
+  lists: new Map<string, TodoItemList>(),
+  todos: new Map<string, Todo>()
 }
 
 const actions = {
@@ -211,20 +216,14 @@ export function AppProvider({ children }: AppProviderProps) {
   const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
   const [data, setData] = useState<AppState>({
     board: initialState.board,
+    lists: initialState.lists,
     todos: initialState.todos
   })
 
   useQuery(GET_DATA, {
     variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' },
     onCompleted: (data) => {
-      const { board, todos } = data.getTodoBoard
-      setData({
-        board: {
-          ...board,
-          startDate: (board.startDate * 1000)
-        },
-        todos
-      })
+      setData(getAppStateFromTodoBoardResult(data.getTodoBoard))
       setLoading(false)
     },
     onError: (error) => {
@@ -272,12 +271,7 @@ export function AppProvider({ children }: AppProviderProps) {
           onCompleted: ({ updateTodo }) => {
             setData((state) => ({
               ...state,
-              todos: state.todos.map((todo) => {
-                if (todo.id === updateTodo.id) {
-                  return updateTodo
-                }
-                return todo
-              })
+              todos: getTodoMapFromUpdate(state.todos, updateTodo)
             }))
             setLoading(false)
           }
@@ -305,12 +299,7 @@ export function AppProvider({ children }: AppProviderProps) {
           onCompleted: ({ updateTodo }) => {
             setData((state) => ({
               ...state,
-              todos: state.todos.map((todo) => {
-                if (todo.id === updateTodo.id) {
-                  return updateTodo
-                }
-                return todo
-              })
+              todos: getTodoMapFromUpdate(state.todos, updateTodo)
             }))
             setLoading(false)
           }
@@ -341,12 +330,7 @@ export function AppProvider({ children }: AppProviderProps) {
           onCompleted: ({ updateTodo }) => {
             setData((state) => ({
               ...state,
-              todos: state.todos.map((todo) => {
-                if (todo.id === updateTodo.id) {
-                  return updateTodo
-                }
-                return todo
-              })
+              todos: getTodoMapFromUpdate(state.todos, updateTodo)
             }))
             setLoading(false)
           }
@@ -358,14 +342,7 @@ export function AppProvider({ children }: AppProviderProps) {
           variables: { boardId: state.board.id },
           fetchPolicy: 'no-cache',
           onCompleted: (data) => {
-            const { board, todos } = data.moveBoardForwardByWeek
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos: todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.moveBoardForwardByWeek))
             setLoading(false)
           },
           onError: (error) => {
@@ -380,14 +357,7 @@ export function AppProvider({ children }: AppProviderProps) {
           variables: { boardId: state.board.id },
           fetchPolicy: 'no-cache',
           onCompleted: (data) => {
-            const { board, todos } = data.moveBoardBackwardByWeek
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos: todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.moveBoardBackwardByWeek))
             setLoading(false)
           },
           onError: (error) => {
@@ -436,14 +406,7 @@ export function AppProvider({ children }: AppProviderProps) {
             setLoading(false)
           },
           onCompleted: (data) => {
-            const { board, todos } = data.deleteTodo
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos: todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.deleteTodo))
             setLoading(false)
           }
         })
@@ -462,14 +425,7 @@ export function AppProvider({ children }: AppProviderProps) {
             setLoading(false)
           },
           onCompleted: (data) => {
-            const { board, todos } = data.addTodo
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.addTodo))
             setLoading(false)
           }
         })

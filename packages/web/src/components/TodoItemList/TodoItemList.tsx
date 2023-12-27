@@ -1,35 +1,15 @@
 import React, {useContext} from 'react'
 import {useDroppable} from "@dnd-kit/core";
 import styles from './TodoItemList.module.css'
-import {TodoItemListProps} from "../../types";
+import {TodoItemListProps, TodoListMap} from "../../types";
 import AppContext from "../../contexts/AppContext";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {SortableTodoItem} from "../SortableTodoItem/SortableTodoItem";
 import {TodoItemListTitle} from "../TodoItemListTitle/TodoItemListTitle";
 import {Todo, TodoLevel, TodoPositionInput} from "@atomic-todo/server/dist/src/generated/graphql";
-import {getHoursToFirstDayOfWeek} from "../TodoItemBoard/TodoItemBoard";
+import { getEndDateForList } from "../../functions/getEndDateForList";
+import { getHoursToFirstDayOfWeek } from "../../functions/getHoursForFirstDayOfWeek";
 
-/**
- * Calculate the end date for the list based on the granularity
- *
- * @param {Date} listStartDate - The start date for the list
- * @param {TodoLevel} granularity - The granularity the list represents
- */
-export function getEndDateForList(listStartDate: Date, granularity: TodoLevel): Date {
-  const listEndDate = new Date(listStartDate)
-  switch (granularity) {
-    case TodoLevel.Day:
-      listEndDate.setDate(listEndDate.getDate() + 1)
-      break;
-    case TodoLevel.Week:
-      listEndDate.setDate(listEndDate.getDate() + 7)
-      break;
-    case TodoLevel.Month:
-      listEndDate.setMonth(listEndDate.getMonth() + 1)
-      break;
-  }
-  return listEndDate
-}
 
 /**
  * Calculate the start date fot the list based on the specified granularity
@@ -79,61 +59,33 @@ export function getTodosForGranularity(listStartDate: Date, listEndDate: Date, g
  *
  * @param {Date} listStartDate - The start date of the list
  * @param {Date} listEndDate - The end date of the list
- * @param {TodoLevel} granularity - The granularity to get the count of Todos for
- * @param {Todo[]} todos - The list of Todos
+ * @param {TodoListMap} lists - Map of lists
+ * @returns {TodoPositionInput[]} - Array of positions of new Todo in different granularity of list
  */
-export function getNewTodoPositions(listStartDate: Date, listEndDate: Date, granularity: TodoLevel, todos: Todo[]): TodoPositionInput[] {
+export function getNewTodoPositions(listStartDate: Date, listEndDate: Date, lists: TodoListMap): TodoPositionInput[] {
   const weekStartDate = getStartDateForGranularity(listStartDate, TodoLevel.Week)
   const weekEndDate = getEndDateForList(weekStartDate, TodoLevel.Week)
   const monthStartDate = getStartDateForGranularity(listStartDate, TodoLevel.Month)
   const monthEndDate = getEndDateForList(monthStartDate, TodoLevel.Month)
-  switch (granularity) {
-    case TodoLevel.Month:
-      return [
-        {
-          granularity: TodoLevel.Month,
-          position: getTodosForGranularity(listStartDate, listEndDate, TodoLevel.Month, todos).length
-        },
-        {
-          granularity: TodoLevel.Week,
-          position: 0,
-        },
-        {
-          granularity: TodoLevel.Day,
-          position: 0
-        }
-      ]
-    case TodoLevel.Week:
-      return [
-        {
-          granularity: TodoLevel.Month,
-          position: getTodosForGranularity(monthStartDate, monthEndDate, TodoLevel.Month, todos).length
-        },
-        {
-          granularity: TodoLevel.Week,
-          position: getTodosForGranularity(listStartDate, listEndDate, TodoLevel.Week, todos).length
-        },
-        {
-          granularity: TodoLevel.Day,
-          position: 0
-        }
-      ]
-    case TodoLevel.Day:
-      return [
-        {
-          granularity: TodoLevel.Month,
-          position: getTodosForGranularity(monthStartDate, monthEndDate, TodoLevel.Week, todos).length
-        },
-        {
-          granularity: TodoLevel.Week,
-          position: getTodosForGranularity(weekStartDate, weekEndDate, TodoLevel.Week, todos).length
-        },
-        {
-          granularity: TodoLevel.Day,
-          position: getTodosForGranularity(listStartDate, listEndDate, TodoLevel.Day, todos).length
-        }
-      ]
-  }
+  const monthList = [...lists.values()].find((list) => list.listStartDate === monthStartDate && list.listEndDate === monthEndDate)
+  const weekList = [...lists.values()].find((list) => list.listStartDate === weekStartDate && list.listEndDate === weekEndDate)
+  const dayList = [...lists.values()].find((list) => list.listStartDate === listStartDate && list.listEndDate === listEndDate)
+
+
+  return [
+    {
+      granularity: TodoLevel.Month,
+      position: monthList?.todos.length || 0
+    },
+    {
+      granularity: TodoLevel.Week,
+      position: weekList?.todos.length || 0
+    },
+    {
+      granularity: TodoLevel.Day,
+      position: dayList?.todos.length || 0
+    }
+  ]
 }
 
 /**
@@ -143,13 +95,11 @@ export function getNewTodoPositions(listStartDate: Date, listEndDate: Date, gran
  * @param {string} props.id - ID of the TodoList
  * @param {TodoLevel} props.granularity - Granularity of the TodoBoard that the TodoList is rendered under
  * @param {Date} props.listStartDate - The start date for the period the list represents
- * @param {Date} props.currentDate - The current date
  * @param {number} props.listPeriodDelta - The delta within the granularity that the list represents
  * @constructor
  */
-export function TodoItemList({ id, granularity, currentDate, listStartDate, listPeriodDelta }: TodoItemListProps): JSX.Element | null {
-  const { loading, todos, actions: { addTodo } } = useContext(AppContext)
-  const listEndDate = getEndDateForList(listStartDate, granularity)
+export function TodoItemList({ id, granularity, listStartDate, listEndDate, listPeriodDelta, era }: TodoItemListProps): JSX.Element | null {
+  const { loading, todos, lists, actions: { addTodo } } = useContext(AppContext)
 
   const { isOver, setNodeRef } = useDroppable({
     id: `${granularity}_${id}`,
@@ -171,25 +121,31 @@ export function TodoItemList({ id, granularity, currentDate, listStartDate, list
    */
   function handleAddTodo() {
     if (!loading) {
-      const positions = getNewTodoPositions(listStartDate, listEndDate, granularity, todos)
+      const positions = getNewTodoPositions(listStartDate, listEndDate, lists)
       addTodo(listStartDate, listEndDate, positions)
     }
   }
 
-  const todoItems = getTodosForGranularity(listStartDate, listEndDate, granularity, todos).sort((todoA, todoB) => {
-    switch (granularity) {
-      case TodoLevel.Month:
-        return todoA.posInMonth - todoB.posInMonth
-      case TodoLevel.Week:
-        return todoA.posInWeek - todoB.posInWeek
-      case TodoLevel.Day:
-        return todoA.posInDay - todoB.posInDay
-    }
-  })
+  const list = lists.get(id)
+  if (!list) return null
+
+  const todoItems = list.todos
+    .filter((todoId) => todos.has(todoId))
+    .map((todoId) => todos.get(todoId)!)
+    .sort((todoA, todoB) => {
+      switch (granularity) {
+        case TodoLevel.Month:
+          return todoA.posInMonth - todoB.posInMonth
+        case TodoLevel.Week:
+          return todoA.posInWeek - todoB.posInWeek
+        case TodoLevel.Day:
+          return todoA.posInDay - todoB.posInDay
+      }
+    })
 
   return (
     <div className={styles.todoItemList}>
-      <TodoItemListTitle listPeriodDelta={listPeriodDelta} currentDate={currentDate} granularity={granularity} listStartDate={listStartDate} />
+      <TodoItemListTitle listPeriodDelta={listPeriodDelta} era={era} granularity={granularity} listStartDate={listStartDate} />
       <SortableContext items={todoItems.map((todoItem) => todoItem.id)} strategy={verticalListSortingStrategy}>
         <div ref={setNodeRef} style={style} className={styles.listContainer}>
           {todoItems.map((todoItem: Todo, index) => <SortableTodoItem id={todoItem.id} key={todoItem.id} granularity={granularity} listStartDate={listStartDate} listEndDate={listEndDate} index={index} />)}

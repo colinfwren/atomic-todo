@@ -59,7 +59,7 @@ export function Container(): JSX.Element {
   function handleDragEnd(event: DragEndEvent) {
     if (event.over !== null && event.over.data.current && event.active !== null && event.active.data.current) {
       const { type, listStartDate, listEndDate, granularity } = event.over.data.current
-      const todo = todos.find((todo) => todo.id === event.active.data.current?.todoId)
+      const todo = todos.get(event.active.data.current?.todoId)
       if (type === 'list' && todo) {
         setTodoDateSpan(todo, listStartDate, listEndDate, granularity)
       }
@@ -199,6 +199,11 @@ export function Container(): JSX.Element {
     const activeContainer = active.data.current?.listId
 
     if (!overContainer || !activeContainer) return
+
+    const activeId = active.data.current?.todoId as string
+    const newIndex = 0 //getIndexForDraggedItem(over, active)
+    const sourceTodos = []
+    const targetTodos = []
   }
 
   return(
