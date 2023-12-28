@@ -1,10 +1,10 @@
 import React, {createContext, useState} from 'react'
-import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList} from "../types";
+import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList, TodoListMap} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
 import {
   BoardNameUpdateInput,
-  Todo,
+  Todo, TodoBoardResult,
   TodoLevel,
   TodoPositionInput
 } from "@atomic-todo/server/dist/src/generated/graphql";
@@ -12,7 +12,8 @@ import {gql, useMutation, useQuery} from "@apollo/client";
 import {getTodoMapFromTodos} from "../functions/getTodoMapFromTodos";
 import {getListMapFromTodos} from "../functions/getListMapFromTodos";
 import {getAppStateFromTodoBoardResult} from "../functions/getAppStateFromTodoBoardResult";
-import {getTodoMapFromUpdate} from "../functions/getTodoMapFromUpdate";
+import {getTodoMapFromUpdate, getTodoMapFromUpdates} from "../functions/getTodoMapFromUpdate";
+import {getGranularityVisibilityKey} from "../functions/getGranularityVisibilityKey";
 
 const initialState: AppState = {
   board: todoBoard,
@@ -21,10 +22,10 @@ const initialState: AppState = {
 }
 
 const actions = {
-  setLists: () => {},
+  setAppState: () => {},
   setTodoCompleted: () => {},
   setTodoName: () => {},
-  setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => {},
+  updateTodos: (todos: Todo[]) => {},
   moveBoardForward: () => {},
   moveBoardBackward: () => {},
   setBoardName: () => {},
@@ -79,6 +80,23 @@ mutation updateTodo($todo: TodoUpdateInput!) {
   }
 }
 `;
+
+const UPDATE_TODOS = gql`
+mutation updateTodos($todos: [TodoUpdateInput!]!) {
+  updateTodos(todos: $todos) {
+    id
+    name
+    completed
+    startDate
+    endDate
+    showInYear
+    showInMonth
+    showInWeek
+    posInMonth
+    posInWeek
+    posInDay
+  }
+}`
 
 const MOVE_BOARD_FORWARD_BY_WEEK = gql`
 mutation moveBoardForwardByWeek($boardId: ID!) {
@@ -189,22 +207,6 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
 `
 
 /**
- * Get the appropriate flag to update on the Todo for the granularity of the list it moved to
- *
- * @param {TodoLevel} granularity - The list granularity
- */
-function getGranularityKey(granularity: TodoLevel): string {
-  switch (granularity) {
-    case TodoLevel.Month:
-      return 'showInMonth'
-    case TodoLevel.Week:
-      return 'showInWeek'
-    default:
-      return 'showInYear'
-  }
-}
-
-/**
  * Provider for the AppContext
  *
  * @param {AppProviderProps} props - Props passed into context
@@ -233,6 +235,7 @@ export function AppProvider({ children }: AppProviderProps) {
   })
 
   const [updateTodo] = useMutation(UPDATE_TODO)
+  const [updateTodos] = useMutation(UPDATE_TODOS)
   const [moveBoardForwardByWeek] = useMutation(MOVE_BOARD_FORWARD_BY_WEEK)
   const [moveBoardBackwardByWeek] = useMutation(MOVE_BOARD_BACKWARD_BY_WEEK)
   const [updateBoardName] = useMutation(UPDATE_BOARD_NAME)
@@ -249,6 +252,9 @@ export function AppProvider({ children }: AppProviderProps) {
   const value = {
     ...state,
     actions: {
+      setAppState: (newState: AppState) => {
+        setData(newState)
+      },
       setTodoCompleted: (todo: Todo, completed: boolean) => {
         const update = {
           id: todo.id,
@@ -305,15 +311,41 @@ export function AppProvider({ children }: AppProviderProps) {
           }
         })
       },
+      updateTodos: (todos: Todo[]) => {
+        const update = todos.map((todo) => ({
+          id: todo.id,
+          startDate: todo.startDate,
+          endDate: todo.endDate,
+          posInDay: todo.posInDay,
+          posInWeek: todo.posInWeek,
+          posInMonth: todo.posInMonth,
+          showInWeek: todo.showInWeek,
+          showInMonth: todo.showInMonth
+        }))
+        setLoading(true)
+        updateTodos({
+          variables: { todos: update },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted:({ updateTodos }) => {
+            setData((state) => ({
+              ...state,
+              todos: getTodoMapFromUpdates(state.todos, updateTodos)
+            }))
+            setLoading(false)
+          }
+        })
+      },
       setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => {
-        const granularityKey = getGranularityKey(granularity)
+        const granularityKey = getGranularityVisibilityKey(granularity)
         const update = {
           id: todo.id,
           startDate: startDate.getTime() / 1000,
           endDate: endDate.getTime() / 1000,
           [granularityKey]: true
         }
-        console.log('about to set date span', update, todo)
         setLoading(true)
         updateTodo({
           variables: { todo: update },

@@ -102,12 +102,13 @@ export function TodoItemList({ id, granularity, listStartDate, listEndDate, list
   const { loading, todos, lists, actions: { addTodo } } = useContext(AppContext)
 
   const { isOver, setNodeRef } = useDroppable({
-    id: `${granularity}_${id}`,
+    id,
     data: {
       type: 'list',
       listStartDate,
       listEndDate,
-      granularity
+      granularity,
+      listId: id,
     }
   })
 
@@ -148,7 +149,7 @@ export function TodoItemList({ id, granularity, listStartDate, listEndDate, list
       <TodoItemListTitle listPeriodDelta={listPeriodDelta} era={era} granularity={granularity} listStartDate={listStartDate} />
       <SortableContext items={todoItems.map((todoItem) => todoItem.id)} strategy={verticalListSortingStrategy}>
         <div ref={setNodeRef} style={style} className={styles.listContainer}>
-          {todoItems.map((todoItem: Todo, index) => <SortableTodoItem id={todoItem.id} key={todoItem.id} granularity={granularity} listStartDate={listStartDate} listEndDate={listEndDate} index={index} />)}
+          {todoItems.map((todoItem: Todo, index) => <SortableTodoItem id={todoItem.id} key={todoItem.id} granularity={granularity} listStartDate={listStartDate} listEndDate={listEndDate} index={index} listId={id} />)}
         </div>
       </SortableContext>
       <div className={styles.addContainer}>

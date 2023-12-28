@@ -33,7 +33,7 @@ export function TodoItemBoard(): JSX.Element {
         listPeriodDelta: index
       }
       return (
-        <TodoItemListComp {...props} />
+        <TodoItemListComp {...props} key={list.id} />
       )
     }
   return <div />

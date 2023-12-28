@@ -9,6 +9,7 @@ export type SortableTodoItemProps = {
   listStartDate: Date,
   listEndDate: Date,
   index: number,
+  listId: string
 }
 
 export type TodoItemProps = {
@@ -60,9 +61,10 @@ export type AppState = {
 
 export type IAppContext = AppState & {
   actions: {
+    setAppState: (newState: AppState) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
-    setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => void,
+    updateTodos: (todos: Todo[]) => void,
     moveBoardForward: () => void,
     moveBoardBackward: () => void,
     setBoardName: (name: string) => void,
