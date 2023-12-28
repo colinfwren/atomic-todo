@@ -13,7 +13,7 @@ import {
 } from "@dnd-kit/core";
 import {TodoItemBoard} from "../TodoItemBoard/TodoItemBoard";
 import React, {useContext, useState} from "react";
-import AppContext from "../../contexts/AppContext";
+import TodoBoardContext from "../../contexts/TodoBoardContext";
 import {TodoItem} from "../TodoItem/TodoItem";
 import {createPortal} from "react-dom";
 import {Modal} from "../Modal/Modal";
@@ -45,7 +45,7 @@ const measuringStrategy = {
  * @returns {JSX.Element} Drag 'n' Drop wrapper over TodoItemBoard
  */
 export function Container(): JSX.Element {
-  const { modal, board, todos, lists, actions: { updateTodos, setAppState } } = useContext(AppContext)
+  const { modal, board, todos, lists, actions: { updateTodos, setAppState } } = useContext(TodoBoardContext)
   const [activeId, setActiveId] = useState<UniqueIdentifier|null>(null)
   const [sourceListId, setSourceListId] = useState<string|null>(null)
   const [appStateCopy, setAppStateCopy] = useState<AppState|null>(null)

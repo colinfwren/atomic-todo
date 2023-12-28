@@ -1,7 +1,7 @@
 import React, {MouseEventHandler, useRef} from 'react'
 import styles from './Modal.module.css'
 import {useContext} from "react";
-import AppContext from "../../contexts/AppContext";
+import TodoBoardContext from "../../contexts/TodoBoardContext";
 import {DeleteIcon} from "../icons/DeleteIcon";
 
 /**
@@ -9,7 +9,7 @@ import {DeleteIcon} from "../icons/DeleteIcon";
  * @constructor
  */
 export function Modal() {
-  const { todos, modal: { todoId }, actions: { hideModal, deleteTodo }} = useContext(AppContext)
+  const { todos, modal: { todoId }, actions: { hideModal, deleteTodo }} = useContext(TodoBoardContext)
   const scrimRef = useRef<HTMLDivElement>(null)
 
   const todo = todos.get(todoId as string)

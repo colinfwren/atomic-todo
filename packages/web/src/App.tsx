@@ -1,7 +1,9 @@
 import React from 'react';
-import { AppProvider } from "./contexts/AppContext";
+import { createBrowserRouter } from "react-router-dom";
+import { TodoBoardProvider } from "./contexts/TodoBoardContext";
 import {Container} from "./components/Container/Container";
 import './app.css';
+import { HomePage } from "./pages/HompePage";
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
@@ -10,6 +12,14 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 
+const router = createBrowserRouter([
+  {
+    id: 'root',
+    path: "/",
+    Component: HomePage,
+  }
+])
+
 /**
  * The Atomic Todo Web App
  * @constructor
@@ -17,9 +27,9 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <AppProvider>
+      <TodoBoardProvider>
         <Container />
-      </AppProvider>
+      </TodoBoardProvider>
     </ApolloProvider>
   );
 }

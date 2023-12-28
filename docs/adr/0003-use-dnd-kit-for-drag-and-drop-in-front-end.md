@@ -136,7 +136,7 @@ sequenceDiagram
     participant DragOverlay
     participant DndContext
     participant Container
-    participant AppContext
+    participant TodoBoardContext
     participant GraphQL
     
     note over TodoItem,Container: onDragStart
@@ -147,11 +147,11 @@ sequenceDiagram
     DragOverlay-->TodoItem: Renders TodoItem in DragOverlay
     TodoItem-->user: Shows TodoItem as they drag
     
-    note over TodoItem,AppContext: onDragOver
+    note over TodoItem,TodoBoardContext: onDragOver
     user-->TodoItem: drags TodoItem over TodoItemList
     DndContext-->Container: Fires onDragOver
-    Container-->AppContext: Updates the lists in state so they reflect the Todo list having moved lists
-    AppContext-->TodoItemList: Re-renders todo list with Todo added to target list
+    Container-->TodoBoardContext: Updates the lists in state so they reflect the Todo list having moved lists
+    TodoBoardContext-->TodoItemList: Re-renders todo list with Todo added to target list
     TodoItemList-->user: Shows Todo in TodoItemList that they are hovering over
     
     note over TodoItem,GraphQL: onDragEnd
@@ -161,16 +161,16 @@ sequenceDiagram
         Container-->Container: sets activeId to null, sets copy of lists to null
         Container-->DragOverlay: hides dragOverlay as activeId is not set
         DragOverlay-->user: dragOverlay is no longer shown
-    and Container to AppContext
-        Container-->AppContext: Calls action to update Todos in backend
+    and Container to TodoBoardContext
+        Container-->TodoBoardContext: Calls action to update Todos in backend
     end
-    par AppContext to GraphQL
-        AppContext-->GraphQL: Calls mutation to update Todos
-        GraphQL-->AppContext: Returns updated Todos
-    and AppContext to AppContext
-    AppContext-->AppContext: Updates state with optimistic response
+    par TodoBoardContext to GraphQL
+        TodoBoardContext-->GraphQL: Calls mutation to update Todos
+        GraphQL-->TodoBoardContext: Returns updated Todos
+    and TodoBoardContext to TodoBoardContext
+    TodoBoardContext-->TodoBoardContext: Updates state with optimistic response
     end
-    AppContext-->TodoItemList: Re-renders todo list based on updated Todo data
+    TodoBoardContext-->TodoItemList: Re-renders todo list based on updated Todo data
     TodoItemList-->user: Shows Todo moved from one TodoItemList to another
 ```
 
@@ -184,7 +184,7 @@ sequenceDiagram
     participant DragOverlay
     participant DndContext
     participant Container
-    participant AppContext
+    participant TodoBoardContext
     participant GraphQL
     
     note over TodoItem,Container: onDragStart
@@ -195,19 +195,19 @@ sequenceDiagram
     DragOverlay-->TodoItem: Renders TodoItem in DragOverlay
     TodoItem-->user: Shows TodoItem as they drag
     
-    note over TodoItem,AppContext: onDragOver
+    note over TodoItem,TodoBoardContext: onDragOver
     user-->TodoItem: drags TodoItem over TodoItemList
     DndContext-->Container: Fires onDragOver
-    Container-->AppContext: Updates the lists in state so they reflect the Todo list having moved lists
-    AppContext-->TodoItemList: Re-renders todo list with Todo added to target list
+    Container-->TodoBoardContext: Updates the lists in state so they reflect the Todo list having moved lists
+    TodoBoardContext-->TodoItemList: Re-renders todo list with Todo added to target list
     TodoItemList-->user: Shows Todo in TodoItemList that they are hovering over
     
     note over TodoItem,GraphQL: onDragCancel
     user-->TodoItem: Cancels drag
     DndContext-->Container: Fires onDragCancel
-    par user to AppContext
-      Container-->AppContext: Updates the lists in state to reflect the copy that was saved during onDragStart
-      AppContext-->TodoItemList: Re-renders todo lists
+    par user to TodoBoardContext
+      Container-->TodoBoardContext: Updates the lists in state to reflect the copy that was saved during onDragStart
+      TodoBoardContext-->TodoItemList: Re-renders todo lists
       TodoItemList-->user: Shows pre-drag state
     and user to Container
       Container-->Container: sets activeId to null, sets copy of lists to null 

@@ -1,16 +1,14 @@
 import React, {createContext, useState} from 'react'
-import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList, TodoListMap} from "../types";
+import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
 import {
   BoardNameUpdateInput,
-  Todo, TodoBoardResult,
+  Todo,
   TodoLevel,
   TodoPositionInput
 } from "@atomic-todo/server/dist/src/generated/graphql";
 import {gql, useMutation, useQuery} from "@apollo/client";
-import {getTodoMapFromTodos} from "../functions/getTodoMapFromTodos";
-import {getListMapFromTodos} from "../functions/getListMapFromTodos";
 import {getAppStateFromTodoBoardResult} from "../functions/getAppStateFromTodoBoardResult";
 import {getTodoMapFromUpdate, getTodoMapFromUpdates} from "../functions/getTodoMapFromUpdate";
 import {getGranularityVisibilityKey} from "../functions/getGranularityVisibilityKey";
@@ -35,8 +33,8 @@ const actions = {
   deleteTodo: (todoId: string) => {}
 }
 
-const AppContext = createContext<IAppContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
-const { Provider } = AppContext
+const TodoBoardContext = createContext<IAppContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
+const { Provider } = TodoBoardContext
 
 const GET_DATA = gql`
 query getData($boardId: ID!) {
@@ -207,12 +205,12 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
 `
 
 /**
- * Provider for the AppContext
+ * Provider for the TodoBoardContext
  *
  * @param {AppProviderProps} props - Props passed into context
  * @param {JSX.Element|JSX.Element[]} props.children - Child elements
  */
-export function AppProvider({ children }: AppProviderProps) {
+export function TodoBoardProvider({ children }: AppProviderProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string|null>(null)
   const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
@@ -468,5 +466,5 @@ export function AppProvider({ children }: AppProviderProps) {
   return <Provider value={value}>{children}</Provider>
 }
 
-export const AppConsumer = AppContext.Consumer
-export default AppContext
+export const TodoBoardConsumer = TodoBoardContext.Consumer
+export default TodoBoardContext

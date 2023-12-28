@@ -146,7 +146,7 @@ sequenceDiagram
     participant Todo
     participant TodoList
     participant Container
-    participant AppContext
+    participant TodoBoardContext
     participant AppState
     participant GraphQL
     
@@ -164,8 +164,8 @@ sequenceDiagram
     Note over User,GraphQl: onDragEnd
     User->>TodoList: Drops Todo at desired position
     TodoList->>Container: Uses ID of Todo being dragged and the ID of list dropped on to update positions of Todos in AppState
-    Container->>AppContext: Calls updateTodos for affected Todos which is determined by looking at which Todos are in TodoList
-    AppContext->>GraphQL: Makes call to back-end to do update in Appwrite
+    Container->>TodoBoardContext: Calls updateTodos for affected Todos which is determined by looking at which Todos are in TodoList
+    TodoBoardContext->>GraphQL: Makes call to back-end to do update in Appwrite
     GraphQL-->AppState: Gets updated Todo data to put into state as part of response (optimistic rendering should already have updated UI)
     AppState-->User: Update to AppState causes TodoBoard to re-render
 ```
@@ -178,7 +178,7 @@ sequenceDiagram
     participant Todo
     participant TodoList
     participant Container
-    participant AppContext
+    participant TodoBoardContext
     participant AppState
     participant GraphQL
     
@@ -196,8 +196,8 @@ sequenceDiagram
     Note over User,GraphQl: onDragEnd
     User->>TodoList: Drops Todo at desired position
     TodoList->>Container: Uses ID of Todo being dragged and the ID of list dropped on to update positions of Todos in source and target TodoLists in AppState
-    Container->>AppContext: Calls updateTodos for affected Todos which is determined by looking at which Todos are in source and target TodoLists
-    AppContext->>GraphQL: Makes call to back-end to do update in Appwrite
+    Container->>TodoBoardContext: Calls updateTodos for affected Todos which is determined by looking at which Todos are in source and target TodoLists
+    TodoBoardContext->>GraphQL: Makes call to back-end to do update in Appwrite
     GraphQL-->AppState: Gets updated Todo data to put into state as part of response (optimistic rendering should already have updated UI)
     AppState-->User: Update to AppState causes TodoBoard to re-render
 ```
