@@ -1,12 +1,15 @@
-import React, {createContext, useState} from "react";
+import React, {createContext, useEffect, useState} from "react";
 import { IAuthContext, AuthState, AuthProviderProps } from "../types";
+import {createAccount, createSession, endSession, restoreExistingSession} from "../services/appwrite";
 
 const initialState: AuthState = {
-  user: null
+  user: null,
+  session: null
 }
 
 const actions = {
-  signIn: (user: string) => {},
+  signIn: (email: string, password: string) => {},
+  signUp: (email: string, password: string) => {},
   signOut: () => {}
 }
 
@@ -21,14 +24,40 @@ const { Provider } = AuthContext
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [data, setData] = useState<AuthState>(initialState)
+  const [restoringSession, setRestoringSession] = useState<boolean>(false)
+
+  useEffect(() => {
+    /**
+     * Get existing session if there is one and set the auth state
+     */
+    async function restoreSession() {
+      const authState = await restoreExistingSession()
+      setData(authState)
+    }
+
+    if (!restoringSession) {
+      restoreSession()
+      setRestoringSession(true)
+    }
+  })
+
   const value = {
     ...data,
     actions: {
-      signIn: (user: string) => {
-        setData({ user })
+      signIn: async (email: string, password: string) => {
+        const authenticatedUser = await createSession(email, password)
+        setData(authenticatedUser)
       },
-      signOut: () => {
-        setData({ user: null })
+      signUp: async (email: string, password: string) => {
+        const authenticatedUser = await createAccount(email, password)
+        setData(authenticatedUser)
+      },
+      signOut: async () => {
+        await endSession()
+        setData({
+          user: null,
+          session: null
+        })
       }
     }
   }

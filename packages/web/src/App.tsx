@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import './app.css';
-import { HomePage } from "./pages/HompePage";
+import { HomePage } from "./pages/HomePage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { TodoBoardPage } from "./pages/TodoBoardPage";
 import AuthContext, {AuthProvider} from "./contexts/AuthContext";
@@ -19,10 +19,9 @@ const client = new ApolloClient({
  * @constructor
  */
 function RequireAuth({ children }: { children: JSX.Element }) {
-  const auth = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
   const location = useLocation()
-
-  if (!auth.user) {
+  if (user === null) {
     // Redirect user back to the homepage but save the location coming from to redirect back to
     return <Navigate to="/" state={{ from: location }} replace />
   }

@@ -2,6 +2,7 @@ import {Todo, TodoBoard, TodoLevel, TodoPositionInput} from '@atomic-todo/server
 import React, {MouseEventHandler} from "react";
 import {DraggableSyntheticListeners} from "@dnd-kit/core";
 import type {Transform} from '@dnd-kit/utilities';
+import { Models } from 'appwrite'
 
 export type SortableTodoItemProps = {
   id: string
@@ -105,12 +106,14 @@ export interface ModalProps {
 }
 
 export interface AuthState {
-  user: any
+  user: Models.User<Models.Preferences> | null,
+  session: Models.Session | null
 }
 
 export type IAuthContext = AuthState & {
   actions: {
-    signIn: (user: string) => void
+    signIn: (emailAddress: string, password: string) => void
+    signUp: (emailAddress: string, password: string) => void
     signOut: () => void
   }
 }
