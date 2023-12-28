@@ -37,7 +37,7 @@ class TodoBoard:
 
 
 class Todo:
-    def __init__(self, name, todo_id, completed, start_date, end_date, show_in_year, show_in_month, show_in_week):
+    def __init__(self, name, todo_id, completed, start_date, end_date, show_in_year, show_in_month, show_in_week, pos_in_year = 1, pos_in_month = 1, pos_in_week = 1, pos_in_day = 1):
         self.name = name
         self.id = todo_id
         self.completed = completed
@@ -47,6 +47,10 @@ class Todo:
         self.show_in_year = show_in_year
         self.show_in_month = show_in_month
         self.show_in_week = show_in_week
+        self.pos_in_year = pos_in_year
+        self.pos_in_month = pos_in_month
+        self.pos_in_week = pos_in_week
+        self.pos_in_day = pos_in_day
         self.database_id = database_id
         self.collection_id = 'todos'
 
@@ -59,7 +63,11 @@ class Todo:
             'endDate': self.end_date,
             'showInYear': self.show_in_year,
             'showInMonth': self.show_in_month,
-            'showInWeek': self.show_in_week
+            'showInWeek': self.show_in_week,
+            "posInYear": self.pos_in_year,
+            "posInMonth": self.pos_in_month,
+            "posInWeek": self.pos_in_week,
+            "posInDay": self.pos_in_day
         })
 
 
@@ -75,7 +83,7 @@ todos = [
         end_date=int(datetime.timestamp(run_date.replace(month=12, day=31, hour=23, minute=59, second=59))),
         show_in_year=True,
         show_in_week=True,
-        show_in_month=True
+        show_in_month=True,
     ),
     Todo(
         name='Assigned to current month',

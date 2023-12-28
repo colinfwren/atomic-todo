@@ -17,7 +17,10 @@ describe('Updating Todo with values', () => {
     endDate: 1736121600,
     showInYear: true,
     showInMonth: true,
-    showInWeek: true
+    showInWeek: true,
+    posInMonth: 1,
+    posInWeek: 2,
+    posInDay: 3
   }
 
   const updatedTodo: Todo = {

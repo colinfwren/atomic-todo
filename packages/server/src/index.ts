@@ -34,7 +34,7 @@ const resolvers: Resolvers = {
     moveBoardForwardByWeek: async (_, { boardId }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.FORWARD),
     moveBoardBackwardByWeek: async (_, { boardId }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.BACK),
     updateBoardName: async (_, { boardNameUpdate }) => await updateTodoBoardDoc(databases, boardNameUpdate),
-    addTodo: async (_, { boardId, startDate, endDate}) => await addTodo(databases, boardId, startDate, endDate),
+    addTodo: async (_, { boardId, startDate, endDate, positions}) => await addTodo(databases, boardId, startDate, endDate, positions),
     deleteTodo: async (_, { boardId, todoId }) => await deleteTodo(databases, boardId, todoId)
   }
 }

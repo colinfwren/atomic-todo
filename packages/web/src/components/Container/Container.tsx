@@ -17,6 +17,11 @@ import AppContext from "../../contexts/AppContext";
 import {TodoItem} from "../TodoItem/TodoItem";
 import {createPortal} from "react-dom";
 import {Modal} from "../Modal/Modal";
+import {AppState, TodoListMap} from "../../types";
+import {getAppStateFromTodoBoardResult} from "../../functions/getAppStateFromTodoBoardResult";
+import {Todo} from "@atomic-todo/server/dist/src/generated/graphql";
+import {getGranularityPositionKey} from "../../functions/getGranularityPositionKey";
+import {getGranularityVisibilityKey} from "../../functions/getGranularityVisibilityKey";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -40,8 +45,10 @@ const measuringStrategy = {
  * @returns {JSX.Element} Drag 'n' Drop wrapper over TodoItemBoard
  */
 export function Container(): JSX.Element {
-  const { modal, todos, actions: { setTodoDateSpan } } = useContext(AppContext)
+  const { modal, board, todos, lists, actions: { updateTodos, setAppState } } = useContext(AppContext)
   const [activeId, setActiveId] = useState<UniqueIdentifier|null>(null)
+  const [sourceListId, setSourceListId] = useState<string|null>(null)
+  const [appStateCopy, setAppStateCopy] = useState<AppState|null>(null)
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -52,22 +59,6 @@ export function Container(): JSX.Element {
   );
 
   /**
-   * Callback for when a drag 'n' drop operation has ended
-   *
-   * @param {DragEndEvent} event - The drag end event
-   */
-  function handleDragEnd(event: DragEndEvent) {
-    if (event.over !== null && event.over.data.current && event.active !== null && event.active.data.current) {
-      const { type, listStartDate, listEndDate, granularity } = event.over.data.current
-      const todo = todos.find((todo) => todo.id === event.active.data.current?.todoId)
-      if (type === 'list' && todo) {
-        setTodoDateSpan(todo, listStartDate, listEndDate, granularity)
-      }
-    }
-    setActiveId(null)
-  }
-
-  /**
    * Callback for when a drag 'n' drop operation has started
    *
    * @param {DragStartEvent} event - The drag start event
@@ -75,16 +66,9 @@ export function Container(): JSX.Element {
   function handleDragStart(event: DragStartEvent) {
     if (event.active.data.current) {
       setActiveId(event.active.id)
+      setSourceListId(event.active.data.current.listId as string)
+      setAppStateCopy({ board, todos, lists })
     }
-  }
-
-  /**
-   * Handle cancelling the drag
-   *
-   * @param {DragCancelEvent} event - The drag cancel event
-   */
-  function handleDragCancel(event: DragCancelEvent) {
-    setActiveId(null)
   }
 
   /**
@@ -166,23 +150,23 @@ export function Container(): JSX.Element {
    * @returns {number} - The index the active todo would be in the list being dragged over
    */
   function getIndexForDraggedItem(over: Over, active: Active) {
-    // const overId = over?.data.current?.todoId as string
-    // const overContainer = over?.data.current?.listId
-    // const overItems = lists.get(overContainer)!.todos
-    // const overIndex = overItems.indexOf(overId)
-    // if (lists.has(overId)) {
-    //   return overItems.length + 1;
-    // } else {
-    //   const isBelowOverItem =
-    //     over &&
-    //     active.rect.current.translated &&
-    //     active.rect.current.translated.top >
-    //       over.rect.top + over.rect.height;
-    //
-    //   const modifier = isBelowOverItem ? 1 : 0;
-    //
-    //   return overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-    // }
+    const overId = over?.data.current?.todoId as string
+    const overContainer = over?.data.current?.listId
+    const overItems = lists.get(overContainer)!.todos
+    const overIndex = overItems.indexOf(overId)
+    if (lists.has(overId)) {
+      return overItems.length + 1
+    } else {
+      const isBelowOverItem =
+        over &&
+        active.rect.current.translated &&
+        active.rect.current.translated.top >
+          over.rect.top + over.rect.height;
+
+      const modifier = isBelowOverItem ? 1 : 0;
+
+      return overIndex >= 0 ? overIndex + modifier : overItems.length + 1
+    }
   }
 
   /**
@@ -199,6 +183,92 @@ export function Container(): JSX.Element {
     const activeContainer = active.data.current?.listId
 
     if (!overContainer || !activeContainer) return
+
+    const activeId = active.data.current?.todoId as string
+    const newIndex = getIndexForDraggedItem(over, active)
+
+    const sourceList = lists.get(activeContainer)!
+    const targetList = lists.get(overContainer)!
+    const sourcePositionKey = getGranularityPositionKey(sourceList.granularity)
+    const targetPositionKey = getGranularityPositionKey(targetList.granularity)
+    const visibilityKey = getGranularityVisibilityKey(targetList.granularity)
+
+    const targetListTodosWithoutActiveTodo = targetList.todos.filter(todo => todo !== activeId)
+    const targetListTodosWithActiveTodo = [
+      ...targetListTodosWithoutActiveTodo.slice(0, newIndex),
+      activeId,
+      ...targetListTodosWithoutActiveTodo.slice(newIndex)
+    ]
+
+    const sourceListTodosWithoutActiveTodo = sourceList.todos.filter((todo) => todo !== activeId)
+
+    const updatedTodos: Todo[] = [...todos.values()].map((todo) => {
+      if (todo.id === activeId) {
+        if (sourceList.id == targetList.id) {
+          return {
+            ...todo,
+            [targetPositionKey]: newIndex,
+          }
+        }
+        return {
+          ...todo,
+          [targetPositionKey]: newIndex,
+          [visibilityKey]: true,
+          startDate: targetList.listStartDate.getTime() / 1000,
+          endDate: targetList.listEndDate.getTime() / 1000
+        }
+      }
+      else {
+        if (sourceList.id !== targetList.id && sourceList.todos.includes(todo.id)) {
+          return {
+            ...todo,
+            [sourcePositionKey]: sourceListTodosWithoutActiveTodo.indexOf(todo.id)
+          }
+        }
+        // @ts-ignore
+        if (targetList.todos.includes(todo.id)) {
+          return {
+            ...todo,
+            [targetPositionKey]: targetListTodosWithActiveTodo.indexOf(todo.id)
+          }
+        }
+      }
+      return todo
+    })
+    const newAppState = getAppStateFromTodoBoardResult({ board: { ...board, startDate: board.startDate.getTime() / 1000 }, todos: updatedTodos})
+    setAppState(newAppState)
+  }
+
+  /**
+   * Callback for when a drag 'n' drop operation has ended
+   *
+   * @param {DragEndEvent} event - The drag end event
+   */
+  function handleDragEnd(event: DragEndEvent) {
+    if (event.over !== null && event.over.data.current && event.active !== null && event.active.data.current && sourceListId !== null) {
+      const overContainer = event.over.data.current.listId
+      const sourceList = lists.get(sourceListId)!
+      const targetList = lists.get(overContainer)!
+      const todosToUpdate = new Set([...sourceList.todos, ...targetList.todos])
+      updateTodos([...todosToUpdate].map((todoId) => todos.get(todoId)!))
+    }
+    setActiveId(null)
+    setSourceListId(null)
+    setAppStateCopy(null)
+  }
+
+
+
+  /**
+   * Handle cancelling the drag
+   */
+  function handleDragCancel() {
+    if (appStateCopy !== null) {
+      setAppState(appStateCopy)
+      setAppStateCopy(null)
+    }
+    setActiveId(null)
+    setSourceListId(null)
   }
 
   return(

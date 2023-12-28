@@ -12,10 +12,11 @@ import {SortableTodoItemProps} from "../../types";
  * @param {Date} props.listStartDate - The start date of the list the todo item is in
  * @param {Date} props.listEndDate - The end date of the list the todo item is in
  * @param {number} props.index - The index of the todo item in the list it is in
+ * @param {string} props.listId - The ID of the list the todo item is in
  * @returns {JSX.Element} sortable TodoItem
  * @constructor
  */
-export function SortableTodoItem({ id, granularity, listStartDate, listEndDate, index }: SortableTodoItemProps) {
+export function SortableTodoItem({ id, granularity, listStartDate, listEndDate, index, listId }: SortableTodoItemProps) {
 
   const itemId = `${granularity}_${id}`
 
@@ -35,6 +36,7 @@ export function SortableTodoItem({ id, granularity, listStartDate, listEndDate, 
       listStartDate,
       listEndDate,
       todoId: id,
+      listId
     }
   })
 

@@ -39,6 +39,7 @@ export type Mutation = {
 export type MutationAddTodoArgs = {
   boardId: Scalars['ID'];
   endDate: Scalars['Int'];
+  positions: Array<InputMaybe<TodoPositionInput>>;
   startDate: Scalars['Int'];
 };
 
@@ -90,6 +91,10 @@ export type Todo = {
   endDate: Scalars['Int'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  posInDay: Scalars['Int'];
+  posInMonth: Scalars['Int'];
+  posInWeek: Scalars['Int'];
+  posInYear: Scalars['Int'];
   showInMonth: Scalars['Boolean'];
   showInWeek: Scalars['Boolean'];
   showInYear: Scalars['Boolean'];
@@ -115,11 +120,19 @@ export enum TodoLevel {
   Week = 'week'
 }
 
+export type TodoPositionInput = {
+  granularity: TodoLevel;
+  position: Scalars['Int'];
+};
+
 export type TodoUpdateInput = {
   completed?: InputMaybe<Scalars['Boolean']>;
   endDate?: InputMaybe<Scalars['Int']>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
+  posInDay?: InputMaybe<Scalars['Int']>;
+  posInMonth?: InputMaybe<Scalars['Int']>;
+  posInWeek?: InputMaybe<Scalars['Int']>;
   showInMonth?: InputMaybe<Scalars['Boolean']>;
   showInWeek?: InputMaybe<Scalars['Boolean']>;
   showInYear?: InputMaybe<Scalars['Boolean']>;
@@ -216,6 +229,7 @@ export type ResolversTypes = {
   TodoBoard: ResolverTypeWrapper<TodoBoard>;
   TodoBoardResult: ResolverTypeWrapper<TodoBoardResult>;
   TodoLevel: TodoLevel;
+  TodoPositionInput: TodoPositionInput;
   TodoUpdateInput: TodoUpdateInput;
   User: ResolverTypeWrapper<User>;
 };
@@ -232,12 +246,13 @@ export type ResolversParentTypes = {
   Todo: Todo;
   TodoBoard: TodoBoard;
   TodoBoardResult: TodoBoardResult;
+  TodoPositionInput: TodoPositionInput;
   TodoUpdateInput: TodoUpdateInput;
   User: User;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationAddTodoArgs, 'boardId' | 'endDate' | 'startDate'>>;
+  addTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationAddTodoArgs, 'boardId' | 'endDate' | 'positions' | 'startDate'>>;
   deleteTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'boardId' | 'todoId'>>;
   moveBoardBackwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardBackwardByWeekArgs, 'boardId'>>;
   moveBoardForwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardForwardByWeekArgs, 'boardId'>>;
@@ -256,6 +271,10 @@ export type TodoResolvers<ContextType = any, ParentType extends ResolversParentT
   endDate?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  posInDay?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  posInMonth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  posInWeek?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  posInYear?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   showInMonth?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   showInWeek?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   showInYear?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

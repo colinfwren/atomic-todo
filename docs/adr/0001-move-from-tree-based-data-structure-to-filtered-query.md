@@ -4,7 +4,8 @@ Date: 2023-12-20
 
 ## Status
 
-2023-12-20 proposed
+- 2023-12-20 proposed
+- 2023-12-23 accepted
 
 ## Context
 

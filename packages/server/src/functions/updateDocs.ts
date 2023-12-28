@@ -20,7 +20,11 @@ export async function updateTodoDoc(databases: Databases, todo: TodoUpdateInput)
     endDate: doc.endDate,
     showInYear: doc.showInYear,
     showInMonth: doc.showInMonth,
-    showInWeek: doc.showInWeek
+    showInWeek: doc.showInWeek,
+    posInYear: doc.posInYear,
+    posInMonth: doc.posInMonth,
+    posInWeek: doc.posInWeek,
+    posInDay: doc.posInDay
   }
 }
 

@@ -1,24 +1,35 @@
 import React, {createContext, useState} from 'react'
-import {AppProviderProps, AppState, IAppContext, ModalProps} from "../types";
+import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList, TodoListMap} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
-import {BoardNameUpdateInput, Todo, TodoBoard, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
+import {
+  BoardNameUpdateInput,
+  Todo, TodoBoardResult,
+  TodoLevel,
+  TodoPositionInput
+} from "@atomic-todo/server/dist/src/generated/graphql";
 import {gql, useMutation, useQuery} from "@apollo/client";
+import {getTodoMapFromTodos} from "../functions/getTodoMapFromTodos";
+import {getListMapFromTodos} from "../functions/getListMapFromTodos";
+import {getAppStateFromTodoBoardResult} from "../functions/getAppStateFromTodoBoardResult";
+import {getTodoMapFromUpdate, getTodoMapFromUpdates} from "../functions/getTodoMapFromUpdate";
+import {getGranularityVisibilityKey} from "../functions/getGranularityVisibilityKey";
 
 const initialState: AppState = {
   board: todoBoard,
-  todos: []
+  lists: new Map<string, TodoItemList>(),
+  todos: new Map<string, Todo>()
 }
 
 const actions = {
-  setLists: () => {},
+  setAppState: () => {},
   setTodoCompleted: () => {},
   setTodoName: () => {},
-  setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => {},
+  updateTodos: (todos: Todo[]) => {},
   moveBoardForward: () => {},
   moveBoardBackward: () => {},
   setBoardName: () => {},
-  addTodo: (listStartDate: Date, listEndDate: Date) => {},
+  addTodo: (listStartDate: Date, listEndDate: Date, positions: TodoPositionInput[]) => {},
   showModal: (todoId: string) => {},
   hideModal: () => {},
   deleteTodo: (todoId: string) => {}
@@ -44,6 +55,9 @@ query getData($boardId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -60,9 +74,29 @@ mutation updateTodo($todo: TodoUpdateInput!) {
     showInYear
     showInMonth
     showInWeek
+    posInMonth
+    posInWeek
+    posInDay
   }
 }
 `;
+
+const UPDATE_TODOS = gql`
+mutation updateTodos($todos: [TodoUpdateInput!]!) {
+  updateTodos(todos: $todos) {
+    id
+    name
+    completed
+    startDate
+    endDate
+    showInYear
+    showInMonth
+    showInWeek
+    posInMonth
+    posInWeek
+    posInDay
+  }
+}`
 
 const MOVE_BOARD_FORWARD_BY_WEEK = gql`
 mutation moveBoardForwardByWeek($boardId: ID!) {
@@ -81,6 +115,9 @@ mutation moveBoardForwardByWeek($boardId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -103,6 +140,9 @@ mutation moveBoardBackwardByWeek($boardId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -117,8 +157,8 @@ mutation UpdateBoardName($boardNameUpdate: BoardNameUpdateInput!) {
 `
 
 const ADD_TODO = gql`
-mutation addTodo($boardId: ID!, $startDate: Int!, $endDate: Int!) {
-  addTodo(boardId: $boardId, startDate: $startDate, endDate: $endDate) {
+mutation addTodo($boardId: ID!, $startDate: Int!, $endDate: Int!, $positions: [TodoPositionInput]!) {
+  addTodo(boardId: $boardId, startDate: $startDate, endDate: $endDate, positions: $positions) {
     board {
       id
       name
@@ -133,6 +173,9 @@ mutation addTodo($boardId: ID!, $startDate: Int!, $endDate: Int!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
@@ -155,26 +198,13 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
       showInYear
       showInMonth
       showInWeek
+      posInMonth
+      posInWeek
+      posInDay
     }
   }
 }
 `
-
-/**
- * Get the appropriate flag to update on the Todo for the granularity of the list it moved to
- *
- * @param {TodoLevel} granularity - The list granularity
- */
-function getGranularityKey(granularity: TodoLevel): string {
-  switch (granularity) {
-    case TodoLevel.Month:
-      return 'showInMonth'
-    case TodoLevel.Week:
-      return 'showInWeek'
-    default:
-      return 'showInYear'
-  }
-}
 
 /**
  * Provider for the AppContext
@@ -188,20 +218,14 @@ export function AppProvider({ children }: AppProviderProps) {
   const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
   const [data, setData] = useState<AppState>({
     board: initialState.board,
+    lists: initialState.lists,
     todos: initialState.todos
   })
 
   useQuery(GET_DATA, {
     variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' },
     onCompleted: (data) => {
-      const { board, todos } = data.getTodoBoard
-      setData({
-        board: {
-          ...board,
-          startDate: (board.startDate * 1000)
-        },
-        todos
-      })
+      setData(getAppStateFromTodoBoardResult(data.getTodoBoard))
       setLoading(false)
     },
     onError: (error) => {
@@ -211,6 +235,7 @@ export function AppProvider({ children }: AppProviderProps) {
   })
 
   const [updateTodo] = useMutation(UPDATE_TODO)
+  const [updateTodos] = useMutation(UPDATE_TODOS)
   const [moveBoardForwardByWeek] = useMutation(MOVE_BOARD_FORWARD_BY_WEEK)
   const [moveBoardBackwardByWeek] = useMutation(MOVE_BOARD_BACKWARD_BY_WEEK)
   const [updateBoardName] = useMutation(UPDATE_BOARD_NAME)
@@ -227,6 +252,9 @@ export function AppProvider({ children }: AppProviderProps) {
   const value = {
     ...state,
     actions: {
+      setAppState: (newState: AppState) => {
+        setData(newState)
+      },
       setTodoCompleted: (todo: Todo, completed: boolean) => {
         const update = {
           id: todo.id,
@@ -249,12 +277,7 @@ export function AppProvider({ children }: AppProviderProps) {
           onCompleted: ({ updateTodo }) => {
             setData((state) => ({
               ...state,
-              todos: state.todos.map((todo) => {
-                if (todo.id === updateTodo.id) {
-                  return updateTodo
-                }
-                return todo
-              })
+              todos: getTodoMapFromUpdate(state.todos, updateTodo)
             }))
             setLoading(false)
           }
@@ -282,26 +305,47 @@ export function AppProvider({ children }: AppProviderProps) {
           onCompleted: ({ updateTodo }) => {
             setData((state) => ({
               ...state,
-              todos: state.todos.map((todo) => {
-                if (todo.id === updateTodo.id) {
-                  return updateTodo
-                }
-                return todo
-              })
+              todos: getTodoMapFromUpdate(state.todos, updateTodo)
+            }))
+            setLoading(false)
+          }
+        })
+      },
+      updateTodos: (todos: Todo[]) => {
+        const update = todos.map((todo) => ({
+          id: todo.id,
+          startDate: todo.startDate,
+          endDate: todo.endDate,
+          posInDay: todo.posInDay,
+          posInWeek: todo.posInWeek,
+          posInMonth: todo.posInMonth,
+          showInWeek: todo.showInWeek,
+          showInMonth: todo.showInMonth
+        }))
+        setLoading(true)
+        updateTodos({
+          variables: { todos: update },
+          onError: (error) => {
+            setError(error.message)
+            setLoading(false)
+          },
+          onCompleted:({ updateTodos }) => {
+            setData((state) => ({
+              ...state,
+              todos: getTodoMapFromUpdates(state.todos, updateTodos)
             }))
             setLoading(false)
           }
         })
       },
       setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => {
-        const granularityKey = getGranularityKey(granularity)
+        const granularityKey = getGranularityVisibilityKey(granularity)
         const update = {
           id: todo.id,
           startDate: startDate.getTime() / 1000,
           endDate: endDate.getTime() / 1000,
           [granularityKey]: true
         }
-        console.log('about to set date span', update, todo)
         setLoading(true)
         updateTodo({
           variables: { todo: update },
@@ -318,12 +362,7 @@ export function AppProvider({ children }: AppProviderProps) {
           onCompleted: ({ updateTodo }) => {
             setData((state) => ({
               ...state,
-              todos: state.todos.map((todo) => {
-                if (todo.id === updateTodo.id) {
-                  return updateTodo
-                }
-                return todo
-              })
+              todos: getTodoMapFromUpdate(state.todos, updateTodo)
             }))
             setLoading(false)
           }
@@ -335,14 +374,7 @@ export function AppProvider({ children }: AppProviderProps) {
           variables: { boardId: state.board.id },
           fetchPolicy: 'no-cache',
           onCompleted: (data) => {
-            const { board, todos } = data.moveBoardForwardByWeek
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos: todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.moveBoardForwardByWeek))
             setLoading(false)
           },
           onError: (error) => {
@@ -357,14 +389,7 @@ export function AppProvider({ children }: AppProviderProps) {
           variables: { boardId: state.board.id },
           fetchPolicy: 'no-cache',
           onCompleted: (data) => {
-            const { board, todos } = data.moveBoardBackwardByWeek
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos: todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.moveBoardBackwardByWeek))
             setLoading(false)
           },
           onError: (error) => {
@@ -413,39 +438,26 @@ export function AppProvider({ children }: AppProviderProps) {
             setLoading(false)
           },
           onCompleted: (data) => {
-            const { board, todos } = data.deleteTodo
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos: todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.deleteTodo))
             setLoading(false)
           }
         })
       },
-      addTodo: (listStartDate: Date, listEndDate: Date) => {
+      addTodo: (listStartDate: Date, listEndDate: Date, positions: TodoPositionInput[]) => {
         setLoading(true)
         addTodo({
           variables: {
             boardId: state.board.id,
             startDate: listStartDate.getTime() / 1000,
-            endDate: listEndDate.getTime() / 1000
+            endDate: listEndDate.getTime() / 1000,
+            positions
           },
           onError: (error) => {
             setError(error.message)
             setLoading(false)
           },
           onCompleted: (data) => {
-            const { board, todos } = data.addTodo
-            setData({
-              board: {
-                ...board,
-                startDate: (board.startDate * 1000)
-              },
-              todos
-            })
+            setData(getAppStateFromTodoBoardResult(data.addTodo))
             setLoading(false)
           }
         })

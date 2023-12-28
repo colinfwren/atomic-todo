@@ -1,26 +1,7 @@
-import {Todo, TodoBoard, TodoLevel} from '@atomic-todo/server/src/generated/graphql'
+import {Todo, TodoBoard, TodoLevel, TodoPositionInput} from '@atomic-todo/server/src/generated/graphql'
 import React, {MouseEventHandler} from "react";
 import {DraggableSyntheticListeners} from "@dnd-kit/core";
 import type {Transform} from '@dnd-kit/utilities';
-
-export enum UpdateOperation {
-  ADD,
-  REMOVE,
-  REORDER
-}
-
-export enum TraversalDirection {
-  PARENTS,
-  CHILDREN,
-  NONE
-}
-
-export type TodoListMapUpdateData = {
-  listId: string,
-  operation: UpdateOperation,
-  direction: TraversalDirection,
-  newIndex?: number
-}
 
 export type SortableTodoItemProps = {
   id: string
@@ -28,6 +9,7 @@ export type SortableTodoItemProps = {
   listStartDate: Date,
   listEndDate: Date,
   index: number,
+  listId: string
 }
 
 export type TodoItemProps = {
@@ -43,30 +25,52 @@ export type TodoItemProps = {
   dragOverlay?: boolean
 }
 
-export type TodoItemListProps = {
-  id: string
-  granularity: TodoLevel,
-  currentDate: Date,
-  listStartDate: Date,
+export type TodoItemListProps = TodoItemList & {
   listPeriodDelta: number
 }
 
+export enum TodoListEra {
+  past  = 'past',
+  current = 'current',
+  future = 'future'
+}
+
+export type TodoItemList = {
+  id: string,
+  granularity: TodoLevel,
+  listStartDate: Date,
+  listEndDate: Date,
+  todos: string[]
+  era: TodoListEra
+}
+
+export type TodoListMap = Map<string, TodoItemList>
+export type TodoMap = Map<string, Todo>
+export type AppTodoBoard = Omit<TodoBoard, 'startDate'> & {
+  startDate: Date
+  months: string[]
+  weeks: string[]
+  days: string[]
+}
+
 export type AppState = {
-  board: TodoBoard
-  todos: Todo[]
+  board: AppTodoBoard
+  todos: TodoMap,
+  lists: TodoListMap
 }
 
 export type IAppContext = AppState & {
   actions: {
+    setAppState: (newState: AppState) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
-    setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => void,
+    updateTodos: (todos: Todo[]) => void,
     moveBoardForward: () => void,
     moveBoardBackward: () => void,
     setBoardName: (name: string) => void,
     showModal: (todoId: string) => void,
     hideModal: () => void,
-    addTodo: (listStartDate: Date, listEndDate: Date) => void,
+    addTodo: (listStartDate: Date, listEndDate: Date, positions: TodoPositionInput[]) => void,
     deleteTodo: (todoId: string) => void,
   },
   loading: boolean,
@@ -75,11 +79,6 @@ export type IAppContext = AppState & {
 
 export type AppProviderProps = {
   children: JSX.Element | JSX.Element[]
-}
-
-export type TodoListTitle = {
-  name: string,
-  date: string,
 }
 
 export enum ProgressButtonDirection {
@@ -96,7 +95,7 @@ export interface ProgressionButtonProps {
 export interface TodoItemListTitleProps {
   granularity: TodoLevel
   listStartDate: Date
-  currentDate: Date
+  era: TodoListEra
   listPeriodDelta: number
 }
 

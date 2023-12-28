@@ -80,6 +80,38 @@
                     "required": false,
                     "array": false,
                     "default": false
+                },
+                {
+                    "key": "posInYear",
+                    "type": "integer",
+                    "status": "available",
+                    "required": false,
+                    "array": false,
+                    "default": 0
+                },
+                {
+                    "key": "posInMonth",
+                    "type": "integer",
+                    "status": "available",
+                    "required": false,
+                    "array": false,
+                    "default": 0
+                },
+                {
+                    "key": "posInWeek",
+                    "type": "integer",
+                    "status": "available",
+                    "required": false,
+                    "array": false,
+                    "default": 0
+                },
+                {
+                    "key": "posInDay",
+                    "type": "integer",
+                    "status": "available",
+                    "required": false,
+                    "array": false,
+                    "default": 0
                 }
             ],
             "indexes": []

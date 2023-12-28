@@ -44,7 +44,7 @@ function Todo({ id, index, handleProps, listeners, transform, transition, dragOv
 
   const { todos, actions } = useContext(AppContext)
   const value = useRef('')
-  const todo = todos.find((todo) => todo.id === id)
+  const todo = todos.get(id)
 
   /**
    * Callback for when checkbox is clicked

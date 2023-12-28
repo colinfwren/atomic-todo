@@ -46,6 +46,10 @@ export async function getTodoBoard(databases: Databases, id: string): Promise<To
       showInYear: doc.showInYear,
       showInMonth: doc.showInMonth,
       showInWeek: doc.showInWeek,
+      posInYear: doc.posInYear,
+      posInMonth: doc.posInMonth,
+      posInWeek: doc.posInWeek,
+      posInDay: doc.posInDay,
       deleted: false
     }
   })

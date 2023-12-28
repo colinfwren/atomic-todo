@@ -19,6 +19,10 @@ type Todo {
   showInYear: Boolean!
   showInMonth: Boolean!
   showInWeek: Boolean!
+  posInYear: Int!
+  posInMonth: Int!
+  posInWeek: Int!
+  posInDay: Int!
 }
 
 type TodoBoard {
@@ -52,6 +56,14 @@ input TodoUpdateInput {
   showInYear: Boolean
   showInMonth: Boolean
   showInWeek: Boolean
+  posInMonth: Int
+  posInWeek: Int
+  posInDay: Int
+}
+
+input TodoPositionInput {
+  granularity: TodoLevel!
+  position: Int!
 }
 
 input BoardNameUpdateInput {
@@ -65,6 +77,6 @@ type Mutation {
   updateTodo(todo: TodoUpdateInput!): Todo,
   updateTodos(todos: [TodoUpdateInput!]!): [Todo]
   updateBoardName(boardNameUpdate: BoardNameUpdateInput!): TodoBoard
-  addTodo(boardId: ID!, startDate: Int!, endDate: Int!): TodoBoardResult
+  addTodo(boardId: ID!, startDate: Int!, endDate: Int!, positions: [TodoPositionInput]!): TodoBoardResult
   deleteTodo(boardId: ID!, todoId: ID!): TodoBoardResult
 }
