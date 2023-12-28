@@ -53,15 +53,15 @@ export type AppTodoBoard = Omit<TodoBoard, 'startDate'> & {
   days: string[]
 }
 
-export type AppState = {
+export type TodoBoardState = {
   board: AppTodoBoard
   todos: TodoMap,
   lists: TodoListMap
 }
 
-export type IAppContext = AppState & {
+export type ITodoBoardContext = TodoBoardState & {
   actions: {
-    setAppState: (newState: AppState) => void,
+    setAppState: (newState: TodoBoardState) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
     updateTodos: (todos: Todo[]) => void,
@@ -77,7 +77,7 @@ export type IAppContext = AppState & {
   modal: ModalProps
 }
 
-export type AppProviderProps = {
+export type TodoBoardProviderProps = {
   children: JSX.Element | JSX.Element[]
 }
 
@@ -102,4 +102,19 @@ export interface TodoItemListTitleProps {
 export interface ModalProps {
   visible: boolean,
   todoId: string|null
+}
+
+export interface AuthState {
+  user: any
+}
+
+export type IAuthContext = AuthState & {
+  actions: {
+    signIn: (user: string) => void
+    signOut: () => void
+  }
+}
+
+export type AuthProviderProps = {
+  children: JSX.Element | JSX.Element[]
 }

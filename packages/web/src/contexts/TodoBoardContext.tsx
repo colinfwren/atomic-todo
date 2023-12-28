@@ -1,5 +1,5 @@
 import React, {createContext, useState} from 'react'
-import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList} from "../types";
+import {TodoBoardProviderProps, TodoBoardState, ITodoBoardContext, ModalProps, TodoItemList} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
 import {
@@ -13,7 +13,7 @@ import {getAppStateFromTodoBoardResult} from "../functions/getAppStateFromTodoBo
 import {getTodoMapFromUpdate, getTodoMapFromUpdates} from "../functions/getTodoMapFromUpdate";
 import {getGranularityVisibilityKey} from "../functions/getGranularityVisibilityKey";
 
-const initialState: AppState = {
+const initialState: TodoBoardState = {
   board: todoBoard,
   lists: new Map<string, TodoItemList>(),
   todos: new Map<string, Todo>()
@@ -33,7 +33,7 @@ const actions = {
   deleteTodo: (todoId: string) => {}
 }
 
-const TodoBoardContext = createContext<IAppContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
+const TodoBoardContext = createContext<ITodoBoardContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
 const { Provider } = TodoBoardContext
 
 const GET_DATA = gql`
@@ -207,18 +207,14 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
 /**
  * Provider for the TodoBoardContext
  *
- * @param {AppProviderProps} props - Props passed into context
+ * @param {TodoBoardProviderProps} props - Props passed into context
  * @param {JSX.Element|JSX.Element[]} props.children - Child elements
  */
-export function TodoBoardProvider({ children }: AppProviderProps) {
+export function TodoBoardProvider({ children }: TodoBoardProviderProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string|null>(null)
   const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
-  const [data, setData] = useState<AppState>({
-    board: initialState.board,
-    lists: initialState.lists,
-    todos: initialState.todos
-  })
+  const [data, setData] = useState<TodoBoardState>(initialState)
 
   useQuery(GET_DATA, {
     variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' },
@@ -250,7 +246,7 @@ export function TodoBoardProvider({ children }: AppProviderProps) {
   const value = {
     ...state,
     actions: {
-      setAppState: (newState: AppState) => {
+      setAppState: (newState: TodoBoardState) => {
         setData(newState)
       },
       setTodoCompleted: (todo: Todo, completed: boolean) => {
@@ -466,5 +462,4 @@ export function TodoBoardProvider({ children }: AppProviderProps) {
   return <Provider value={value}>{children}</Provider>
 }
 
-export const TodoBoardConsumer = TodoBoardContext.Consumer
 export default TodoBoardContext

@@ -1,5 +1,5 @@
 import {TodoBoardResult, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
-import {AppState} from "../types";
+import {TodoBoardState} from "../types";
 import {getListMapFromTodos} from "./getListMapFromTodos";
 import {getTodoMapFromTodos} from "./getTodoMapFromTodos";
 
@@ -7,9 +7,9 @@ import {getTodoMapFromTodos} from "./getTodoMapFromTodos";
  * Get AppState object from TodoBoardResult response from server
  *
  * @param {TodoBoardResult} response - Response from server
- * @returns {AppState} The state for the app
+ * @returns {TodoBoardState} The state for the app
  */
-export function getAppStateFromTodoBoardResult({ board, todos}: TodoBoardResult): AppState {
+export function getAppStateFromTodoBoardResult({ board, todos}: TodoBoardResult): TodoBoardState {
     const boardStartDate = new Date(board.startDate * 1000)
     const lists = getListMapFromTodos(boardStartDate, todos)
     const todoMap = getTodoMapFromTodos(todos)
