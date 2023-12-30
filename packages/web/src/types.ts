@@ -79,6 +79,19 @@ export type ITodoBoardContext = TodoBoardState & {
 }
 
 export type TodoBoardProviderProps = {
+  boardId: string,
+  children: JSX.Element | JSX.Element[]
+}
+
+export type DashboardState = {
+  boards: TodoBoard[]
+}
+
+export type IDashboardContext = DashboardState & {
+  loading: boolean
+}
+
+export type DashboardProviderProps = {
   children: JSX.Element | JSX.Element[]
 }
 

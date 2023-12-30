@@ -1,4 +1,4 @@
-import {TodoBoardResult} from "../generated/graphql";
+import {TodoBoard, TodoBoardResult} from "../generated/graphql";
 import {Databases, Query} from "node-appwrite";
 import { TodoBoardDoc, TodoDoc } from "../types";
 import { DATABASE_ID, TODO_COL_ID, TODOBOARD_COL_ID } from "../consts";
@@ -46,4 +46,13 @@ export async function getTodoBoard(databases: Databases, id: string): Promise<To
     }
   })
   }
+}
+
+export async function getTodoBoards(databases: Databases): Promise<TodoBoard[]> {
+  const boards = await databases.listDocuments(DATABASE_ID, TODOBOARD_COL_ID)
+  return boards.documents.map((doc: TodoBoardDoc) => ({
+    id: doc.$id,
+    name: doc.name,
+    startDate: doc.startDate
+  }))
 }

@@ -22,7 +22,7 @@ export function HomePage() {
    */
   async function handleSignIn() {
     await signIn('test@test.com', 'correctHorseBatteryStaple')
-    navigate('/todoboard/meh')
+    navigate('/dashboard')
   }
 
   /**

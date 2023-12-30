@@ -45,6 +45,7 @@ type TodoBoardResult {
 
 type Query {
   getTodoBoard(id: ID!): TodoBoardResult
+  getTodoBoards: [TodoBoard!]!
 }
 
 input TodoUpdateInput {

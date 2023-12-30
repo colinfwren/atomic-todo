@@ -11,6 +11,7 @@ import {
   moveBoardByWeek,
   updateTodoBoardDoc,
   updateTodoDoc,
+  getTodoBoards,
 } from "./functions";
 import {BoardMoveDirection} from "./types";
 
@@ -19,6 +20,7 @@ const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' })
 const resolvers: Resolvers = {
   Query: {
     getTodoBoard: async (_, { id }, { databases }) => getTodoBoard(databases, id),
+    getTodoBoards: async (_, args, { databases }) => getTodoBoards(databases)
   },
   Mutation: {
     updateTodo: async (_, { todo }, { databases }) => await updateTodoDoc(databases, todo),

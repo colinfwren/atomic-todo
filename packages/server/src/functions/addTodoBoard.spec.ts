@@ -32,7 +32,8 @@ describe('Creating a new TodoBoard', () => {
       getDocument: jest.fn().mockImplementation(() => {
         return Promise.resolve({
           ...docAttrs,
-          ...board
+          ...board,
+          todos: []
         })
       }),
       updateDocument: jest.fn(),

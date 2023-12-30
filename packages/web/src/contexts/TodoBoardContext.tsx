@@ -36,29 +36,29 @@ const actions = {
 const TodoBoardContext = createContext<ITodoBoardContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
 const { Provider } = TodoBoardContext
 
-const GET_DATA = gql`
-query getData($boardId: ID!) {
-  getTodoBoard(id: $boardId) {
-    board {
-      id
-      name
-      startDate
-    }
-    todos {
-      id
-      name
-      completed
-      startDate
-      endDate
-      showInYear
-      showInMonth
-      showInWeek
-      posInMonth
-      posInWeek
-      posInDay
+const GET_TODOBOARD = gql`
+  query getTodoBoard($boardId: ID!) {
+    getTodoBoard(id: $boardId) {
+      board {
+        id
+        name
+        startDate
+      }
+      todos {
+        id
+        name
+        completed
+        startDate
+        endDate
+        showInYear
+        showInMonth
+        showInWeek
+        posInMonth
+        posInWeek
+        posInDay
+      }
     }
   }
-}
 `;
 
 const UPDATE_TODO = gql`
@@ -210,14 +210,14 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
  * @param {TodoBoardProviderProps} props - Props passed into context
  * @param {JSX.Element|JSX.Element[]} props.children - Child elements
  */
-export function TodoBoardProvider({ children }: TodoBoardProviderProps) {
+export function TodoBoardProvider({ children, boardId }: TodoBoardProviderProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string|null>(null)
   const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
   const [data, setData] = useState<TodoBoardState>(initialState)
 
-  useQuery(GET_DATA, {
-    variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' },
+  useQuery(GET_TODOBOARD, {
+    variables: { boardId },
     onCompleted: (data) => {
       setData(getAppStateFromTodoBoardResult(data.getTodoBoard))
       setLoading(false)
