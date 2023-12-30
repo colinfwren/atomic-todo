@@ -13,7 +13,7 @@ export function HomePage() {
    * Handle pressing sign up button
    */
   async function handleSignUp() {
-    await signUp('test@test.com', 'shitPassword')
+    await signUp('test@test.com', 'correctHorseBatteryStaple')
     navigate('/dashboard')
   }
 
@@ -21,8 +21,8 @@ export function HomePage() {
    * Handle pressing sign in button
    */
   async function handleSignIn() {
-    await signIn('test@test.com', 'shitPassword')
-    navigate('/dashboard')
+    await signIn('test@test.com', 'correctHorseBatteryStaple')
+    navigate('/todoboard/meh')
   }
 
   /**

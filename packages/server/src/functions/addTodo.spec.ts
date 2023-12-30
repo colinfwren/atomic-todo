@@ -6,8 +6,11 @@ import {
   TODO_ID,
   BOARD_ID,
   TODO_START_DATE,
-  TODO_END_DATE
+  TODO_END_DATE,
+  USER
 } from "./testCommon";
+
+
 
 describe('Creating a new Todo', () => {
   it('throws an error when unable to create new todo', () => {
@@ -16,7 +19,7 @@ describe('Creating a new Todo', () => {
         throw new Error(CREATE_APPWRITE_DOCUMENT_ERROR)
       })
     } as any
-    expect(() => addTodo(databases, BOARD_ID, TODO_START_DATE, TODO_END_DATE, [])).rejects.toThrowError(CREATE_APPWRITE_DOCUMENT_ERROR)
+    expect(() => addTodo(databases, USER, BOARD_ID, TODO_START_DATE, TODO_END_DATE, [])).rejects.toThrowError(CREATE_APPWRITE_DOCUMENT_ERROR)
   })
   it('returns updated board with todo in the appropriate TodoLists', async () => {
     const expectedResult = {
@@ -45,7 +48,8 @@ describe('Creating a new Todo', () => {
       getDocument: jest.fn().mockImplementation(() => {
         return Promise.resolve({
           ...docAttrs,
-          ...board
+          ...board,
+          todos: []
         })
       }),
       updateDocument: jest.fn(),
@@ -56,7 +60,7 @@ describe('Creating a new Todo', () => {
         })
       })
     } as any
-    const result = await addTodo(databases, BOARD_ID, TODO_START_DATE, TODO_END_DATE, [])
+    const result = await addTodo(databases, USER, BOARD_ID, TODO_START_DATE, TODO_END_DATE, [])
     expect(result).toEqual(expectedResult)
   })
 })

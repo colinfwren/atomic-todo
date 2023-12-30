@@ -1,5 +1,6 @@
 import { Client, Account, ID} from 'appwrite'
 import {AuthState} from "../types";
+import {API_TOKEN_LOCAL_STORAGE_KEY} from "../constants";
 
 const client = new Client()
 client
@@ -7,6 +8,14 @@ client
   .setProject('atomic-todo')
 
 const account = new Account(client)
+
+/**
+ * Get a JWT for the logged-in user and save it in localStorage
+ */
+export async function setApiToken(): Promise<void> {
+  const apiToken = await account.createJWT()
+  localStorage.setItem(API_TOKEN_LOCAL_STORAGE_KEY, apiToken.jwt)
+}
 
 /**
  * Create account for user using supplied email address and password
@@ -18,6 +27,7 @@ const account = new Account(client)
 export async function createAccount(emailAddress: string, password: string): Promise<AuthState> {
   const createdAccount = await account.create(ID.unique(), emailAddress, password)
   const session = await account.createEmailSession(emailAddress, password)
+  await setApiToken()
   return {
     user: createdAccount,
     session
@@ -34,6 +44,7 @@ export async function createAccount(emailAddress: string, password: string): Pro
 export async function createSession(emailAddress: string, password: string): Promise<AuthState> {
   const session = await account.createEmailSession(emailAddress, password)
   const user = await account.get()
+  await setApiToken()
   return {
     user,
     session
@@ -54,6 +65,7 @@ export async function restoreExistingSession(): Promise<AuthState> {
   try {
     const user = await account.get()
     const session = await account.getSession('current')
+    await setApiToken()
     return {
       user,
       session

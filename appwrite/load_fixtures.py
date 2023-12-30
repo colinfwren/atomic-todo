@@ -6,8 +6,20 @@ from datetime import datetime, timedelta
 # pip3 install appwrite
 from appwrite.client import Client
 from appwrite.services.databases import Databases
+from appwrite.services.users import Users
 
 api_key = os.getenv('API_KEY')
+database_id = 'atomic-todo'
+todo_collection_id = 'todos'
+todoboard_collection_id = 'todoboards'
+user_id = 'dead-beef'
+
+document_permissions = [
+    'write("user:{user_id}")'.format(user_id=user_id),
+    'read("user:{user_id}")'.format(user_id=user_id),
+    'update("user:{user_id}")'.format(user_id=user_id),
+    'delete("user:{user_id}")'.format(user_id=user_id)
+]
 
 client = (
     Client()
@@ -16,23 +28,75 @@ client = (
     .set_key(api_key))
 
 databases = Databases(client)
+users = Users(client)
 
 
-database_id = 'atomic-todo'
+def set_up_test_user():
+    users.create_argon2_user(user_id, 'test@test.com', 'correctHorseBatteryStaple', 'Test User')
+
+
+def set_up_database():
+    databases.create('atomic-todo', 'Atomic Todo')
+
+
+def set_up_todos_collection():
+    databases.create_collection(
+        database_id,
+        todo_collection_id,
+        'todos',
+        ['create("users")'],
+        document_security=True,
+    )
+    databases.create_boolean_attribute(database_id, todo_collection_id, 'completed', False, default=False)
+    databases.create_string_attribute(database_id, todo_collection_id, 'name', 256, False, default="Todo")
+    databases.create_boolean_attribute(database_id, todo_collection_id, 'deleted', False, default=False)
+    databases.create_integer_attribute(database_id, todo_collection_id, 'startDate', True, min=0)
+    databases.create_integer_attribute(database_id, todo_collection_id, 'endDate', True, min=0)
+    databases.create_boolean_attribute(database_id, todo_collection_id, 'showInYear', False, default=False)
+    databases.create_boolean_attribute(database_id, todo_collection_id, 'showInMonth', False, default=False)
+    databases.create_boolean_attribute(database_id, todo_collection_id, 'showInWeek', False, default=False)
+    databases.create_integer_attribute(database_id, todo_collection_id, 'posInYear', False, min=0, default=0)
+    databases.create_integer_attribute(database_id, todo_collection_id, 'posInMonth', False, min=0, default=0)
+    databases.create_integer_attribute(database_id, todo_collection_id, 'posInWeek', False, min=0, default=0)
+    databases.create_integer_attribute(database_id, todo_collection_id, 'posInDay', False, min=0, default=0)
+
+
+def set_up_todoboards_collection():
+    databases.create_collection(
+        database_id,
+        todoboard_collection_id,
+        'todoboards',
+        ['create("users")'],
+        document_security=True
+    )
+    databases.create_string_attribute(database_id, todoboard_collection_id, 'name', 256, False, default='Todo Board')
+    databases.create_integer_attribute(database_id, todoboard_collection_id, 'startDate', True, min=0)
+    databases.create_relationship_attribute(
+        database_id=database_id,
+        collection_id=todoboard_collection_id,
+        related_collection_id=todo_collection_id,
+        type='oneToMany',
+        two_way=False,
+        key='todos',
+        two_way_key='todoboards',
+        on_delete='cascade'
+    )
 
 
 class TodoBoard:
-    def __init__(self, name, board_id):
+    def __init__(self, name, board_id, todo_ids):
         self.name = name
         self.id = board_id
         self.start_date = int(time.time())
+        self.todo_ids = todo_ids
         self.database_id = database_id
         self.collection_id = 'todoboards'
 
     def to_json(self):
         return json.dumps({
             'name': self.name,
-            'startDate': self.start_date
+            'startDate': self.start_date,
+            # 'todos': self.todo_ids
         })
 
 
@@ -73,7 +137,6 @@ class Todo:
 
 run_date = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
 current_month_range = monthrange(run_date.year, run_date.month)
-board = TodoBoard("Todo Board", "5769fdc6-d2fd-4526-8955-5cf6fe6a14e2")
 todos = [
     Todo(
         name="Assigned to current year",
@@ -186,26 +249,44 @@ todos = [
         show_in_week=True
     )
 ]
+board = TodoBoard("Todo Board", "5769fdc6-d2fd-4526-8955-5cf6fe6a14e2", [todo.id for todo in todos])
 
 
 def load_boards():
     databases.create_document(
-        board.database_id,
-        board.collection_id,
+        database_id,
+        todoboard_collection_id,
         board.id,
-        board.to_json()
+        board.to_json(),
+        document_permissions
+    )
+
+    databases.update_document(
+        database_id,
+        todoboard_collection_id,
+        board.id,
+        json.dumps({
+            'todos': [todo.id for todo in todos]
+        })
     )
 
 
 def load_todos():
     for todo in todos:
         databases.create_document(
-            todo.database_id,
-            todo.collection_id,
+            database_id,
+            todo_collection_id,
             todo.id,
-            todo.to_json()
+            todo.to_json(),
+            document_permissions
         )
 
 
-load_boards()
+set_up_database()
+set_up_test_user()
+set_up_todos_collection()
+set_up_todoboards_collection()
+time.sleep(1)  # have to wait due to some async shenanigans
 load_todos()
+load_boards()
+

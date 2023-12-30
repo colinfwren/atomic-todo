@@ -14,11 +14,13 @@ const badTodosBoardDoc: TodoBoardDoc = {
   name: 'Bad Board',
   startDate: badBoardStartDate,
   id: docAttrs.$id,
+  todos: []
 }
 
 const boardDoc: TodoBoardDoc = {
   ...docAttrs,
-  ...board
+  ...board,
+  todos: []
 }
 
 const todo: Todo = {

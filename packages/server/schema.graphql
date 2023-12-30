@@ -79,4 +79,5 @@ type Mutation {
   updateBoardName(boardNameUpdate: BoardNameUpdateInput!): TodoBoard
   addTodo(boardId: ID!, startDate: Int!, endDate: Int!, positions: [TodoPositionInput]!): TodoBoardResult
   deleteTodo(boardId: ID!, todoId: ID!): TodoBoardResult
+  addTodoBoard: TodoBoardResult
 }

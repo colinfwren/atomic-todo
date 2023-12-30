@@ -21,22 +21,14 @@ export function getQueryDates(boardStartDate: number): Record<string, number> {
 export async function getTodoBoard(databases: Databases, id: string): Promise<TodoBoardResult> {
   const boardDoc: TodoBoardDoc = await databases.getDocument(DATABASE_ID, TODOBOARD_COL_ID, id)
   const { queryStartDate, queryEndDate } = getQueryDates(boardDoc.startDate)
-  const todoQuery = await databases.listDocuments(DATABASE_ID, TODO_COL_ID, [
-    Query.between('startDate', queryStartDate, queryEndDate ),
-    Query.notEqual('deleted', true)
-  ])
-  if (todoQuery.total < 1) {
-    return {
-       board: {
-        name: boardDoc.name,
-        id: boardDoc.$id,
-        startDate: boardDoc.startDate
-      },
-      todos: []
-    }
-  }
-   // TODO: figure out pagination
-  const todos = todoQuery.documents.map((doc: TodoDoc) => {
+  const todos = boardDoc.todos.filter((todo) => todo.startDate >= queryStartDate && todo.endDate <= queryEndDate && !todo.deleted)
+  return {
+    board: {
+      name: boardDoc.name,
+      id: boardDoc.$id,
+      startDate: boardDoc.startDate
+    },
+    todos: todos.map((doc: TodoDoc) => {
     return {
       id: doc.$id,
       name: doc.name,
@@ -53,12 +45,5 @@ export async function getTodoBoard(databases: Databases, id: string): Promise<To
       deleted: false
     }
   })
-  return {
-    board: {
-      name: boardDoc.name,
-      id: boardDoc.$id,
-      startDate: boardDoc.startDate
-    },
-    todos
   }
 }

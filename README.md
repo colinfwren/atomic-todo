@@ -15,9 +15,8 @@ This is a simple Apollo based GraphQL server that provides the types for the Ato
 - Create a new project with the project ID (click the button to set it) of `atomic-todo`
 - Create a new API key (under the server integration option), this needs to passed as an environment variable for `load_fixtures.py` and when running the Apollo server (details on that later)
   - You'll need to add the `users.read`, `users.write` and all the Database scopes for the token
-- Install the Appwrite CLI and login
-- Run `appwrite deploy collection`, select the collections and deploy them to create the database tables used
-- Run `API_KEY=[api key generated] python3 load_fixtures.py` to then load fixture data into the database tables
+- Install the Appwrite Python SDK via `pip3 install appwrite`
+- Run `API_KEY=[api key generated] python3 load_fixtures.py` to then create the database tables and load fixture data
 
 ## Running Server Locally
 - `API_KEY=[api key generated] yarn start` will generate the TypeScript types for the GraphQL schema and transpile the TypeScript code into JS before running the server under Node.
