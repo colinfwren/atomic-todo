@@ -33,7 +33,8 @@ describe('Deleting a TODO', () => {
       getDocument: jest.fn().mockImplementation(() => {
         return Promise.resolve({
           ...docAttrs,
-          ...board
+          ...board,
+          todos: []
         })
       }),
     } as any

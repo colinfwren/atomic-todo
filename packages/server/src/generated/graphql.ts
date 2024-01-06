@@ -27,6 +27,7 @@ export enum ContactPreferences {
 export type Mutation = {
   __typename?: 'Mutation';
   addTodo?: Maybe<TodoBoardResult>;
+  addTodoBoard?: Maybe<TodoBoardResult>;
   deleteTodo?: Maybe<TodoBoardResult>;
   moveBoardBackwardByWeek?: Maybe<TodoBoardResult>;
   moveBoardForwardByWeek?: Maybe<TodoBoardResult>;
@@ -77,6 +78,7 @@ export type MutationUpdateTodosArgs = {
 export type Query = {
   __typename?: 'Query';
   getTodoBoard?: Maybe<TodoBoardResult>;
+  getTodoBoards: Array<TodoBoard>;
 };
 
 
@@ -253,6 +255,7 @@ export type ResolversParentTypes = {
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationAddTodoArgs, 'boardId' | 'endDate' | 'positions' | 'startDate'>>;
+  addTodoBoard?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType>;
   deleteTodo?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'boardId' | 'todoId'>>;
   moveBoardBackwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardBackwardByWeekArgs, 'boardId'>>;
   moveBoardForwardByWeek?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<MutationMoveBoardForwardByWeekArgs, 'boardId'>>;
@@ -263,6 +266,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getTodoBoard?: Resolver<Maybe<ResolversTypes['TodoBoardResult']>, ParentType, ContextType, RequireFields<QueryGetTodoBoardArgs, 'id'>>;
+  getTodoBoards?: Resolver<Array<ResolversTypes['TodoBoard']>, ParentType, ContextType>;
 };
 
 export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {

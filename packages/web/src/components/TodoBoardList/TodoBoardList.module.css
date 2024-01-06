@@ -1,0 +1,35 @@
+.todoBoardList {
+
+    padding-left: 0;
+    margin: 0;
+
+    li {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem 1rem;
+        border: 1px solid var(--primary-colour-trans);
+
+        a {
+            color: var(--primary-colour);
+            text-decoration: none;
+        }
+    }
+
+    li:hover {
+        background-color: var(--primary-colour);
+        border-color: var(--primary-colour);
+
+        a {
+            color: var(--background-colour);
+        }
+    }
+
+    li:first-child {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    li:last-child {
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+}

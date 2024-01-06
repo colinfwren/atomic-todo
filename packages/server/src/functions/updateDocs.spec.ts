@@ -61,7 +61,8 @@ describe('Update Board Name', () => {
 
   const updatedTodoBoardDoc: TodoBoardDoc = {
     ...updatedTodoBoard,
-    ...docAttrs
+    ...docAttrs,
+    todos: []
   }
 
   it('throws an error if unable to update the TodoBoard doc', async () => {

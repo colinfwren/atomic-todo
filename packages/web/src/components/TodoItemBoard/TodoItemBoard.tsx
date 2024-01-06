@@ -1,7 +1,7 @@
 import React, {useContext, useRef} from 'react'
 import {TodoItemList as TodoItemListComp} from "../TodoItemList/TodoItemList";
 import styles from './TodoItemBoard.module.css'
-import AppContext from "../../contexts/AppContext";
+import TodoBoardContext from "../../contexts/TodoBoardContext";
 import {TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
 import {ProgressionButton} from "../ProgressionButton/ProgressionButton";
 import {ProgressButtonDirection, TodoItemList, TodoItemListProps} from "../../types";
@@ -16,7 +16,7 @@ const granularity = [TodoLevel.Month, TodoLevel.Week, TodoLevel.Day]
  * @constructor
  */
 export function TodoItemBoard(): JSX.Element {
-  const { board: { name, months, weeks, days }, lists, actions: { moveBoardForward, moveBoardBackward, setBoardName }, loading} = useContext(AppContext)
+  const { board: { name, months, weeks, days }, lists, actions: { moveBoardForward, moveBoardBackward, setBoardName }, loading} = useContext(TodoBoardContext)
   const boardName = useRef(name)
 
   /**

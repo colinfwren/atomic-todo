@@ -5,11 +5,11 @@ html {
 }
 
 body {
-  background: #191919;
+  background: var(--background-colour);
   font-family: 'Nunito', sans-serif;
   font-weight: 300;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.81);
+  color: var(--text-colour);
 }
 
 p {margin-bottom: 1rem;}
@@ -44,9 +44,16 @@ h5 {font-size: 1.2rem;}
 
 small, .text_small {font-size: 0.833rem;}
 
-@media (prefers-color-scheme: light) {
-  body {
-    background: white;
-    color: #191919;
+:root {
+  --primary-colour: rgb(248, 37, 131);
+  --primary-colour-trans: rgba(248, 37, 131, 0.5);
+  --past-colour: rgba(255, 255, 255, 0.5);
+  --past-colour-trans: rgba(255, 255, 255, 0.25);
+  --background-colour: #191919;
+  --text-colour: rgba(255, 255, 255, 0.81);
+
+  @media (prefers-color-scheme: light) {
+    --text-colour: #191919;
+    --background-colour: #FFFFFF;
   }
 }

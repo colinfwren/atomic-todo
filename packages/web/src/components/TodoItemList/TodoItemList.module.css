@@ -9,15 +9,15 @@
 .addButton {
     width: 100%;
     padding: 8px;
-    background-color: #191919;
+    background-color: var(--background-colour);
     border: 0;
-    color: #F82583;
+    color: var(--primary-colour);
     border-radius: 8px;
     opacity: 0;
 }
 
 .addButton:hover {
-    background-color: #F82583;
-    color: #FFFFFF;
+    background-color: var(--primary-colour);
+    color: var(--text-colour);
     opacity: 1;
 }

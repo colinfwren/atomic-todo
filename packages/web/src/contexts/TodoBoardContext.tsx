@@ -1,21 +1,19 @@
 import React, {createContext, useState} from 'react'
-import {AppProviderProps, AppState, IAppContext, ModalProps, TodoItemList, TodoListMap} from "../types";
+import {TodoBoardProviderProps, TodoBoardState, ITodoBoardContext, ModalProps, TodoItemList} from "../types";
 import {todoBoard} from "../testData";
 // @ts-ignore
 import {
   BoardNameUpdateInput,
-  Todo, TodoBoardResult,
+  Todo,
   TodoLevel,
   TodoPositionInput
 } from "@atomic-todo/server/dist/src/generated/graphql";
 import {gql, useMutation, useQuery} from "@apollo/client";
-import {getTodoMapFromTodos} from "../functions/getTodoMapFromTodos";
-import {getListMapFromTodos} from "../functions/getListMapFromTodos";
 import {getAppStateFromTodoBoardResult} from "../functions/getAppStateFromTodoBoardResult";
 import {getTodoMapFromUpdate, getTodoMapFromUpdates} from "../functions/getTodoMapFromUpdate";
 import {getGranularityVisibilityKey} from "../functions/getGranularityVisibilityKey";
 
-const initialState: AppState = {
+const initialState: TodoBoardState = {
   board: todoBoard,
   lists: new Map<string, TodoItemList>(),
   todos: new Map<string, Todo>()
@@ -35,32 +33,32 @@ const actions = {
   deleteTodo: (todoId: string) => {}
 }
 
-const AppContext = createContext<IAppContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
-const { Provider } = AppContext
+const TodoBoardContext = createContext<ITodoBoardContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
+const { Provider } = TodoBoardContext
 
-const GET_DATA = gql`
-query getData($boardId: ID!) {
-  getTodoBoard(id: $boardId) {
-    board {
-      id
-      name
-      startDate
-    }
-    todos {
-      id
-      name
-      completed
-      startDate
-      endDate
-      showInYear
-      showInMonth
-      showInWeek
-      posInMonth
-      posInWeek
-      posInDay
+const GET_TODOBOARD = gql`
+  query getTodoBoard($boardId: ID!) {
+    getTodoBoard(id: $boardId) {
+      board {
+        id
+        name
+        startDate
+      }
+      todos {
+        id
+        name
+        completed
+        startDate
+        endDate
+        showInYear
+        showInMonth
+        showInWeek
+        posInMonth
+        posInWeek
+        posInDay
+      }
     }
   }
-}
 `;
 
 const UPDATE_TODO = gql`
@@ -207,23 +205,19 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
 `
 
 /**
- * Provider for the AppContext
+ * Provider for the TodoBoardContext
  *
- * @param {AppProviderProps} props - Props passed into context
+ * @param {TodoBoardProviderProps} props - Props passed into context
  * @param {JSX.Element|JSX.Element[]} props.children - Child elements
  */
-export function AppProvider({ children }: AppProviderProps) {
+export function TodoBoardProvider({ children, boardId }: TodoBoardProviderProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string|null>(null)
   const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
-  const [data, setData] = useState<AppState>({
-    board: initialState.board,
-    lists: initialState.lists,
-    todos: initialState.todos
-  })
+  const [data, setData] = useState<TodoBoardState>(initialState)
 
-  useQuery(GET_DATA, {
-    variables: { boardId: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2' },
+  useQuery(GET_TODOBOARD, {
+    variables: { boardId },
     onCompleted: (data) => {
       setData(getAppStateFromTodoBoardResult(data.getTodoBoard))
       setLoading(false)
@@ -252,7 +246,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const value = {
     ...state,
     actions: {
-      setAppState: (newState: AppState) => {
+      setAppState: (newState: TodoBoardState) => {
         setData(newState)
       },
       setTodoCompleted: (todo: Todo, completed: boolean) => {
@@ -468,5 +462,4 @@ export function AppProvider({ children }: AppProviderProps) {
   return <Provider value={value}>{children}</Provider>
 }
 
-export const AppConsumer = AppContext.Consumer
-export default AppContext
+export default TodoBoardContext

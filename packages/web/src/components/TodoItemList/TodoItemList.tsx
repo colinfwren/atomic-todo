@@ -2,7 +2,7 @@ import React, {useContext} from 'react'
 import {useDroppable} from "@dnd-kit/core";
 import styles from './TodoItemList.module.css'
 import {TodoItemListProps, TodoListMap} from "../../types";
-import AppContext from "../../contexts/AppContext";
+import TodoBoardContext from "../../contexts/TodoBoardContext";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {SortableTodoItem} from "../SortableTodoItem/SortableTodoItem";
 import {TodoItemListTitle} from "../TodoItemListTitle/TodoItemListTitle";
@@ -99,7 +99,7 @@ export function getNewTodoPositions(listStartDate: Date, listEndDate: Date, list
  * @constructor
  */
 export function TodoItemList({ id, granularity, listStartDate, listEndDate, listPeriodDelta, era }: TodoItemListProps): JSX.Element | null {
-  const { loading, todos, lists, actions: { addTodo } } = useContext(AppContext)
+  const { loading, todos, lists, actions: { addTodo } } = useContext(TodoBoardContext)
 
   const { isOver, setNodeRef } = useDroppable({
     id,

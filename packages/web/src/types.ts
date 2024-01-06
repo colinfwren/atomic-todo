@@ -1,7 +1,8 @@
 import {Todo, TodoBoard, TodoLevel, TodoPositionInput} from '@atomic-todo/server/src/generated/graphql'
-import React, {MouseEventHandler} from "react";
+import React, {HTMLInputTypeAttribute, MouseEventHandler, SyntheticEvent} from "react";
 import {DraggableSyntheticListeners} from "@dnd-kit/core";
 import type {Transform} from '@dnd-kit/utilities';
+import { Models } from 'appwrite'
 
 export type SortableTodoItemProps = {
   id: string
@@ -53,15 +54,15 @@ export type AppTodoBoard = Omit<TodoBoard, 'startDate'> & {
   days: string[]
 }
 
-export type AppState = {
+export type TodoBoardState = {
   board: AppTodoBoard
   todos: TodoMap,
   lists: TodoListMap
 }
 
-export type IAppContext = AppState & {
+export type ITodoBoardContext = TodoBoardState & {
   actions: {
-    setAppState: (newState: AppState) => void,
+    setAppState: (newState: TodoBoardState) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
     updateTodos: (todos: Todo[]) => void,
@@ -77,7 +78,20 @@ export type IAppContext = AppState & {
   modal: ModalProps
 }
 
-export type AppProviderProps = {
+export type TodoBoardProviderProps = {
+  boardId: string,
+  children: JSX.Element | JSX.Element[]
+}
+
+export type DashboardState = {
+  boards: TodoBoard[]
+}
+
+export type IDashboardContext = DashboardState & {
+  loading: boolean
+}
+
+export type DashboardProviderProps = {
   children: JSX.Element | JSX.Element[]
 }
 
@@ -102,4 +116,48 @@ export interface TodoItemListTitleProps {
 export interface ModalProps {
   visible: boolean,
   todoId: string|null
+}
+
+export interface AuthState {
+  user: Models.User<Models.Preferences> | null,
+  session: Models.Session | null
+}
+
+export type IAuthContext = AuthState & {
+  actions: {
+    signIn: (emailAddress: string, password: string) => Promise<void>
+    signUp: (emailAddress: string, password: string, name: string) => Promise<void>
+    signOut: () => Promise<void>
+  }
+}
+
+export type AuthProviderProps = {
+  children: JSX.Element | JSX.Element[]
+}
+
+export type FormInputProps = {
+  fieldId: string
+  label: string
+  inputType: HTMLInputTypeAttribute
+  isInvalid: boolean
+  invalidMessage: string
+}
+
+export interface LoginFormElements extends HTMLFormControlsCollection {
+  emailAddressInput: HTMLInputElement,
+  passwordInput: HTMLInputElement
+}
+
+export interface LoginFormElement extends HTMLFormElement {
+  readonly elements: LoginFormElements
+}
+
+export interface SignUpFormElements extends HTMLFormControlsCollection {
+  emailAddressInput: HTMLInputElement,
+  passwordInput: HTMLInputElement
+  nameInput: HTMLInputElement
+}
+
+export interface SignUpFormElement extends HTMLFormElement {
+  readonly elements: SignUpFormElements
 }

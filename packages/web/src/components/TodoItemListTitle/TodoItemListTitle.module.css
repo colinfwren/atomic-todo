@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0 10px;
-    border-bottom: 3px solid rgb(255, 255, 255);
+    border-bottom: 3px solid var(--text-colour);
     margin-bottom: 12px;
 }
 
@@ -14,35 +14,29 @@
 .title h4 {
     text-align: right;
     margin: 0;
-    color: rgba(255, 255, 255, 0.50);
+    color: var(--past-colour);
 }
 
 .title.past {
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: var(--past-colour);
 }
 
 .title.past h3 {
-    color: rgba(255, 255, 255, 0.50);
+    color: var(--past-colour);
 }
 
 .title.past h4 {
-    color: rgba(255, 255, 255, 0.25);
+    color: var(--past-colour-trans);
 }
 
 .title.today {
-    border-color: rgb(248, 37, 131);
+    border-color: var(--primary-colour);
 }
 
 .title.today h3 {
-    color: rgb(248, 37, 131);
+    color: var(--primary-colour);
 }
 
 .title.today h4 {
-    color: rgba(248, 37, 131, 0.5);
-}
-
-@media (prefers-color-scheme: light) {
-    .title{
-        border-bottom: 1px solid #191919;
-    }
+    color: var(--primary-colour-trans);
 }

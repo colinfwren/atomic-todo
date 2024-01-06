@@ -1,5 +1,6 @@
 import {TodoBoard} from "../generated/graphql";
 import {TodoBoardDoc, TodoDoc} from "../types";
+import {Models} from "node-appwrite";
 
 export const TODO_ID = 'dead-beef'
 export const BOARD_ID = 'board'
@@ -45,4 +46,22 @@ export const mockBoardDoc: TodoBoardDoc = {
   name: 'Todo Board',
   startDate: 1680476400000,
   id: docAttrs.$id,
+  todos: []
+}
+
+export const USER: Models.User<Models.Preferences> = {
+  $createdAt: "",
+  $updatedAt: "",
+  accessedAt: "",
+  email: "test@test.com",
+  emailVerification: false,
+  labels: [],
+  name: "Test User",
+  passwordUpdate: "",
+  phone: "",
+  phoneVerification: false,
+  prefs: undefined,
+  registration: "",
+  status: false,
+  $id: 'userId'
 }

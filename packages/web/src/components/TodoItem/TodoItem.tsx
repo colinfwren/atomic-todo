@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, forwardRef, Ref, memo, useRef} from 'react'
 import styles from "./TodoItem.module.css"
 import { TodoItemProps } from "../../types";
-import AppContext from "../../contexts/AppContext";
+import TodoBoardContext from "../../contexts/TodoBoardContext";
 import ContentEditable, {ContentEditableEvent} from "react-contenteditable";
 import {DragHandleIcon} from "../icons/DragHandleIcon";
 
@@ -42,7 +42,7 @@ function Todo({ id, index, handleProps, listeners, transform, transition, dragOv
     }
   }, [dragOverlay])
 
-  const { todos, actions } = useContext(AppContext)
+  const { todos, actions } = useContext(TodoBoardContext)
   const value = useRef('')
   const todo = todos.get(id)
 
