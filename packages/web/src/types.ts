@@ -1,5 +1,5 @@
 import {Todo, TodoBoard, TodoLevel, TodoPositionInput} from '@atomic-todo/server/src/generated/graphql'
-import React, {MouseEventHandler} from "react";
+import React, {HTMLInputTypeAttribute, MouseEventHandler, SyntheticEvent} from "react";
 import {DraggableSyntheticListeners} from "@dnd-kit/core";
 import type {Transform} from '@dnd-kit/utilities';
 import { Models } from 'appwrite'
@@ -125,12 +125,39 @@ export interface AuthState {
 
 export type IAuthContext = AuthState & {
   actions: {
-    signIn: (emailAddress: string, password: string) => void
-    signUp: (emailAddress: string, password: string) => void
-    signOut: () => void
+    signIn: (emailAddress: string, password: string) => Promise<void>
+    signUp: (emailAddress: string, password: string, name: string) => Promise<void>
+    signOut: () => Promise<void>
   }
 }
 
 export type AuthProviderProps = {
   children: JSX.Element | JSX.Element[]
+}
+
+export type FormInputProps = {
+  fieldId: string
+  label: string
+  inputType: HTMLInputTypeAttribute
+  isInvalid: boolean
+  invalidMessage: string
+}
+
+export interface LoginFormElements extends HTMLFormControlsCollection {
+  emailAddressInput: HTMLInputElement,
+  passwordInput: HTMLInputElement
+}
+
+export interface LoginFormElement extends HTMLFormElement {
+  readonly elements: LoginFormElements
+}
+
+export interface SignUpFormElements extends HTMLFormControlsCollection {
+  emailAddressInput: HTMLInputElement,
+  passwordInput: HTMLInputElement
+  nameInput: HTMLInputElement
+}
+
+export interface SignUpFormElement extends HTMLFormElement {
+  readonly elements: SignUpFormElements
 }

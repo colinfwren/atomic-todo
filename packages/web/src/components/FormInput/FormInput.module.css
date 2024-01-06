@@ -1,0 +1,23 @@
+.formControl {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+
+    label {
+        font-size: 1.2rem;
+    }
+
+    input {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+    }
+
+    input:focus {
+        outline: 2px solid  rgb(248, 37, 131);
+        box-shadow: 1px 1px 8px 1px  rgb(248, 37, 131);
+    }
+
+    label:has(+ input:focus) {
+        color: rgb(248, 37, 131);
+    }
+}

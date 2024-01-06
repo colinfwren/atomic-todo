@@ -8,9 +8,9 @@ const initialState: AuthState = {
 }
 
 const actions = {
-  signIn: (email: string, password: string) => {},
-  signUp: (email: string, password: string) => {},
-  signOut: () => {}
+  signIn: async (email: string, password: string) => {},
+  signUp: async (email: string, password: string, name: string) => {},
+  signOut: async () => {}
 }
 
 const AuthContext = createContext<IAuthContext>({ ...initialState, actions })
@@ -48,8 +48,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const authenticatedUser = await createSession(email, password)
         setData(authenticatedUser)
       },
-      signUp: async (email: string, password: string) => {
-        const authenticatedUser = await createAccount(email, password)
+      signUp: async (email: string, password: string, name: string) => {
+        const authenticatedUser = await createAccount(email, password, name)
         setData(authenticatedUser)
       },
       signOut: async () => {

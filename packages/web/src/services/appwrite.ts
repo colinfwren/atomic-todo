@@ -22,10 +22,11 @@ export async function setApiToken(): Promise<void> {
  *
  * @param {string} emailAddress - Email address to set for account
  * @param {string} password - Password to set for account
+ * @param {string} name - Name for the user
  * @returns {Promise<AuthState>} The created user and the session after logging the user in
  */
-export async function createAccount(emailAddress: string, password: string): Promise<AuthState> {
-  const createdAccount = await account.create(ID.unique(), emailAddress, password)
+export async function createAccount(emailAddress: string, password: string, name: string): Promise<AuthState> {
+  const createdAccount = await account.create(ID.unique(), emailAddress, password, name)
   const session = await account.createEmailSession(emailAddress, password)
   await setApiToken()
   return {
