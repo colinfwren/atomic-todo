@@ -9,6 +9,7 @@ export function DashboardPage() {
   return (
     <DashboardProvider>
       <h1>Dashboard</h1>
+      <h2>Todo Boards</h2>
       <TodoBoardList />
     </DashboardProvider>
   )

@@ -13,11 +13,11 @@
     }
 
     input:focus {
-        outline: 2px solid  rgb(248, 37, 131);
-        box-shadow: 1px 1px 8px 1px  rgb(248, 37, 131);
+        outline: 2px solid  var(--primary-colour);
+        box-shadow: 1px 1px 8px 1px  var(--primary-colour);
     }
 
     label:has(+ input:focus) {
-        color: rgb(248, 37, 131);
+        color: var(--primary-colour);
     }
 }

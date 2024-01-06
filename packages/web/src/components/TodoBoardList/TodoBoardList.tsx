@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import DashboardContext from "../../contexts/DashboardContext";
 import {NavLink} from "react-router-dom";
+import styles from './TodoBoardList.module.css'
 
 /**
  * List of TodoBoards
@@ -16,7 +17,7 @@ export function TodoBoardList() {
     )
   })
   return (
-    <ul>
+    <ul className={styles.todoBoardList}>
       {boardListItems}
     </ul>
   )
