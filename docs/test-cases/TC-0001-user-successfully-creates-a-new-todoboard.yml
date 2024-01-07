@@ -1,0 +1,15 @@
+---
+id: TC-0001
+creation-date: 2024-01-06
+title: User successfully creates a new TodoBoard
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+test-steps:
+  - name: Create a new TodoBoard
+test-assertions:
+  - name: A new TodoBoard is created for user's account
+  - nane: Newly created TodoBoard has correct user permissions
+linked-resources:
+  - type: user-flow
+    id: UF-0020

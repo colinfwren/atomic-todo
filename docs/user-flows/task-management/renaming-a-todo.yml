@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: Authenticated user renames Todo in TodoList
+    id: UF-0031
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -27,6 +28,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with timed-out session attempts to rename Todo in TodoList
+    id: UF-0032
     scenario-type: failure
     actor: User with timed-out session
     steps:

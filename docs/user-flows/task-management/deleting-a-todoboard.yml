@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: Authenticated user deletes a TodoBoard that belongs to them
+    id: UF-0024
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -30,6 +31,7 @@ user-flows:
                   services:
                     - frontend
   - title: Authenticated user attempts to delete a TodoBoard that doesn't belong to them
+    id: UF-0025
     scenario-type: failure
     actor: Authenticated user
     steps:
@@ -58,6 +60,7 @@ user-flows:
                 - name: Display error message
                     - frontend
   - title: User with timed-out session attempts to delete a TodoBoard that belongs to them
+    id: UF-0026
     scenario-type: failure
     actor: User with timed-out session
     steps:

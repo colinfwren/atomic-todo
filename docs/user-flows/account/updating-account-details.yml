@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: User with an account updates password for their account
+    id: UF-0008
     scenario-type: success
     actor: User with an account
     steps:
@@ -36,6 +37,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with an account updates email address for their account
+    id: UF-0009
     scenario-type: success
     actor: User with an account
     steps:

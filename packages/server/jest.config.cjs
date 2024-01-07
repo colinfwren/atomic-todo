@@ -1,7 +1,10 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: '@atomic-todo/test-reporter/node',
+  testEnvironmentOptions: {
+    resultsDir: './test-results'
+  },
   testPathIgnorePatterns: ['dist'],
-  globalSetup: './global-setup.cjs'
+  globalSetup: './global-setup.cjs',
 };

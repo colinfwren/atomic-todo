@@ -1,7 +1,8 @@
 ---
 creation-date: 2023-12-23
 user-flows:
-  - title: Authenticated user creates a TodoBoard
+  - id: UF-0020
+    title: Authenticated user creates a TodoBoard
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -28,6 +29,7 @@ user-flows:
                     - frontend
       - page: TodoBoard
   - title: User with timed-out session attempts to create a TodoBoard
+    id: UF-0021
     scenario-type: failure
     actor: User with timed-out session
     steps:

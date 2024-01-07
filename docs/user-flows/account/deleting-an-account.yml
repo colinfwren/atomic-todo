@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: User with an account deletes their account
+    id: UF-0003
     scenario-type: success
     actor: User with an account
     steps:
