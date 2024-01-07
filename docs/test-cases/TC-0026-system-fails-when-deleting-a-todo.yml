@@ -1,0 +1,17 @@
+---
+id: TC-0026
+creation-date: 2024-01-07
+title: System fails when deleting a Todo with expired session
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Create a new Todo in TodoBoard
+  - name: Let session expire
+test-steps:
+  - name: Delete Todo
+test-assertions:
+  - name: The Todo is not updated to mark it as deleted
+linked-resources:
+  - type: user-flow
+    id: UF-0023

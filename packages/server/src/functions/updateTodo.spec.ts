@@ -5,6 +5,7 @@ import {
 } from "../generated/graphql";
 import {TodoDoc} from "../types";
 import {docAttrs, errorMessage} from "./testCommon";
+import {TestType} from "@atomic-todo/test-reporter";
 
 describe('Updating Todo with values', () => {
   const todoUpdate: TodoUpdateInput = {
@@ -32,12 +33,20 @@ describe('Updating Todo with values', () => {
   }
 
   it('throws an error if unable to update the Todo doc', async () => {
+     atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0019',
+      testType: TestType.UNIT
+    })
      const mockDatabases = {
       updateDocument: jest.fn().mockRejectedValue(new Error(errorMessage))
     } as any
     await expect(updateTodo(mockDatabases, todoUpdate)).rejects.toThrowError(errorMessage)
   })
   it('returns the updated Todo values', async () => {
+     atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0017',
+      testType: TestType.UNIT
+    })
     const mockDatabases = {
       updateDocument: jest.fn().mockResolvedValue(updatedTodoDoc)
     } as any

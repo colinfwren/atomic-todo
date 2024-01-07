@@ -1,0 +1,16 @@
+---
+id: TC-0021
+creation-date: 2024-01-07
+title: User updates visibility of Todo that belongs to them
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Create a new Todo in TodoBoard
+test-steps:
+  - name: Update visibility of Todo
+test-assertions:
+  - name: Todo visibility is updated
+linked-resources:
+  - type: user-flow
+    id: UF-0012

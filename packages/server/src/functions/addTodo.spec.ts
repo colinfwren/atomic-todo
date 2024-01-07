@@ -9,11 +9,16 @@ import {
   TODO_END_DATE,
   USER
 } from "./testCommon";
+import {TestType} from "@atomic-todo/test-reporter";
 
 
 
 describe('Creating a new Todo', () => {
   it('throws an error when unable to create new todo', () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0015',
+      testType: TestType.UNIT
+    })
     const databases = {
       createDocument: jest.fn().mockImplementation(() => {
         throw new Error(CREATE_APPWRITE_DOCUMENT_ERROR)
@@ -22,6 +27,10 @@ describe('Creating a new Todo', () => {
     expect(() => addTodo(databases, USER, BOARD_ID, TODO_START_DATE, TODO_END_DATE, [])).rejects.toThrowError(CREATE_APPWRITE_DOCUMENT_ERROR)
   })
   it('returns updated board with todo in the appropriate TodoLists', async () => {
+     atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0014',
+      testType: TestType.UNIT
+    })
     const expectedResult = {
       board,
       todos: []

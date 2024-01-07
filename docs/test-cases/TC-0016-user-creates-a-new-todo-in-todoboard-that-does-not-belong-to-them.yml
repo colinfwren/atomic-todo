@@ -1,0 +1,16 @@
+---
+id: TC-0016
+creation-date: 2024-01-07
+title: User creates a new Todo in TodoBoard that does not belong to them
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account (Session A)
+  - name: Create a new TodoBoard (Board A)
+  - name: Create session for another account (Session B)
+test-steps:
+  - name: Create a new Todo in Board A
+test-assertions:
+  - name: A new Todo is not created for either user account
+linked-resources:
+  - type: user-flow
+    id: UF-0010
