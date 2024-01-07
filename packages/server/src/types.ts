@@ -10,7 +10,3 @@ export enum BoardMoveDirection {
   BACK,
   FORWARD
 }
-
-declare global {
-  const atomicTodoTestReporter: AtomicTodoJestApi
-}

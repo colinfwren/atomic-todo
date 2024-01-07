@@ -1,6 +1,14 @@
 import {TodoBoard} from "../generated/graphql";
 import {TodoBoardDoc, TodoDoc} from "../types";
-import {Models} from "node-appwrite";
+import {Client, Databases, ID, Models, Users} from "node-appwrite";
+import {randomUUID} from "node:crypto";
+import request from 'supertest'
+import {DATABASE_ID, TODOBOARD_COL_ID} from "../consts";
+
+const APPWRITE_URL = 'http://localhost/v1'
+const APPWRITE_PROJECT = 'atomic-todo'
+const APPWRITE_API_KEY = ''
+const NEW_USER_PASSWORD = 'correctHorseBatteryStaple'
 
 export const TODO_ID = 'dead-beef'
 export const BOARD_ID = 'board'
@@ -64,4 +72,91 @@ export const USER: Models.User<Models.Preferences> = {
   registration: "",
   status: false,
   $id: 'userId'
+}
+
+export async function getTodoBoardDetails(todoBoardId: string): Promise<TodoBoardDoc> {
+  const client = new Client()
+  .setEndpoint(APPWRITE_URL)
+  .setProject(APPWRITE_PROJECT)
+  .setKey(APPWRITE_API_KEY)
+  const databases = new Databases(client)
+  return databases.getDocument(DATABASE_ID, TODOBOARD_COL_ID, todoBoardId)
+}
+
+export async function getNewUser(): Promise<{ user: Models.User<Models.Preferences>, jwt: string}> {
+  const client = new Client()
+  .setEndpoint(APPWRITE_URL)
+  .setProject(APPWRITE_PROJECT)
+  .setKey(APPWRITE_API_KEY)
+  const users = new Users(client)
+  const userEmail = `test-user-${randomUUID()}@test.com`
+  const user = await users.create(ID.unique(), userEmail, undefined, NEW_USER_PASSWORD, 'test user')
+  const agent = request.agent(APPWRITE_URL)
+    await agent
+      .post('/account/sessions/email')
+      .set('X-Appwrite-Response-Format', '1.4.0')
+      .set('X-Appwrite-Project', APPWRITE_PROJECT)
+      .send({
+        'email': userEmail,
+        'password': NEW_USER_PASSWORD
+      })
+    const jwtResponse = await agent
+      .post('/account/jwt')
+      .set('X-Appwrite-Response-Format', '1.4.0')
+      .set('X-Appwrite-Project', APPWRITE_PROJECT)
+    return {
+      user,
+      jwt: jwtResponse.body?.jwt
+    }
+}
+
+export const GET_TODOBOARDS_QUERY = `
+query getTodoBoards {
+  getTodoBoards {
+    id
+    name
+  }
+}
+`
+
+export const getTodoBoardsQueryData = {
+  query: GET_TODOBOARDS_QUERY
+}
+
+export const ADD_TODOBOARDS_MUTATION  = `
+mutation addTodoBoard {
+  addTodoBoard {
+    board {
+      id
+      name
+    }
+    todos {
+      id
+    }  
+  }
+}
+`
+
+export const addTodoBoardMutationData = {
+  query: ADD_TODOBOARDS_MUTATION
+}
+
+export const UPDATE_TODOBOARD_NAME_MUTATION = `
+mutation UpdateBoardName($boardNameUpdate: BoardNameUpdateInput!) {
+  updateBoardName(boardNameUpdate: $boardNameUpdate) {
+    name
+  }
+}
+`
+
+export function updateTodoBoardNameMutationData(boardId: string, name: string) {
+  return  {
+    query: UPDATE_TODOBOARD_NAME_MUTATION,
+    variables: {
+      boardNameUpdate: {
+        id: boardId,
+        name
+      }
+    }
+  }
 }
