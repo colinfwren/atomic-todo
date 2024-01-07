@@ -5,7 +5,7 @@ import {
   TodoBoardDoc,
 } from "../types";
 import {DATABASE_ID, TODOBOARD_COL_ID} from "../consts";
-import {getTodoBoard} from './getDocs'
+import {getTodoBoard} from './getTodoBoard'
 import {convertDateToUTC} from "./utils";
 
 export const DATE_ERROR = 'Invalid Dates provided'

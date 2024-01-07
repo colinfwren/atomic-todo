@@ -9,8 +9,8 @@ import {
   deleteTodo,
   getTodoBoard,
   moveBoardByWeek,
-  updateTodoBoardDoc,
-  updateTodoDoc,
+  updateTodoBoard,
+  updateTodo,
   getTodoBoards,
 } from "./functions";
 import {BoardMoveDirection} from "./types";
@@ -23,11 +23,11 @@ const resolvers: Resolvers = {
     getTodoBoards: async (_, args, { databases }) => getTodoBoards(databases)
   },
   Mutation: {
-    updateTodo: async (_, { todo }, { databases }) => await updateTodoDoc(databases, todo),
-    updateTodos: async (_, { todos }, { databases }) => await Promise.all(todos.map(async (todo) => await updateTodoDoc(databases, todo))),
+    updateTodo: async (_, { todo }, { databases }) => await updateTodo(databases, todo),
+    updateTodos: async (_, { todos }, { databases }) => await Promise.all(todos.map(async (todo) => await updateTodo(databases, todo))),
     moveBoardForwardByWeek: async (_, { boardId }, { databases }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.FORWARD),
     moveBoardBackwardByWeek: async (_, { boardId }, { databases }) => await moveBoardByWeek(databases, boardId, BoardMoveDirection.BACK),
-    updateBoardName: async (_, { boardNameUpdate }, { databases }) => await updateTodoBoardDoc(databases, boardNameUpdate),
+    updateBoardName: async (_, { boardNameUpdate }, { databases }) => await updateTodoBoard(databases, boardNameUpdate),
     addTodo: async (_, { boardId, startDate, endDate, positions}, { databases, user }) => await addTodo(databases, user, boardId, startDate, endDate, positions),
     deleteTodo: async (_, { boardId, todoId }, { databases }) => await deleteTodo(databases, boardId, todoId),
     addTodoBoard: async (_, args, { databases, user }) => await addTodoBoard(databases, user)

@@ -1,0 +1,16 @@
+---
+id: TC-0010
+creation-date: 2024-01-07
+title: User deletes a TodoBoard that does not belongs to them
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account (Session A)
+  - name: Create a new TodoBoard (Board A)
+  - name: Create a session for another account (Session B)
+test-steps:
+  - name: Delete Board A name using Session B
+test-assertions:
+  - name: User is not able to delete Board A
+linked-resources:
+  - type: user-flow
+    id: UF-0025

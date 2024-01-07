@@ -1,8 +1,8 @@
-import {getTodoBoard, getTodoBoards} from "./getDocs";
+import { getTodoBoard } from "./getTodoBoard";
 import {TodoBoardDoc, TodoDoc} from "../types";
 import {docAttrs, errorMessage, board, TODO_START_DATE, TODO_END_DATE} from "./testCommon";
 import {Todo} from "../generated/graphql";
-import {TODO_COL_ID} from "../consts";
+import {TestType} from "@atomic-todo/test-reporter";
 
 const badBoardId = 'BOOM'
 const badTodosBoardId = 'TODO-BOOM'
@@ -44,10 +44,12 @@ const boardDoc: TodoBoardDoc = {
   todos: [todoDoc]
 }
 
-
-
 describe('Getting data for a TodoBoard', () => {
   it('throws an error if unable to load the TodoBoard', async () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0005',
+      testType: TestType.UNIT
+    })
     const databases = {
       getDocument: jest.fn().mockImplementation(() => {
         throw new Error(errorMessage)
@@ -56,6 +58,10 @@ describe('Getting data for a TodoBoard', () => {
     await expect(getTodoBoard(databases, badBoardId)).rejects.toThrowError(errorMessage)
   })
   it('returns a TodoBoard and empty Todo array when no Todos in board date range', async () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0003',
+      testType: TestType.UNIT
+    })
     const databases = {
       getDocument: jest.fn().mockImplementation(() => {
         return badTodosBoardDoc
@@ -73,6 +79,10 @@ describe('Getting data for a TodoBoard', () => {
     expect(result).toEqual(expectedResult)
   })
   it('returns a TodoBoard and Todos that fall with board date range', async () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0003',
+      testType: TestType.UNIT
+    })
     const databases = {
       getDocument: jest.fn().mockImplementation(() => {
         return boardDoc
@@ -86,32 +96,6 @@ describe('Getting data for a TodoBoard', () => {
       todos: [todo]
     }
     const result = await getTodoBoard(databases, 'good')
-    expect(result).toEqual(expectedResult)
-  })
-})
-
-describe('Getting list of TodoBoards for user', () => {
-  it('throws an error if unable to load the TodoBoards', async () => {
-    const databases = {
-      listDocuments: jest.fn().mockImplementation(() => {
-        throw new Error(errorMessage)
-      })
-    } as any
-    await expect(getTodoBoards(databases)).rejects.toThrowError(errorMessage)
-  })
-  it('returns a list of TodoBoards', async () => {
-    const databases = {
-      listDocuments: jest.fn().mockImplementation(() => {
-        return { total: 1, documents: [boardDoc]}
-      })
-    } as any
-    const expectedResult = [
-      {
-        ...board,
-        startDate: TODO_START_DATE
-      }
-    ]
-    const result = await getTodoBoards(databases)
     expect(result).toEqual(expectedResult)
   })
 })

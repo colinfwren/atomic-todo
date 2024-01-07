@@ -10,6 +10,7 @@ test-steps:
 test-assertions:
   - name: A new TodoBoard is created for user's account
   - nane: Newly created TodoBoard has correct user permissions
+  - name: The TodoBoard appears in user's list of TodoBoards
 linked-resources:
   - type: user-flow
     id: UF-0020

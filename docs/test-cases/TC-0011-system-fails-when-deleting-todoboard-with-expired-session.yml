@@ -1,0 +1,16 @@
+---
+id: TC-0011
+creation-date: 2024-01-07
+title: System fails when deleting TodoBoard with expired session
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Let session expire
+test-steps:
+  - name: Delete TodoBoard name for TodoBoard that user has permissions to delete
+test-assertions:
+  - name: User is not able to delete TodoBoard
+linked-resources:
+  - type: user-flow
+    id: UF-0026

@@ -4,11 +4,11 @@ import {
 } from "./progressBoard";
 import {BoardMoveDirection} from "../types";
 import { mockBoardDoc} from "./testCommon";
-import {getTodoBoard} from "./getDocs";
+import {getTodoBoard} from "./getTodoBoard";
 
 
 jest.mock('node-appwrite')
-jest.mock('./getDocs')
+jest.mock('./getTodoBoard')
 
 const DOCUMENT_READ_ERROR = 'Error reading doc'
 
