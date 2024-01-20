@@ -1,9 +1,9 @@
-import {TodoBoard} from "../generated/graphql";
+import {TodoBoard, TodoLevel, TodoPositionInput, TodoUpdateInput} from "../generated/graphql";
 import {TodoBoardDoc, TodoDoc} from "../types";
 import {Client, Databases, ID, Models, Users} from "node-appwrite";
 import {randomUUID} from "node:crypto";
 import request from 'supertest'
-import {DATABASE_ID, TODOBOARD_COL_ID} from "../consts";
+import {DATABASE_ID, TODO_COL_ID, TODOBOARD_COL_ID} from "../consts";
 
 const APPWRITE_URL = 'http://localhost/v1'
 const APPWRITE_PROJECT = 'atomic-todo'
@@ -74,6 +74,30 @@ export const USER: Models.User<Models.Preferences> = {
   $id: 'userId'
 }
 
+export const todoPositions: TodoPositionInput[] = [
+  {
+    granularity: TodoLevel.Month,
+    position: 1
+  },
+  {
+    granularity: TodoLevel.Week,
+    position: 2
+  },
+  {
+    granularity: TodoLevel.Day,
+    position: 3
+  }
+]
+
+export async function getTodoDetails(todoId: string): Promise<TodoDoc> {
+  const client = new Client()
+    .setEndpoint(APPWRITE_URL)
+    .setProject(APPWRITE_PROJECT)
+    .setKey(APPWRITE_API_KEY)
+  const databases = new Databases(client)
+  return databases.getDocument(DATABASE_ID, TODO_COL_ID, todoId)
+}
+
 export async function getTodoBoardDetails(todoBoardId: string): Promise<TodoBoardDoc> {
   const client = new Client()
   .setEndpoint(APPWRITE_URL)
@@ -115,6 +139,7 @@ query getTodoBoards {
   getTodoBoards {
     id
     name
+    startDate
   }
 }
 `
@@ -129,6 +154,7 @@ mutation addTodoBoard {
     board {
       id
       name
+      startDate
     }
     todos {
       id
@@ -193,6 +219,111 @@ export function getTodoBoardQueryData(boardId: string) {
     query: GET_TODOBOARD_QUERY,
     variables: {
       id: boardId
+    }
+  }
+}
+
+export const ADD_TODO = `
+mutation AddTodo($boardId: ID!, $startDate: Int!, $endDate: Int!, $positions: [TodoPositionInput]!) {
+  addTodo(boardId: $boardId, startDate: $startDate, endDate: $endDate, positions: $positions) {
+    board {
+      id
+      name
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+      deleted
+      startDate
+      endDate
+      showInYear
+      showInMonth
+      showInWeek
+      posInYear
+      posInMonth
+      posInWeek
+      posInDay
+    }
+  }
+}
+`
+
+export function addTodoMutationData(boardId: string, startDate: number, endDate: number, positions: TodoPositionInput[]) {
+  return {
+    query: ADD_TODO,
+    variables: {
+      boardId,
+      startDate,
+      endDate,
+      positions
+    }
+  }
+}
+
+export const UPDATE_TODO = `
+mutation UpdateTodo($todo: TodoUpdateInput!) {
+  updateTodo(todo: $todo) {
+    id
+    name
+    completed
+    deleted
+    startDate
+    endDate
+    showInYear
+    showInMonth
+    showInWeek
+    posInYear
+    posInMonth
+    posInWeek
+    posInDay
+  }
+}
+`
+
+export function updateTodoMutationData(todo: TodoUpdateInput) {
+  return {
+    query: UPDATE_TODO,
+    variables: {
+      todo
+    }
+  }
+}
+
+export const DELETE_TODO = `
+mutation DeleteTodo($boardId: ID!, $todoId: ID!) {
+  deleteTodo(boardId: $boardId, todoId: $todoId) {
+    board {
+      id
+      name
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+      deleted
+      startDate
+      endDate
+      showInYear
+      showInMonth
+      showInWeek
+      posInYear
+      posInMonth
+      posInWeek
+      posInDay
+    }
+  }
+}
+`
+
+export function deleteTodoMutationData(boardId: string, todoId: string) {
+  return {
+    query: DELETE_TODO,
+    variables: {
+      boardId,
+      todoId
     }
   }
 }
