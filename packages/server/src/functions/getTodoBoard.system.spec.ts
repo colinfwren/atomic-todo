@@ -1,9 +1,9 @@
 import { createApolloServer } from "../server";
 import request from 'supertest'
-import {getNewUser, addTodoBoardMutationData, updateTodoBoardNameMutationData} from "./testCommon";
+import {getNewUser, addTodoBoardMutationData, getTodoBoardQueryData} from "./testCommon";
 import {TestType} from "@atomic-todo/test-reporter";
 
-describe('Updating TodoBoard System Tests', () => {
+describe('Reading TodoBoard System Tests', () => {
   let server, url;
 
   beforeAll(async () => {
@@ -14,9 +14,9 @@ describe('Updating TodoBoard System Tests', () => {
     await server?.stop()
   })
 
-  test('Updates a TodoBoard that user has permissions to update', async () => {
+  test('User can read a TodoBoard that user has permissions to read', async () => {
     atomicTodoTestReporter.metaData({
-      testCaseId: 'TC-0006',
+      testCaseId: 'TC-0003',
       testType: TestType.SYSTEM
     })
     const { jwt } = await getNewUser()
@@ -26,20 +26,17 @@ describe('Updating TodoBoard System Tests', () => {
       .send(addTodoBoardMutationData)
     expect(addTodoBoard.errors).toBeUndefined()
     const boardId = addTodoBoard.body.data?.addTodoBoard.board.id
-    const UPDATED_NAME = 'Updated Board Name'
-    const updateTodoBoard = await request(url)
+    const getTodoBoard = await request(url)
       .post('/')
       .set('Authorization', `Bearer ${jwt}`)
-      .send(updateTodoBoardNameMutationData(boardId, UPDATED_NAME))
-    expect(updateTodoBoard.body.errors).toBeUndefined()
-    expect(updateTodoBoard.body.data?.updateBoardName).toMatchObject({
-      name: UPDATED_NAME,
-    })
+      .send(getTodoBoardQueryData(boardId))
+    expect(getTodoBoard.body.errors).toBeUndefined()
+    expect(getTodoBoard.body.data?.getTodoBoard).toMatchObject(addTodoBoard.body.data?.addTodoBoard)
   })
 
-  test('Does not update a TodoBoard that user has no permissions to update', async () => {
+  test('User cannot read a TodoBoard that user has no permissions to read', async () => {
     atomicTodoTestReporter.metaData({
-      testCaseId: 'TC-0007',
+      testCaseId: 'TC-0004',
       testType: TestType.SYSTEM
     })
     const { jwt } = await getNewUser()
@@ -49,17 +46,16 @@ describe('Updating TodoBoard System Tests', () => {
       .send(addTodoBoardMutationData)
     expect(addTodoBoard.errors).toBeUndefined()
     const boardId = addTodoBoard.body.data?.addTodoBoard.board.id
-    const UPDATED_NAME = 'Updated Board Name'
     const { jwt: otherJwt } = await getNewUser()
-    const updateTodoBoard = await request(url)
+    const getTodoBoard = await request(url)
       .post('/')
       .set('Authorization', `Bearer ${otherJwt}`)
-      .send(updateTodoBoardNameMutationData(boardId, UPDATED_NAME))
-    expect(updateTodoBoard.body.errors).toMatchObject([
+      .send(getTodoBoardQueryData(boardId))
+    expect(getTodoBoard.body.errors).toMatchObject([
       {
-        message: 'The current user is not authorized to perform the requested action.'
+        message: 'Document with the requested ID could not be found.'
       }
     ])
-    expect(updateTodoBoard.body.data?.updateBoardName).toBeNull()
+    expect(getTodoBoard.body.data?.updateBoardName).toBeUndefined()
   })
 })

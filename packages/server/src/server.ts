@@ -54,6 +54,9 @@ export async function createApolloServer(listenOptions: ListenOptions = { port: 
   //  3. prepares your app to handle incoming requests
   const { url } = await startStandaloneServer(server, {
     context: async ({ req, res}) => {
+      if (req.headers.host === 'localhost:4000') {
+        return
+      }
       const token = req.headers.authorization.replace('Bearer ', '') || ''
       const client = new Client()
         .setEndpoint('http://localhost/v1')
