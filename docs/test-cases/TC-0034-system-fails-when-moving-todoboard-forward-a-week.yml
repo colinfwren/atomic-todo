@@ -1,0 +1,16 @@
+---
+id: TC-0034
+creation-date: 2024-01-20
+title: System fails when moving TodoBoard forward a week
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Let session expire
+test-steps:
+  - name: Move TodoBoard start date forward a week
+test-assertions:
+  - name: User is not able to update TodoBoard
+linked-resources:
+  - type: user-flow
+    id: UF-0015

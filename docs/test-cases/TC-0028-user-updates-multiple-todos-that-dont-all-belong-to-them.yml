@@ -1,0 +1,21 @@
+---
+id: TC-0028
+creation-date: 2024-01-20
+title: User updates multiple Todos that don't all belong to them
+test-set-uo:
+  - name: Create an account (1)
+  - name: Create session (1) for account 1
+  - name: Create a new TodoBoard (1) for account 1
+  - name: Create a new Todo (1) in TodoBoard 1
+  - name: Create an another account (2)
+  - name: Create session (2) for account 2
+  - name: Create a new TodoBoard (2) for account 2
+  - name: Create a new Todo (2) in TodoBoard 2
+test-steps:
+  - name: call UpdateTodos with updates to Todo 1 and Todo 2 using session 1
+test-assertions:
+  - name: GraphQL mutation returns an error
+  - name: neither Todo 1 or Todo 2 are updated
+linked-resources:
+  - type: user-flow
+    id: UF-0027

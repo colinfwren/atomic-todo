@@ -5,6 +5,7 @@ import {
 import {BoardMoveDirection} from "../types";
 import { mockBoardDoc} from "./testCommon";
 import {getTodoBoard} from "./getTodoBoard";
+import {TestType} from "@atomic-todo/test-reporter";
 
 
 jest.mock('node-appwrite')
@@ -37,6 +38,10 @@ describe('Progressing the board scope forward a week', () => {
   })
 
   it('throws an error if unable to update the TodoBoard doc with the new TodoBoard data', () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0034',
+      testType: TestType.UNIT
+    })
     const databases = {
       getDocument: jest.fn().mockImplementation(() => {
         return Promise.resolve(mockBoardDoc)
@@ -48,6 +53,10 @@ describe('Progressing the board scope forward a week', () => {
     expect(() => moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)).rejects.toThrowError(DATE_ERROR)
   })
   it('throws an error if unable to read the updated TodoBoard and Todo docs', () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0035',
+      testType: TestType.UNIT
+    });
     (getTodoBoard as jest.Mock).mockImplementation(() => {
       throw new Error(DOCUMENT_READ_ERROR)
     })
@@ -62,6 +71,10 @@ describe('Progressing the board scope forward a week', () => {
     expect(() => moveBoardByWeek(databases, mockBoardDoc.id, BoardMoveDirection.FORWARD)).rejects.toThrowError(DOCUMENT_READ_ERROR)
   })
   it('returns the updated TodoBoard, TodoLists, Todo data when moving forward', async () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0029',
+      testType: TestType.UNIT
+    })
     const databases = {
       getDocument: jest.fn().mockImplementation(() => {
         return Promise.resolve(mockBoardDoc)
@@ -74,6 +87,10 @@ describe('Progressing the board scope forward a week', () => {
     expect(getTodoBoard).toHaveBeenCalledWith(databases, mockBoardDoc.id)
   })
   it('returns the updated TodoBoard, TodoLists, Todo data when moving backward', async () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0031',
+      testType: TestType.UNIT
+    })
     const databases = {
       getDocument: jest.fn().mockImplementation(() => {
         return Promise.resolve(mockBoardDoc)

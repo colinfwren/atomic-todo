@@ -258,6 +258,6 @@ describe('Update Todo System Tests', () => {
         message: 'The current user is not authorized to perform the requested action.'
       }
     ])
-    expect(updateTodo.body.data?.deleteTodo).toBeUndefined()
+    expect(updateTodo.body.data?.updateTodo).toBeNull()
   })
 })

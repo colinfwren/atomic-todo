@@ -114,7 +114,7 @@ export async function getNewUser(): Promise<{ user: Models.User<Models.Preferenc
   .setKey(APPWRITE_API_KEY)
   const users = new Users(client)
   const userEmail = `test-user-${randomUUID()}@test.com`
-  const user = await users.create(ID.unique(), userEmail, undefined, NEW_USER_PASSWORD, 'test user')
+  const user = await users.create(ID.unique(), userEmail, undefined, NEW_USER_PASSWORD, userEmail)
   const agent = request.agent(APPWRITE_URL)
     await agent
       .post('/account/sessions/email')
@@ -291,6 +291,35 @@ export function updateTodoMutationData(todo: TodoUpdateInput) {
   }
 }
 
+export const UPDATE_TODOS = `
+mutation UpdateTodos($todos: [TodoUpdateInput!]!) {
+  updateTodos(todos: $todos) {
+    id
+    name
+    completed
+    deleted
+    startDate
+    endDate
+    showInYear
+    showInMonth
+    showInWeek
+    posInYear
+    posInMonth
+    posInWeek
+    posInDay
+  }
+}
+`
+
+export function updateTodosMutationData(todos: TodoUpdateInput[]) {
+  return {
+    query: UPDATE_TODOS,
+    variables: {
+      todos
+    }
+  }
+}
+
 export const DELETE_TODO = `
 mutation DeleteTodo($boardId: ID!, $todoId: ID!) {
   deleteTodo(boardId: $boardId, todoId: $todoId) {
@@ -324,6 +353,78 @@ export function deleteTodoMutationData(boardId: string, todoId: string) {
     variables: {
       boardId,
       todoId
+    }
+  }
+}
+
+export const MOVE_BOARD_FORWARD = `
+mutation MoveBoardForwardByWeek($boardId: ID!) {
+  moveBoardForwardByWeek(boardId: $boardId) {
+    board {
+      id
+      name
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+      deleted
+      startDate
+      endDate
+      showInYear
+      showInMonth
+      showInWeek
+      posInYear
+      posInMonth
+      posInWeek
+      posInDay
+    }
+  }
+}
+`
+
+export function moveBoardForwardByWeekMutationData(boardId: string) {
+  return {
+    query: MOVE_BOARD_FORWARD,
+    variables: {
+      boardId
+    }
+  }
+}
+
+export const MOVE_BOARD_BACKWARD = `
+mutation MoveBoardBackwardByWeek($boardId: ID!) {
+  moveBoardBackwardByWeek(boardId: $boardId) {
+    board {
+      id
+      name
+      startDate
+    }
+    todos {
+      id
+      name
+      completed
+      deleted
+      startDate
+      endDate
+      showInYear
+      showInMonth
+      showInWeek
+      posInYear
+      posInMonth
+      posInWeek
+      posInDay
+    }
+  }
+}
+`
+
+export function moveBoardBackwardByWeekMutationData(boardId: string) {
+  return {
+    query: MOVE_BOARD_BACKWARD,
+    variables: {
+      boardId
     }
   }
 }
