@@ -27,6 +27,7 @@
     "generate": "graphql-codegen --config codegen.ts",
     "compile": "npm run generate && tsc",
     "start": "npm run compile && node --experimental-modules --es-module-specifier-resolution=node ./dist/src/index.js",
-    "test": "jest"
+    "test": "jest",
+    "test:unit": "jest --filter=./unitTestFilter.cjs"
   }
 }

@@ -7,7 +7,7 @@ import {DATABASE_ID, TODO_COL_ID, TODOBOARD_COL_ID} from "../consts";
 
 const APPWRITE_URL = 'http://localhost/v1'
 const APPWRITE_PROJECT = 'atomic-todo'
-const APPWRITE_API_KEY = '5de9dc03ce6bc714afe1a3d87b1a7829eedfc0bab61f75589287fe04dad9f5203e4d39218c71e2fd67dabcbcfa512670bf769ddfa0e4182c0b9c863b4ff1936237581040f34b7a179cbbeee64c9f1e5b1c68798d096a0de6969df3e4ed067bee9db56f8ae244ea4196d502413473443f946eccb712e8d5ce10fa1afe959e72a1'
+const APPWRITE_API_KEY = process.env.API_KEY
 const NEW_USER_PASSWORD = 'correctHorseBatteryStaple'
 
 export const TODO_ID = 'dead-beef'
