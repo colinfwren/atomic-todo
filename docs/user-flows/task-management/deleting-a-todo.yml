@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: Authenticated user deletes Todo from TodoList
+    id: UF-022
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -27,6 +28,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with timed-out session attempts to delete Todo from TodoList
+    id: UF-0023
     scenario-type: failure
     actor: User with timed-out session
     steps:

@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: Authenticated user changes position of Todo in TodoList
+    id: UF-0027
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -30,6 +31,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with timed-out session attempts to change position of Todo in TodoList
+    id: UF-0028
     scenario-type: failure
     actor: User with timed-out session
     steps:
@@ -62,6 +64,7 @@ user-flows:
                   services:
                     - frontend
   - title: Authenticated user moves Todo from one TodoList to another TodoList
+    id: UF-0029
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -94,6 +97,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with timed-out session attempts to move Todo from one TodoList to another TodoList
+    id: UF-0030
     scenario-type: failure
     actor: User with timed-out session
     steps:

@@ -1,0 +1,18 @@
+---
+id: TC-0030
+creation-date: 2024-01-20
+title: User moves a TodoBoard that doesn't belong to them forward a week
+test-set-uo:
+  - name: Create an account (1)
+  - name: Create session (1) for account 1
+  - name: Create a new TodoBoard
+  - name: Create another account (2)
+  - name: Create session (2) for account 2
+test-steps:
+  - name: Move TodoBoard 1 forward a week as session 2
+test-assertions:
+  - name: User is not able to update TodoBoard
+  - name: TodoBoard data is not updated
+linked-resources:
+  - type: user-flow
+    id: UF-0014

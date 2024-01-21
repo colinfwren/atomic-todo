@@ -1,7 +1,7 @@
 import { TodoBoardResult } from "../generated/graphql";
 import { Databases, ID, Models, Permission, Role } from "node-appwrite";
 import { DATABASE_ID, TODOBOARD_COL_ID } from "../consts";
-import { getTodoBoard } from "./getDocs";
+import { getTodoBoard } from "./getTodoBoard";
 import {getHoursToFirstDayOfWeek} from "./utils";
 export async function addTodoBoard(databases: Databases, user: Models.User<Models.Preferences>): Promise<TodoBoardResult> {
   const boardStartDate = new Date()

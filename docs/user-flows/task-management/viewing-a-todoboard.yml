@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: Authenticated user views a TodoBoard that belongs to them
+    id: UF-0035
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -27,6 +28,7 @@ user-flows:
                     - backend
                     - frontend
   - title: Authenticated user attempts to view a TodoBoard that doesn't belong to them
+    id: UF-0036
     scenario-type: failure
     actor: Authenticated user
     steps:
@@ -51,6 +53,7 @@ user-flows:
                 - name: Display error message
                     - frontend
   - title: User with timed-out session attempts to view a TodoBoard that belongs to them
+    id: UF-0037
     scenario-type: failure
     actor: User with timed-out session
     steps:
@@ -79,6 +82,7 @@ user-flows:
                     - frontend
       - page: Homepage
   - title: Unauthenticated user attempts to view a TodoBoard
+    id: UF-0038
     scenario-type: failure
     actor: Unauthenticated user
     steps:

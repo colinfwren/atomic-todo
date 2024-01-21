@@ -1,0 +1,17 @@
+---
+id: TC-0027
+creation-date: 2024-01-20
+title: User updates multiple Todos that belong to them
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Create a 2 new Todos in TodoBoard
+test-steps:
+  - name: Update position of Todo 2 in list so it's above Todo 1
+test-assertions:
+  - name: Todo 1 is updated to have position 2
+  - name: Todo 2 is update to have position 1
+linked-resources:
+  - type: user-flow
+    id: UF-0027

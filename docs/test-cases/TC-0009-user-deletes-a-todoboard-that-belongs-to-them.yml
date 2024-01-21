@@ -1,0 +1,16 @@
+---
+id: TC-0009
+creation-date: 2024-01-07
+title: User deletes a TodoBoard that belongs to them
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+test-steps:
+  - name: Delete TodoBoard user has permissions to delete
+test-assertions:
+  - name: User is able to delete TodoBoard
+  - name: TodoBoard is deleted
+linked-resources:
+  - type: user-flow
+    id: UF-0024

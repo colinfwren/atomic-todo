@@ -1,0 +1,17 @@
+---
+id: TC-0024
+creation-date: 2024-01-07
+title: User deletes a Todo that belongs to them
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Create a new Todo in TodoBoard
+test-steps:
+  - name: Delete Todo
+test-assertions:
+  - name: The Todo is updated to show it's deleted
+  - name: The Todo no longer appears in the TodoBoard that it was created against
+linked-resources:
+  - type: user-flow
+    id: UF-0022

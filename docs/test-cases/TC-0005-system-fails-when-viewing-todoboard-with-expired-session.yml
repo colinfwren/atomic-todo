@@ -1,0 +1,18 @@
+---
+id: TC-0005
+creation-date: 2024-01-07
+title: System fails when viewing TodoBoard with expired session
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Let session expire
+test-steps:
+  - name: View TodoBoard that user has permissions to view
+test-assertions:
+  - name: User is not able to see TodoBoard
+linked-resources:
+  - type: user-flow
+    id: UF-0037
+  - type: user-flow
+    id: UF-0038

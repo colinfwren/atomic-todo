@@ -12,6 +12,9 @@ jobs:
         node-version: '18.x'
     - name: Run Yarn
       run: yarn
+    - name: Build test reporter
+      working-directory: 'packages/test-reporter'
+      run: yarn build
     - name: Generate types from server
       working-directory: 'packages/server'
       run: yarn compile

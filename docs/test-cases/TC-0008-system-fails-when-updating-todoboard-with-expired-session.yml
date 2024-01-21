@@ -1,0 +1,16 @@
+---
+id: TC-0008
+creation-date: 2024-01-07
+title: System fails when updating TodoBoard with expired session
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+  - name: Let session expire
+test-steps:
+  - name: Update TodoBoard name for TodoBoard that user has permissions to update
+test-assertions:
+  - name: User is not able to update TodoBoard
+linked-resources:
+  - type: user-flow
+    id: UF-0034

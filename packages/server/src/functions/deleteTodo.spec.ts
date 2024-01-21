@@ -6,9 +6,14 @@ import {
   docAttrs,
   board
 } from "./testCommon";
+import {TestType} from "@atomic-todo/test-reporter";
 
 describe('Deleting a TODO', () => {
   it('throws an error if the update encountered an error', () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0026',
+      testType: TestType.UNIT
+    })
     const databases = {
       updateDocument: jest.fn().mockImplementation(() => {
         throw new Error(UPDATE_APPWRITE_DOCUMENT_ERROR)
@@ -17,6 +22,10 @@ describe('Deleting a TODO', () => {
     expect(() => deleteTodo(databases, mockBoardDoc.$id, mockTodoDoc.$id)).rejects.toThrowError(UPDATE_APPWRITE_DOCUMENT_ERROR)
   })
   it('returns the updated TodoBoard', async () => {
+    atomicTodoTestReporter.metaData({
+      testCaseId: 'TC-0024',
+      testType: TestType.UNIT
+    })
     const databases = {
       updateDocument: jest.fn().mockImplementation((databases, colId) => {
         return Promise.resolve({

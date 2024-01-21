@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: Authenticated user moves TodoBoard date forward by a week
+    id: UF-0014
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -27,6 +28,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with timed-out session attempts to move TodoBoard date forward by a week
+    id: UF-0015
     scenario-type: failure
     actor: User with timed-out session
     steps:
@@ -53,6 +55,7 @@ user-flows:
                     - frontend
       - page: Homepage
   - title: Authenticated user moves TodoBoard date backward by a week
+    id: UF-0016
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -78,6 +81,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with timed-out session attempts to move TodoBoard date backward by a week
+    id: UF-0017
     scenario-type: failure
     actor: User with timed-out session
     steps:

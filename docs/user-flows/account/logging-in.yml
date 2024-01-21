@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: User with an account logs into account
+    id: UF-0004
     scenario-type: success
     actor: User with an account
     steps:
@@ -35,6 +36,7 @@ user-flows:
                     - frontend
       - page: Dashboard
   - title: User without an account attempts to log into account
+    id: UF-0005
     scenario-type: failure
     actor: User without an account
     steps:

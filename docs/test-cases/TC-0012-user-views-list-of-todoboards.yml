@@ -1,0 +1,12 @@
+---
+id: TC-0012
+creation-date: 2024-01-07
+title: User views the list of their TodoBoards
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+test-steps:
+  - name: View TodoBoard list
+test-assertions:
+  - name: User is able to see TodoBoards in their account

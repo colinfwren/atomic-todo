@@ -2,6 +2,7 @@
 creation-date: 2023-12-23
 user-flows:
   - title: Authenticated user changes visibility of Todo in TodoList granularity
+    id: UF-0012
     scenario-type: success
     actor: Authenticated user
     steps:
@@ -27,6 +28,7 @@ user-flows:
                   services:
                     - frontend
   - title: User with timed-out session attempts to change visibility of Todo in TodoList granularity
+    id: UF-0013
     scenario-type: failure
     actor: User with timed-out session
     steps:

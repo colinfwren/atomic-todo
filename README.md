@@ -24,3 +24,12 @@ The Apollo server will then be available under [http://localhost:4000](http://lo
 
 ## Running Web Front-end Locally
 - `yarn start` will compile and run the React development server on [http://localhost:3000](http://localhost:3000)
+
+## Running Server System tests
+The Server system tests require a running Appwrite instance, an API key and the Appwrite instance to be set up via the 
+steps in [Setting up Appwrite](#setting-up-appwrite).
+
+Once you have the instance set up and running you can run `API_KEY=[api key generated] yarn test` to run them.
+
+The system tests will create new users, todoboards and todos as they are run and they don't currently clean up their
+data so bare this in mind when running them.

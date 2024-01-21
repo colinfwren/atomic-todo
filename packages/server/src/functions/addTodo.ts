@@ -1,7 +1,7 @@
 import {TodoBoardResult, TodoLevel, TodoPositionInput} from "../generated/graphql";
 import {Databases, ID, Models, Permission, Role} from "node-appwrite";
 import {DATABASE_ID, TODO_COL_ID, TODOBOARD_COL_ID} from "../consts";
-import {getTodoBoard} from "./getDocs";
+import {getTodoBoard} from "./getTodoBoard";
 import {TodoBoardDoc} from "../types";
 
 function getPositionKey(granularity: TodoLevel) {

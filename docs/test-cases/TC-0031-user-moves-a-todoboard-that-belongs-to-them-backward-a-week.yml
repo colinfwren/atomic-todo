@@ -1,0 +1,16 @@
+---
+id: TC-0031
+creation-date: 2024-01-20
+title: User moves a TodoBoard that belongs to them backward a week
+test-set-uo:
+  - name: Create an account
+  - name: Create session for account
+  - name: Create a new TodoBoard
+test-steps:
+  - name: Move TodoBoard user has permissions to update backward a week
+test-assertions:
+  - name: User is able to update TodoBoard
+  - name: TodoBoard data is updated with startDate that is a week behind original date
+linked-resources:
+  - type: user-flow
+    id: UF-0016

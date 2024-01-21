@@ -1,7 +1,8 @@
 ---
 creation-date: 2023-12-23
 user-flows:
-  - title: User without an account creates an account
+  - id: UF-0001
+    title: User without an account creates an account
     scenario-type: success
     actor: User without an account
     steps:
@@ -206,6 +207,7 @@ user-flows:
                     services:
                       - frontend
   - title: User with an account attempts to create an account
+    id: UF-0002
     scenario-type: failure
     actor: User with an account
     steps:
