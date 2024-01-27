@@ -7,6 +7,7 @@ import { getHoursToFirstDayOfWeek } from "./getHoursForFirstDayOfWeek";
  * @param {Date} boardStartDate - The start date for the board
  * @param {TodoLevel} granularity - The granularity the list represents
  * @param {number} delta - The relative date delta to apply based on the granularity
+ * @returns {Date} the start date for the list
  */
 export function getStartDateForList(boardStartDate: Date, granularity: TodoLevel, delta: number): Date {
   const listStartDate = new Date(boardStartDate)

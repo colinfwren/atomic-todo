@@ -7,6 +7,7 @@ const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep
  *
  * @param {TodoLevel} granularity - The granularity of time the list represents
  * @param {Date} listStartDate - The date the list starts on
+ * @returns {string} string for date
  */
 export function getTodoListTitleDate(listStartDate: Date, granularity: TodoLevel): string {
   switch (granularity) {

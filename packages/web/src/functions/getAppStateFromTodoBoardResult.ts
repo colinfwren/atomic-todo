@@ -7,11 +7,14 @@ import {getTodoMapFromTodos} from "./getTodoMapFromTodos";
  * Get AppState object from TodoBoardResult response from server
  *
  * @param {TodoBoardResult} response - Response from server
+ * @param {Date} now - the current datetime
  * @returns {TodoBoardState} The state for the app
  */
-export function getAppStateFromTodoBoardResult({ board, todos}: TodoBoardResult): TodoBoardState {
+export function getAppStateFromTodoBoardResult({ board, todos}: TodoBoardResult, now: Date = new Date()): TodoBoardState {
     const boardStartDate = new Date(board.startDate * 1000)
-    const lists = getListMapFromTodos(boardStartDate, todos)
+    const currentDate = new Date(now.toISOString())
+    currentDate.setHours(0, 0, 0,0)
+    const lists = getListMapFromTodos(boardStartDate, currentDate, todos)
     const todoMap = getTodoMapFromTodos(todos)
     return {
       board: {

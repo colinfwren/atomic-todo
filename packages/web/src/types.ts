@@ -36,6 +36,11 @@ export enum TodoListEra {
   future = 'future'
 }
 
+export type TodoListRow = {
+  granularity: TodoLevel,
+  deltas: number[]
+}
+
 export type TodoItemList = {
   id: string,
   granularity: TodoLevel,

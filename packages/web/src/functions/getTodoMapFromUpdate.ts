@@ -1,5 +1,6 @@
 import {TodoMap} from "../types";
 import {Todo} from "@atomic-todo/server/dist/src/generated/graphql";
+import {getTodoMapFromTodos} from "./getTodoMapFromTodos";
 
 /**
  * Create a new TodoMap with the updated Todo in place of the old one
@@ -25,6 +26,5 @@ export function getTodoMapFromUpdate(todoMap: TodoMap, updatedTodo: Todo): TodoM
  * @returns {TodoMap} The new map of Todos with the update applied
  */
 export function getTodoMapFromUpdates(todoMap: TodoMap, updatedTodos: Todo[]): TodoMap {
-  const updatedTodoMap = new Map<string, Todo>(updatedTodos.map((todo) => [todo.id, todo]))
-  return new Map<string, Todo>([...todoMap.entries(), ...updatedTodoMap.entries()])
+  return new Map<string, Todo>([...todoMap.entries(), ...getTodoMapFromTodos(updatedTodos).entries()])
 }
