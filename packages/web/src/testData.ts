@@ -1,5 +1,6 @@
 import {AppTodoBoard, TodoItemList, TodoListEra} from "./types";
 import {Todo, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
+import {Models} from "appwrite";
 
 export const todoBoard: AppTodoBoard = {
   id: '5769fdc6-d2fd-4526-8955-5cf6fe6a14e2',
@@ -387,3 +388,49 @@ export const testTodoItemListMap = new Map<string, TodoItemList>([
   [month5List.id, month5List],
   [month6List.id, month6List],
 ])
+
+export const testUserAccount: Models.User<Models.Preferences> = {
+  $id: 'user-id-1',
+  $createdAt: '1988-01-12T00:00:00.000Z',
+  $updatedAt: '1988-01-12T00:00:00.000Z',
+  name: 'Test User 1',
+  registration: '',
+  status: true,
+  labels: [],
+  password: '',
+  passwordUpdate: '',
+  email: '',
+  phone: '',
+  emailVerification: false,
+  phoneVerification: false,
+  prefs: {},
+  accessedAt: '1988-01-12T00:00:00.000Z'
+}
+
+export const testEmailSession: Models.Session = {
+  $id: 'user-1-session-1',
+  $createdAt: '1988-01-12T00:00:00.000Z',
+  userId: testUserAccount.$id,
+  expire: '1988-01-12T:00:00:00.000Z',
+  provider: '',
+  providerUid: '',
+  providerAccessToken: '',
+  providerAccessTokenExpiry: '1988-01-12T00:00:00.000Z',
+  providerRefreshToken: '',
+  ip: '',
+  osCode: '',
+  osName: '',
+  osVersion: '',
+  clientCode: '',
+  clientName: '',
+  clientType: '',
+  clientVersion: '',
+  clientEngine: '',
+  clientEngineVersion: '',
+  deviceBrand: '',
+  deviceModel: '',
+  deviceName: '',
+  countryCode: '',
+  countryName: '',
+  current: true
+}
