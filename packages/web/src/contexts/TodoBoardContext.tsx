@@ -1,7 +1,6 @@
 import React, {createContext, useState} from 'react'
 import {TodoBoardProviderProps, TodoBoardState, ITodoBoardContext, ModalProps, TodoItemList} from "../types";
 import {todoBoard} from "../testData";
-// @ts-ignore
 import {
   BoardNameUpdateInput,
   Todo,
@@ -12,8 +11,16 @@ import {gql, useMutation, useQuery} from "@apollo/client";
 import {getAppStateFromTodoBoardResult} from "../functions/getAppStateFromTodoBoardResult";
 import {getTodoMapFromUpdate, getTodoMapFromUpdates} from "../functions/getTodoMapFromUpdate";
 import {getGranularityVisibilityKey} from "../functions/getGranularityVisibilityKey";
+import {
+  ADD_TODO_MUTATION, DELETE_TODO_MUTATION,
+  GET_TODOBOARD_QUERY,
+  MOVE_BOARD_BACKWARD_BY_WEEK_MUTATION,
+  MOVE_BOARD_FORWARD_BY_WEEK_MUTATION, UPDATE_BOARD_NAME_MUTATION,
+  UPDATE_TODO_MUTATION,
+  UPDATE_TODOS_MUTATION
+} from "../constants";
 
-const initialState: TodoBoardState = {
+export const initialTodoBoardState: TodoBoardState = {
   board: todoBoard,
   lists: new Map<string, TodoItemList>(),
   todos: new Map<string, Todo>()
@@ -23,6 +30,7 @@ const actions = {
   setAppState: () => {},
   setTodoCompleted: () => {},
   setTodoName: () => {},
+  setTodoDateSpan: () => {},
   updateTodos: (todos: Todo[]) => {},
   moveBoardForward: () => {},
   moveBoardBackward: () => {},
@@ -33,176 +41,17 @@ const actions = {
   deleteTodo: (todoId: string) => {}
 }
 
-const TodoBoardContext = createContext<ITodoBoardContext>({ ...initialState, actions, loading: false, modal: { visible: false, todoId: null }})
+const TodoBoardContext = createContext<ITodoBoardContext>({
+  ...initialTodoBoardState,
+  actions,
+  loading: false,
+  modal: {
+    visible: false,
+    todoId: null
+  },
+  error: null
+})
 const { Provider } = TodoBoardContext
-
-const GET_TODOBOARD = gql`
-  query getTodoBoard($boardId: ID!) {
-    getTodoBoard(id: $boardId) {
-      board {
-        id
-        name
-        startDate
-      }
-      todos {
-        id
-        name
-        completed
-        startDate
-        endDate
-        showInYear
-        showInMonth
-        showInWeek
-        posInMonth
-        posInWeek
-        posInDay
-      }
-    }
-  }
-`;
-
-const UPDATE_TODO = gql`
-mutation updateTodo($todo: TodoUpdateInput!) {
-  updateTodo(todo: $todo) {
-    id
-    name
-    completed
-    startDate
-    endDate
-    showInYear
-    showInMonth
-    showInWeek
-    posInMonth
-    posInWeek
-    posInDay
-  }
-}
-`;
-
-const UPDATE_TODOS = gql`
-mutation updateTodos($todos: [TodoUpdateInput!]!) {
-  updateTodos(todos: $todos) {
-    id
-    name
-    completed
-    startDate
-    endDate
-    showInYear
-    showInMonth
-    showInWeek
-    posInMonth
-    posInWeek
-    posInDay
-  }
-}`
-
-const MOVE_BOARD_FORWARD_BY_WEEK = gql`
-mutation moveBoardForwardByWeek($boardId: ID!) {
-  moveBoardForwardByWeek(boardId: $boardId) {
-    board {
-      id
-      name
-      startDate
-    }
-    todos {
-      id
-      name
-      completed
-      startDate
-      endDate
-      showInYear
-      showInMonth
-      showInWeek
-      posInMonth
-      posInWeek
-      posInDay
-    }
-  }
-}
-`;
-
-const MOVE_BOARD_BACKWARD_BY_WEEK = gql`
-mutation moveBoardBackwardByWeek($boardId: ID!) {
-  moveBoardBackwardByWeek(boardId: $boardId) {
-    board {
-      id
-      name
-      startDate
-    }
-    todos {
-      id
-      name
-      completed
-      startDate
-      endDate
-      showInYear
-      showInMonth
-      showInWeek
-      posInMonth
-      posInWeek
-      posInDay
-    }
-  }
-}
-`;
-
-const UPDATE_BOARD_NAME = gql`
-mutation UpdateBoardName($boardNameUpdate: BoardNameUpdateInput!) {
-  updateBoardName(boardNameUpdate: $boardNameUpdate) {
-    name
-  }
-}
-`
-
-const ADD_TODO = gql`
-mutation addTodo($boardId: ID!, $startDate: Int!, $endDate: Int!, $positions: [TodoPositionInput]!) {
-  addTodo(boardId: $boardId, startDate: $startDate, endDate: $endDate, positions: $positions) {
-    board {
-      id
-      name
-      startDate
-    }
-    todos {
-      id
-      name
-      completed
-      startDate
-      endDate
-      showInYear
-      showInMonth
-      showInWeek
-      posInMonth
-      posInWeek
-      posInDay
-    }
-  }
-}
-`;
-
-const DELETE_TODO = gql`
-mutation deleteTodo($boardId: ID!, $todoId: ID!) {
-  deleteTodo(boardId: $boardId, todoId: $todoId) {
-    board {
-      id
-      name
-      startDate
-    }
-    todos {
-      id
-      name
-      completed
-      startDate
-      endDate
-      showInYear
-      showInMonth
-      showInWeek
-      posInMonth
-      posInWeek
-      posInDay
-    }
-  }
-}
-`
 
 /**
  * Provider for the TodoBoardContext
@@ -211,12 +60,12 @@ mutation deleteTodo($boardId: ID!, $todoId: ID!) {
  * @param {JSX.Element|JSX.Element[]} props.children - Child elements
  */
 export function TodoBoardProvider({ children, boardId }: TodoBoardProviderProps) {
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string|null>(null)
   const [modal, setModal] = useState<ModalProps>({ visible: false, todoId: null })
-  const [data, setData] = useState<TodoBoardState>(initialState)
+  const [data, setData] = useState<TodoBoardState>(initialTodoBoardState)
 
-  useQuery(GET_TODOBOARD, {
+  useQuery(GET_TODOBOARD_QUERY, {
     variables: { boardId },
     onCompleted: (data) => {
       setData(getAppStateFromTodoBoardResult(data.getTodoBoard))
@@ -228,13 +77,13 @@ export function TodoBoardProvider({ children, boardId }: TodoBoardProviderProps)
     }
   })
 
-  const [updateTodo] = useMutation(UPDATE_TODO)
-  const [updateTodos] = useMutation(UPDATE_TODOS)
-  const [moveBoardForwardByWeek] = useMutation(MOVE_BOARD_FORWARD_BY_WEEK)
-  const [moveBoardBackwardByWeek] = useMutation(MOVE_BOARD_BACKWARD_BY_WEEK)
-  const [updateBoardName] = useMutation(UPDATE_BOARD_NAME)
-  const [addTodo] = useMutation(ADD_TODO)
-  const [deleteTodo] = useMutation(DELETE_TODO)
+  const [updateTodo] = useMutation(UPDATE_TODO_MUTATION)
+  const [updateTodos] = useMutation(UPDATE_TODOS_MUTATION)
+  const [moveBoardForwardByWeek] = useMutation(MOVE_BOARD_FORWARD_BY_WEEK_MUTATION)
+  const [moveBoardBackwardByWeek] = useMutation(MOVE_BOARD_BACKWARD_BY_WEEK_MUTATION)
+  const [updateBoardName] = useMutation(UPDATE_BOARD_NAME_MUTATION)
+  const [addTodo] = useMutation(ADD_TODO_MUTATION)
+  const [deleteTodo] = useMutation(DELETE_TODO_MUTATION)
 
   const state = {
     ...data,
@@ -274,6 +123,7 @@ export function TodoBoardProvider({ children, boardId }: TodoBoardProviderProps)
               todos: getTodoMapFromUpdate(state.todos, updateTodo)
             }))
             setLoading(false)
+            setError(null)
           }
         })
       },
@@ -409,7 +259,14 @@ export function TodoBoardProvider({ children, boardId }: TodoBoardProviderProps)
             setError(error.message)
             setLoading(false)
           },
-          onCompleted: () => {
+          onCompleted: (data) => {
+            setData((currentState) => ({
+              ...currentState,
+              board: {
+                ...currentState.board,
+                name: data.updateBoardName.name
+              }
+            }))
             setLoading(false)
           }
         })

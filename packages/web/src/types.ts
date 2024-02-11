@@ -70,6 +70,7 @@ export type ITodoBoardContext = TodoBoardState & {
     setAppState: (newState: TodoBoardState) => void,
     setTodoCompleted: (todo: Todo, completed: boolean) => void,
     setTodoName: (todo: Todo, value: string) => void,
+    setTodoDateSpan: (todo: Todo, startDate: Date, endDate: Date, granularity: TodoLevel) => void,
     updateTodos: (todos: Todo[]) => void,
     moveBoardForward: () => void,
     moveBoardBackward: () => void,
@@ -80,7 +81,8 @@ export type ITodoBoardContext = TodoBoardState & {
     deleteTodo: (todoId: string) => void,
   },
   loading: boolean,
-  modal: ModalProps
+  modal: ModalProps,
+  error: string|null
 }
 
 export type TodoBoardProviderProps = {
@@ -93,7 +95,8 @@ export type DashboardState = {
 }
 
 export type IDashboardContext = DashboardState & {
-  loading: boolean
+  loading: boolean,
+  error: string|null
 }
 
 export type DashboardProviderProps = {

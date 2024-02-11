@@ -45,19 +45,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ...data,
     actions: {
       signIn: async (email: string, password: string) => {
-        const authenticatedUser = await createSession(email, password)
-        setData(authenticatedUser)
+        try {
+          const authenticatedUser = await createSession(email, password)
+          setData(authenticatedUser)
+        } catch {
+          setData(initialState)
+        }
       },
       signUp: async (email: string, password: string, name: string) => {
-        const authenticatedUser = await createAccount(email, password, name)
-        setData(authenticatedUser)
+        try {
+          const authenticatedUser = await createAccount(email, password, name)
+          setData(authenticatedUser)
+        } catch {
+          setData(initialState)
+        }
       },
       signOut: async () => {
-        await endSession()
-        setData({
-          user: null,
-          session: null
-        })
+        if (data.session) {
+          await endSession()
+          setData({
+            user: null,
+            session: null
+          })
+        }
       }
     }
   }

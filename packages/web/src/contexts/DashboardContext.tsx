@@ -1,31 +1,14 @@
-import React, {createContext, useState} from 'react'
+import React, {createContext} from 'react'
 import {DashboardProviderProps, DashboardState, IDashboardContext} from "../types";
-// @ts-ignore
-import {
-  BoardNameUpdateInput,
-  Todo,
-  TodoLevel,
-  TodoPositionInput
-} from "@atomic-todo/server/dist/src/generated/graphql";
-import {gql, useMutation, useQuery} from "@apollo/client";
+import { useQuery} from "@apollo/client";
+import {GET_TODOBOARDS_QUERY} from "../constants";
 
 const initialState: DashboardState = {
   boards: []
 }
 
-const actions = {}
-
-const DashboardContext = createContext<IDashboardContext>({ ...initialState, loading: false })
+const DashboardContext = createContext<IDashboardContext>({ ...initialState, loading: false, error: null })
 const { Provider } = DashboardContext
-
-const GET_TODOBOARDS = gql`
-  query getTodoBoards {
-    getTodoBoards {
-      id
-      name
-    }
-  }
-`;
 
 /**
  * Provider for the TodoBoardContext
@@ -34,29 +17,12 @@ const GET_TODOBOARDS = gql`
  * @param {JSX.Element|JSX.Element[]} props.children - Child elements
  */
 export function DashboardProvider({ children }: DashboardProviderProps) {
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string|null>(null)
-  const [data, setData] = useState<DashboardState>(initialState)
-
-  useQuery(GET_TODOBOARDS, {
-    onCompleted: (data) => {
-      setData({ boards: data.getTodoBoards })
-      setLoading(false)
-    },
-    onError: (error) => {
-      setError(error.message)
-      setLoading(false)
-    }
-  })
-
-  const state = {
-    ...data,
-    loading,
-    error,
-  }
+  const { loading, error, data } = useQuery(GET_TODOBOARDS_QUERY)
 
   const value = {
-    ...state,
+    boards: data?.getTodoBoards,
+    loading,
+    error: error ? error.message : null,
   }
 
   return <Provider value={value}>{children}</Provider>

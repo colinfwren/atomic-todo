@@ -1,5 +1,5 @@
 import {AppTodoBoard, TodoItemList, TodoListEra} from "./types";
-import {Todo, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
+import {Todo, TodoBoard, TodoLevel} from "@atomic-todo/server/dist/src/generated/graphql";
 import {Models} from "appwrite";
 
 export const todoBoard: AppTodoBoard = {
@@ -433,4 +433,10 @@ export const testEmailSession: Models.Session = {
   countryCode: '',
   countryName: '',
   current: true
+}
+
+export const testTodoBoard: TodoBoard = {
+  id: 'todoboard-1',
+  name: 'Todoboard 1',
+  startDate: 568944000
 }
